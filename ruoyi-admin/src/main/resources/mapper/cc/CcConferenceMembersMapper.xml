@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cc.mapper.CcConferenceMembersMapper">
+    
+    <resultMap type="CcConferenceMembers" id="CcConferenceMembersResult">
+        <result property="id"    column="id"    />
+        <result property="conferenceId"    column="conference_id"    />
+        <result property="phone"    column="phone"    />
+        <result property="userId"    column="user_id"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="timeLen"    column="time_len"    />
+    </resultMap>
+
+    <sql id="selectCcConferenceMembersVo">
+        select id, conference_id, phone, user_id, start_time, end_time, time_len from cc_conference_members
+    </sql>
+
+    <select id="selectCcConferenceMembersList" parameterType="CcConferenceMembers" resultMap="CcConferenceMembersResult">
+        <include refid="selectCcConferenceMembersVo"/>
+        <where>  
+            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+            <if test="userId != null  and userId != ''"> and user_id = #{userId}</if>
+            <if test="startTime != null "> and start_time = #{startTime}</if>
+            <if test="endTime != null "> and end_time = #{endTime}</if>
+            <if test="timeLen != null "> and time_len = #{timeLen}</if>
+        </where>
+    </select>
+    
+    <select id="selectCcConferenceMembersById" parameterType="String" resultMap="CcConferenceMembersResult">
+        <include refid="selectCcConferenceMembersVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCcConferenceMembers" parameterType="CcConferenceMembers">
+        insert into cc_conference_members
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="conferenceId != null">conference_id,</if>
+            <if test="phone != null and phone != ''">phone,</if>
+            <if test="userId != null and userId != ''">user_id,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="timeLen != null">time_len,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="conferenceId != null">#{conferenceId},</if>
+            <if test="phone != null and phone != ''">#{phone},</if>
+            <if test="userId != null and userId != ''">#{userId},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="timeLen != null">#{timeLen},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCcConferenceMembers" parameterType="CcConferenceMembers">
+        update cc_conference_members
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="conferenceId != null">conference_id = #{conferenceId},</if>
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+            <if test="userId != null and userId != ''">user_id = #{userId},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="timeLen != null">time_len = #{timeLen},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCcConferenceMembersById" parameterType="String">
+        delete from cc_conference_members where id = #{id}
+    </delete>
+
+    <delete id="deleteCcConferenceMembersByIds" parameterType="String">
+        delete from cc_conference_members where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

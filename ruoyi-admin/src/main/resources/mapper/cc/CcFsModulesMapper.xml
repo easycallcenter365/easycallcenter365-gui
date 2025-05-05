@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cc.mapper.CcFsModulesMapper">
+    
+    <resultMap type="CcFsModules" id="CcFsModulesResult">
+        <result property="id"    column="id"    />
+        <result property="moduleLabel"    column="module_label"    />
+        <result property="moduleName"    column="module_name"    />
+        <result property="moduleDesc"    column="module_desc"    />
+        <result property="catId"    column="cat_id"    />
+        <result property="moduleEnabled"    column="module_enabled"    />
+    </resultMap>
+
+    <sql id="selectCcFsModulesVo">
+        select id, module_label, module_name, module_desc, cat_id, module_enabled from cc_fs_modules
+    </sql>
+
+    <select id="selectCcFsModulesList" parameterType="CcFsModules" resultMap="CcFsModulesResult">
+        <include refid="selectCcFsModulesVo"/>
+        <where>  
+            <if test="moduleLabel != null  and moduleLabel != ''"> and module_label = #{moduleLabel}</if>
+            <if test="moduleName != null  and moduleName != ''"> and module_name like concat('%', #{moduleName}, '%')</if>
+            <if test="moduleDesc != null  and moduleDesc != ''"> and module_desc = #{moduleDesc}</if>
+            <if test="catId != null "> and cat_id = #{catId}</if>
+            <if test="moduleEnabled != null "> and module_enabled = #{moduleEnabled}</if>
+        </where>
+    </select>
+    
+    <select id="selectCcFsModulesById" parameterType="Long" resultMap="CcFsModulesResult">
+        <include refid="selectCcFsModulesVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCcFsModules" parameterType="CcFsModules">
+        insert into cc_fs_modules
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="moduleLabel != null and moduleLabel != ''">module_label,</if>
+            <if test="moduleName != null and moduleName != ''">module_name,</if>
+            <if test="moduleDesc != null and moduleDesc != ''">module_desc,</if>
+            <if test="catId != null">cat_id,</if>
+            <if test="moduleEnabled != null">module_enabled,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="moduleLabel != null and moduleLabel != ''">#{moduleLabel},</if>
+            <if test="moduleName != null and moduleName != ''">#{moduleName},</if>
+            <if test="moduleDesc != null and moduleDesc != ''">#{moduleDesc},</if>
+            <if test="catId != null">#{catId},</if>
+            <if test="moduleEnabled != null">#{moduleEnabled},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCcFsModules" parameterType="CcFsModules">
+        update cc_fs_modules
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="moduleLabel != null and moduleLabel != ''">module_label = #{moduleLabel},</if>
+            <if test="moduleName != null and moduleName != ''">module_name = #{moduleName},</if>
+            <if test="moduleDesc != null and moduleDesc != ''">module_desc = #{moduleDesc},</if>
+            <if test="catId != null">cat_id = #{catId},</if>
+            <if test="moduleEnabled != null">module_enabled = #{moduleEnabled},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCcFsModulesById" parameterType="Long">
+        delete from cc_fs_modules where id = #{id}
+    </delete>
+
+    <delete id="deleteCcFsModulesByIds" parameterType="String">
+        delete from cc_fs_modules where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

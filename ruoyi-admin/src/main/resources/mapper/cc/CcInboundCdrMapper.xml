@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cc.mapper.CcInboundCdrMapper">
+    
+    <resultMap type="CcInboundCdr" id="CcInboundCdrResult">
+        <result property="id"    column="id"    />
+        <result property="caller"    column="caller"    />
+        <result property="callee"    column="callee"    />
+        <result property="inboundTime"    column="inbound_time"    />
+        <result property="groupId"    column="group_id"    />
+        <result property="answeredTime"    column="answered_time"    />
+        <result property="extnum"    column="extnum"    />
+        <result property="opnum"    column="opnum"    />
+        <result property="hangupTime"    column="hangup_time"    />
+        <result property="answeredTimeLen"    column="answered_time_len"    />
+        <result property="timeLen"    column="time_len"    />
+        <result property="uuid"    column="uuid"    />
+        <result property="wavFile"    column="wav_file"    />
+        <result property="chatContent" column="chat_content"></result>
+    </resultMap>
+
+    <sql id="selectCcInboundCdrVo">
+        select id, caller, callee, inbound_time, group_id, answered_time, extnum, opnum, hangup_time, answered_time_len, time_len, uuid, wav_file,chat_content from cc_inbound_cdr
+    </sql>
+
+    <select id="selectCcInboundCdrList" parameterType="CcInboundCdr" resultMap="CcInboundCdrResult">
+        <include refid="selectCcInboundCdrVo"/>
+        <where>  
+            <if test="caller != null  and caller != ''"> and caller = #{caller}</if>
+            <if test="callee != null  and callee != ''"> and callee = #{callee}</if>
+            <if test="params.inboundTimeStart != null and params.inboundTimeStart != ''"><!-- 开始时间检索 -->
+                AND inbound_time &gt;= #{params.inboundTimeStart}
+            </if>
+            <if test="params.inboundTimeEnd != null and params.inboundTimeEnd != ''"><!-- 结束时间检索 -->
+                AND inbound_time &lt;= #{params.inboundTimeEnd}
+            </if>
+            <if test="groupId != null  and groupId != ''"> and group_id = #{groupId}</if>
+            <if test="params.answeredTimeStart != null and params.answeredTimeStart != ''"><!-- 开始时间检索 -->
+                AND answered_time &gt;= #{params.answeredTimeStart}
+            </if>
+            <if test="params.answeredTimeEnd != null and params.answeredTimeEnd != ''"><!-- 结束时间检索 -->
+                AND answered_time &lt;= #{params.answeredTimeEnd}
+            </if>
+            <if test="extnum != null  and extnum != ''"> and extnum = #{extnum}</if>
+            <if test="opnum != null  and opnum != ''"> and opnum = #{opnum}</if>
+            <if test="params.hangupTimeStart != null and params.hangupTimeStart != ''"><!-- 开始时间检索 -->
+                AND hangup_time &gt;= #{params.hangupTimeStart}
+            </if>
+            <if test="params.hangupTimeEnd != null and params.hangupTimeEnd != ''"><!-- 结束时间检索 -->
+                AND hangup_time &lt;= #{params.hangupTimeEnd}
+            </if>
+            <if test="answeredTimeLen != null "> and answered_time_len = #{answeredTimeLen}</if>
+            <if test="params.timeLenStart != null and params.timeLenStart != ''"><!-- 开始时间检索 -->
+                AND time_len &gt;= #{params.timeLenStart}
+            </if>
+            <if test="params.timeLenEnd != null and params.timeLenEnd != ''"><!-- 结束时间检索 -->
+                AND time_len &lt;= #{params.timeLenEnd}
+            </if>
+            <if test="uuid != null  and uuid != ''"> and uuid = #{uuid}</if>
+            <if test="wavFile != null  and wavFile != ''"> and wav_file = #{wavFile}</if>
+        </where>
+        order by inbound_time desc
+    </select>
+    
+    <select id="selectCcInboundCdrById" parameterType="String" resultMap="CcInboundCdrResult">
+        <include refid="selectCcInboundCdrVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCcInboundCdr" parameterType="CcInboundCdr">
+        insert into cc_inbound_cdr
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="caller != null and caller != ''">caller,</if>
+            <if test="callee != null and callee != ''">callee,</if>
+            <if test="inboundTime != null">inbound_time,</if>
+            <if test="groupId != null and groupId != ''">group_id,</if>
+            <if test="answeredTime != null">answered_time,</if>
+            <if test="extnum != null and extnum != ''">extnum,</if>
+            <if test="opnum != null and opnum != ''">opnum,</if>
+            <if test="hangupTime != null">hangup_time,</if>
+            <if test="answeredTimeLen != null">answered_time_len,</if>
+            <if test="timeLen != null">time_len,</if>
+            <if test="uuid != null and uuid != ''">uuid,</if>
+            <if test="wavFile != null and wavFile != ''">wav_file,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="caller != null and caller != ''">#{caller},</if>
+            <if test="callee != null and callee != ''">#{callee},</if>
+            <if test="inboundTime != null">#{inboundTime},</if>
+            <if test="groupId != null and groupId != ''">#{groupId},</if>
+            <if test="answeredTime != null">#{answeredTime},</if>
+            <if test="extnum != null and extnum != ''">#{extnum},</if>
+            <if test="opnum != null and opnum != ''">#{opnum},</if>
+            <if test="hangupTime != null">#{hangupTime},</if>
+            <if test="answeredTimeLen != null">#{answeredTimeLen},</if>
+            <if test="timeLen != null">#{timeLen},</if>
+            <if test="uuid != null and uuid != ''">#{uuid},</if>
+            <if test="wavFile != null and wavFile != ''">#{wavFile},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCcInboundCdr" parameterType="CcInboundCdr">
+        update cc_inbound_cdr
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="caller != null and caller != ''">caller = #{caller},</if>
+            <if test="callee != null and callee != ''">callee = #{callee},</if>
+            <if test="inboundTime != null">inbound_time = #{inboundTime},</if>
+            <if test="groupId != null and groupId != ''">group_id = #{groupId},</if>
+            <if test="answeredTime != null">answered_time = #{answeredTime},</if>
+            <if test="extnum != null and extnum != ''">extnum = #{extnum},</if>
+            <if test="opnum != null and opnum != ''">opnum = #{opnum},</if>
+            <if test="hangupTime != null">hangup_time = #{hangupTime},</if>
+            <if test="answeredTimeLen != null">answered_time_len = #{answeredTimeLen},</if>
+            <if test="timeLen != null">time_len = #{timeLen},</if>
+            <if test="uuid != null and uuid != ''">uuid = #{uuid},</if>
+            <if test="wavFile != null and wavFile != ''">wav_file = #{wavFile},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCcInboundCdrById" parameterType="String">
+        delete from cc_inbound_cdr where id = #{id}
+    </delete>
+
+    <delete id="deleteCcInboundCdrByIds" parameterType="String">
+        delete from cc_inbound_cdr where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

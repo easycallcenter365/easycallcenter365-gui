@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cc.mapper.CcBizGroupMapper">
+
+    <resultMap type="CcBizGroup" id="CcBizGroupResult">
+        <result property="groupId"    column="group_id"    />
+        <result property="bizGroupName"    column="biz_group_name"    />
+        <result property="sortNo"    column="sort_no"    />
+        <result property="notes"    column="notes"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectCcBizGroupVo">
+        select group_id, biz_group_name, sort_no, notes, create_time from cc_biz_group
+    </sql>
+
+    <select id="selectCcBizGroupList" parameterType="CcBizGroup" resultMap="CcBizGroupResult">
+        <include refid="selectCcBizGroupVo"/>
+        <where>
+            <if test="bizGroupName != null  and bizGroupName != ''"> and biz_group_name like concat('%', #{bizGroupName}, '%')</if>
+            <if test="sortNo != null "> and sort_no = #{sortNo}</if>
+            <if test="notes != null  and notes != ''"> and notes = #{notes}</if>
+        </where>
+    </select>
+
+    <select id="selectCcBizGroupByGroupId" parameterType="String" resultMap="CcBizGroupResult">
+        <include refid="selectCcBizGroupVo"/>
+        where group_id = #{groupId}
+    </select>
+
+    <insert id="insertCcBizGroup" parameterType="CcBizGroup">
+        insert into cc_biz_group
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            group_id,
+            biz_group_name,
+            sort_no,
+            notes,
+            create_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{groupId},
+            #{bizGroupName},
+            #{sortNo},
+            #{notes},
+            #{createTime},
+        </trim>
+    </insert>
+
+    <update id="updateCcBizGroup" parameterType="CcBizGroup">
+        update cc_biz_group
+        <trim prefix="SET" suffixOverrides=",">
+            biz_group_name = #{bizGroupName},
+            sort_no = #{sortNo},
+            notes = #{notes},
+            create_time = #{createTime},
+        </trim>
+        where group_id = #{groupId}
+    </update>
+
+    <delete id="deleteCcBizGroupByGroupId" parameterType="String">
+        delete from cc_biz_group where group_id = #{groupId}
+    </delete>
+
+    <delete id="deleteCcBizGroupByGroupIds" parameterType="String">
+        delete from cc_biz_group where group_id in
+        <foreach item="groupId" collection="array" open="(" separator="," close=")">
+            #{groupId}
+        </foreach>
+    </delete>
+
+</mapper>

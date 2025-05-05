@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('编辑profile')" />
+    <th:block th:include="include :: layout-latest-css" />
+    <th:block th:include="include :: ztree-css" />
+    <style>
+    </style>
+</head>
+
+<body>
+<div class="main-content">
+    <input class="config-value form-control" id="_operaType" th:value="edit" type="hidden" />
+    <div class="h4 form-header">基础配置</div>
+    <div id="baseConfigs">
+        <div className="row">
+            <div class="col-sm-12">
+                <label class="col-sm-4 control-label">profile名称</label>
+                <div class="col-sm-8">
+                    <input class="config-value form-control" type="text" id="profileName" th:value="${profileName}" readonly="true" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="showAdvancedConfig" style="margin-top:210px" class="h6 form-header">更多</div>
+    <div id="advancedConfigs" style="display: none"></div>
+
+    <!-- 保存按钮 -->
+    <div class="row" ></div>
+    <div class="row" >
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-success" onclick="addRows()">
+                <i class="fa fa-plus"></i> 增加配置项
+            </a>
+        </div>
+    </div>
+</div>
+
+
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: layout-latest-js" />
+<script>
+    // 页面加载完成后，发送AJAX请求获取配置数据
+    var prefix = ctx + "cc/fsconf";
+    var paramSize = 0;
+    $(function() {
+        $.ajax({
+            url: prefix + '/getProfileConf?profileName=' + $("#profileName").val(),
+            type: 'GET',
+            success: function(_data) {
+                // 假设后端返回的数据格式为 { baseConfigs: [], advancedConfigs: [] }
+                var baseConfigsHtml = '';
+                var advancedConfigsHtml = '';
+                var data = _data.data;
+
+                // 渲染基础配置
+                $.each(data.baseConfigs, function(index, config) {
+                    baseConfigsHtml += '<div className="row">';
+                    baseConfigsHtml += '<div class="col-sm-12">';
+                    baseConfigsHtml += '<label class="col-sm-4 control-label">' + config.aliasName + '</label><div class="col-sm-8"><input class="config-value form-control" type="text" id="' + config.name + '" value="' + config.value + '" /></div>';
+                    baseConfigsHtml += '</div>';
+                    baseConfigsHtml += '</div>';
+                    paramSize ++;
+                });
+                $('#baseConfigs').append(baseConfigsHtml);
+
+                // 渲染高级配置
+                $.each(data.advancedConfigs, function(index, config) {
+                    advancedConfigsHtml += '<div className="row">';
+                    advancedConfigsHtml += '<div class="col-sm-12">';
+                    advancedConfigsHtml += '<label class="col-sm-4 control-label">' + config.aliasName + '</label><div class="col-sm-8"><input class="config-value form-control" type="text" id="' + config.name + '" value="' + config.value + '" /></div>';
+                    advancedConfigsHtml += '</div>';
+                    advancedConfigsHtml += '</div>';
+                    paramSize ++;
+                });
+                $('#advancedConfigs').html(advancedConfigsHtml);
+                $("#advancedConfigs").hide();
+            },
+            error: function(error) {
+                console.error('Error fetching configuration:', error);
+            }
+        });
+    });
+
+    // 追加一行配置
+    function addRows(){
+        paramSize ++;
+        $("#advancedConfigs").show();
+        $('#showAdvancedConfig').text("收起");
+        var advancedConfigs = '';
+        advancedConfigs += '<div className="row">';
+        advancedConfigs += '<div class="col-sm-12">';
+        advancedConfigs += '<div class="col-sm-4"><input class="new-config-name form-control" type="text" value="" id="newConfig_' + paramSize + '" placeholder="请输入参数名"/></div><div class="col-sm-8"><input class="new-config-value form-control" type="text" id="newConfig_' + paramSize + '_value" value="" placeholder="请输入参数值"/></div>';
+        advancedConfigs += '</div>';
+        advancedConfigs += '</div>';
+        $('#advancedConfigs').append(advancedConfigs);
+    }
+
+    // JavaScript函数用于展开和折叠高级配置
+    function toggleAdvancedConfig() {
+        if ($("#advancedConfigs").css('display') === 'none') {
+            $("#advancedConfigs").show();
+            $('#showAdvancedConfig').text("收起");
+        } else {
+            $("#advancedConfigs").hide();
+            $('#showAdvancedConfig').text("更多");
+        }
+    }
+    // 为每个高级配置的标签添加点击事件
+    $('#showAdvancedConfig').click(function() {
+        toggleAdvancedConfig(this);
+    });
+
+
+    function submitHandler() {
+        var configs = [];
+        // 已存在的配置
+        $('input.config-value').each(function() {
+            var config = {
+                name: $(this).attr('id'),
+                value: $(this).val().trim()
+            };
+            configs.push(config);
+        });
+        // 添加的配置
+        $('input.new-config-name').each(function() {
+            var newConfigId = $(this).attr('id');
+            var config = {
+                name: $(this).val().trim(),
+                value: $("#" + newConfigId + "_value").val().trim()
+            };
+            configs.push(config);
+        });
+        $.ajax({
+            url: prefix + '/setProfileConf', // 假设后端保存配置的接口是 /setConfig
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(configs),
+            beforeSend: function () {
+                $.modal.loading("正在处理中，请稍候...");
+                $.modal.disable();
+            },
+            success : function(data) {
+                $.operate.successCallback(data);
+                $.modal.closeLoading();
+                $.modal.enable();
+            },
+            error: function(error) {
+                console.error('Error saving configuration:', error);
+                $.modal.msgError('配置保存失败！');
+                $.modal.closeLoading();
+                $.modal.enable();
+            }
+        });
+    }
+
+</script>
+
+</body>
+</html>

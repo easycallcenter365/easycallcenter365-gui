@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('asr引擎设置')" />
+    <th:block th:include="include :: layout-latest-css" />
+    <th:block th:include="include :: ztree-css" />
+    <style>
+    </style>
+</head>
+
+<body>
+<div class="main-content">
+    <div id="baseConfigs" th:object="${mod}">
+        <div className="row">
+            <div class="col-sm-12">
+                <label class="col-sm-2 control-label">asr引擎选择</label>
+                <div class="col-sm-6">
+                    <select name="asrengine" id="asrengine" class="form-control m-b" th:field="*{modValue}">
+                        <option value="">无</option>
+                        <option value="mod_funasr">FunASR(免费)</option>
+                        <option value="mod_aliyun_asr">阿里ASR</option>
+                        <option value="mod_xunfei_asr">讯飞ASR</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 保存按钮 -->
+    <div class="row" ></div>
+    <div class="row" >
+        <div class="col-sm-offset-5 col-sm-10">
+            <button id="saveConfig" type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>保 存</button>&nbsp;
+        </div>
+    </div>
+</div>
+
+
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: layout-latest-js" />
+<script>
+    // 页面加载完成后，发送AJAX请求获取配置数据
+    var prefix = ctx + "cc/fsconf";
+
+    // 保存配置
+    $('#saveConfig').click(function() {
+        $.ajax({
+            url: prefix + '/setAsrengine?asrengine=' + $("#asrengine").val(), // 假设后端保存配置的接口是 /setConfig
+            type: 'GET',
+            contentType: 'application/json',
+            beforeSend: function () {
+                $.modal.loading("正在处理中，请稍候...");
+                $.modal.disable();
+            },
+            success: function(response) {
+                processAjaxReponseJson(response);
+            },
+            error: function(error) {
+
+            }
+        });
+    });
+
+</script>
+
+</body>
+</html>

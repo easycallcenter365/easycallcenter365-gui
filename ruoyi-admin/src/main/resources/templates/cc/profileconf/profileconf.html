@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('profile列表')" />
+    <style>
+        .modal-custom-size {
+            width: 800px; /* 自定义宽度 */
+        }
+    </style>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-success" onclick="$.operate.add('internal')" shiro:hasPermission="cc:profileconf:add">
+                <i class="fa fa-plus"></i> 新增internal
+            </a>
+            <a class="btn btn-success" onclick="$.operate.add('external')" shiro:hasPermission="cc:profileconf:add">
+                <i class="fa fa-plus"></i> 新增external
+            </a>
+            <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="cc:profileconf:edit">
+                <i class="fa fa-edit"></i> 修改
+            </a>
+            <a class="btn btn-info single disabled" onclick="showProfileStatus()" shiro:hasPermission="cc:profileconf:status">
+                <i class="fa fa-search"></i> 查看状态
+            </a>
+            <a class="btn btn-primary single disabled" onclick="startProfile()" shiro:hasPermission="cc:profileconf:start">
+                <i class="fa fa-check-circle-o"></i> 启动
+            </a>
+            <a class="btn btn-danger single disabled" onclick="stopProfile()" shiro:hasPermission="cc:profileconf:stop">
+                <i class="fa fa-close"></i> 停止
+            </a>
+            <a class="btn btn-primary single disabled" onclick="restartProfile()" shiro:hasPermission="cc:profileconf:restart">
+                <i class="fa fa-refresh"></i> 重启
+            </a>
+            <a class="btn btn-info single disabled" onclick="showExtnum()" shiro:hasPermission="cc:profileconf:status">
+                <i class="fa fa-search"></i> 分机查看
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+    <div class="modal fade" id="customModal" tabindex="-1" role="dialog" aria-labelledby="customModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-custom-size" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="customModalLabel">提示</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modal-body">
+                    自定义模态框内容...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('cc:profileconf:edit')}]];
+    var statusFlag = [[${@permission.hasPermi('cc:profileconf:status')}]];
+    var startFlag = [[${@permission.hasPermi('cc:profileconf:start')}]];
+    var stopFlag = [[${@permission.hasPermi('cc:profileconf:stop')}]];
+    var restartFlag = [[${@permission.hasPermi('cc:profileconf:restart')}]];
+    var prefix = ctx + "cc/fsconf";
+
+    $(function() {
+        var options = {
+            url: prefix + "/profileList",
+            createUrl: prefix + "/profileconf/add/{id}",
+            updateUrl: prefix + "/profileconf/edit/{id}",
+            modalName: "profile管理",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'profileName',
+                    title: '名称'
+                },
+                {
+                    field: 'sipPort',
+                    title: 'sip端口'
+                },
+                {
+                    field: 'sipId',
+                    title: 'sip监听地址'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.profileName + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-info btn-xs ' + statusFlag + '" href="javascript:void(0)" onclick="showProfileStatus(\'' + row.profileName + '\')"><i class="fa fa-search"></i>查看状态</a>');
+                        actions.push('<a class="btn btn-primary btn-xs ' + startFlag + '" href="javascript:void(0)" onclick="startProfile(\'' + row.profileName + '\')"><i class="fa fa-check-circle-o"></i>启动</a>');
+                        actions.push('<a class="btn btn-danger btn-xs ' + stopFlag + '" href="javascript:void(0)" onclick="stopProfile(\'' + row.profileName + '\')"><i class="fa fa-close"></i>停止</a>');
+                        actions.push('<a class="btn btn-primary btn-xs ' + restartFlag + '" href="javascript:void(0)" onclick="restartProfile(\'' + row.profileName + '\')"><i class="fa fa-refresh"></i>重启</a>');
+                        actions.push('<a class="btn btn-info btn-xs ' + statusFlag + '" href="javascript:void(0)" onclick="showExtnum(\'' + row.profileName + '\')"><i class="fa fa-search"></i>分机查看</a>');
+                        return actions.join('');
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    function showProfileStatus(profileName) {
+        if ($.common.isEmpty(profileName)) {
+            var row = $("#bootstrap-table").bootstrapTable('getSelections')[0];
+            if ($.common.isEmpty(row)) {
+                $.modal.alertWarning("请至少选择一条记录");
+                return;
+            }
+            console.log(row);
+            profileName = row.profileName
+        }
+        console.log(profileName)
+        $.ajax({
+            url: prefix + '/getProfileStatus?profileName=' + profileName,
+            type: 'GET',
+            success: function(response) {
+                var data = response.data.data; // 假设这是一个数组
+                var statusHtml = '<table class="table table-striped">'; // 使用Bootstrap的表格样式
+                statusHtml += '<thead><tr><th>名称</th><th>类型</th><th>数据</th><th>状态</th></tr></thead><tbody>';
+
+                // 遍历数组，拼接每一行的数据
+                data.forEach(function(item) {
+                    statusHtml += '<tr>';
+                    statusHtml += '<td>' + item.name + '</td>';
+                    statusHtml += '<td>' + item.type + '</td>';
+                    statusHtml += '<td>' + item.data + '</td>';
+                    statusHtml += '<td>' + item.state + '</td>';
+                    statusHtml += '</tr>';
+                });
+
+                statusHtml += '</tbody></table>';
+
+                // 将拼接好的HTML设置到模态框的body中
+                $("#modal-body").html(statusHtml);
+                $('#customModal').modal('show');
+            },
+            error: function(error) {
+                console.error('Error saving configuration:', error);
+                $.modal.msgError('系统异常！');
+            }
+        });
+    }
+
+
+    function startProfile(profileName) {
+        if ($.common.isEmpty(profileName)) {
+            var row = $("#bootstrap-table").bootstrapTable('getSelections')[0];
+            if ($.common.isEmpty(row)) {
+                $.modal.alertWarning("请至少选择一条记录");
+                return;
+            }
+            console.log(row);
+            profileName = row.profileName
+        }
+        console.log(profileName)
+        $.ajax({
+            url: prefix + '/startProfile?profileName=' + profileName,
+            type: 'GET',
+            success: function(response) {
+                $("#modal-body").html(response.data.msg);
+                $('#customModal').modal('show');
+            },
+            error: function(error) {
+                console.error('Error saving configuration:', error);
+                $.modal.msgError('系统异常！');
+            }
+        });
+    }
+
+    function stopProfile(profileName) {
+        if ($.common.isEmpty(profileName)) {
+            var row = $("#bootstrap-table").bootstrapTable('getSelections')[0];
+            if ($.common.isEmpty(row)) {
+                $.modal.alertWarning("请至少选择一条记录");
+                return;
+            }
+            console.log(row);
+            profileName = row.profileName
+        }
+        console.log(profileName)
+        $.ajax({
+            url: prefix + '/stopProfile?profileName=' + profileName,
+            type: 'GET',
+            success: function(response) {
+                $("#modal-body").html(response.data.msg);
+                $('#customModal').modal('show');
+            },
+            error: function(error) {
+                console.error('Error saving configuration:', error);
+                $.modal.msgError('系统异常！');
+            }
+        });
+    }
+
+    function restartProfile(profileName) {
+        if ($.common.isEmpty(profileName)) {
+            var row = $("#bootstrap-table").bootstrapTable('getSelections')[0];
+            if ($.common.isEmpty(row)) {
+                $.modal.alertWarning("请至少选择一条记录");
+                return;
+            }
+            console.log(row);
+            profileName = row.profileName
+        }
+        console.log(profileName)
+        $.ajax({
+            url: prefix + '/restartProfile?profileName=' + profileName,
+            type: 'GET',
+            success: function(response) {
+                $("#modal-body").html(response.data.msg);
+                $('#customModal').modal('show');
+            },
+            error: function(error) {
+                console.error('Error saving configuration:', error);
+                $.modal.msgError('系统异常！');
+            }
+        });
+    }
+
+
+    function showExtnum(profileName) {
+        if ($.common.isEmpty(profileName)) {
+            var row = $("#bootstrap-table").bootstrapTable('getSelections')[0];
+            if ($.common.isEmpty(row)) {
+                $.modal.alertWarning("请至少选择一条记录");
+                return;
+            }
+            console.log(row);
+            profileName = row.profileName
+        }
+        console.log(profileName)
+        $.ajax({
+            url: prefix + '/getExtnumList?profileName=' + profileName,
+            type: 'GET',
+            success: function(response) {
+                var data = response.data.data; // 假设这是一个数组
+                var statusHtml = '<table class="table table-striped">'; // 使用Bootstrap的表格样式
+                statusHtml += '<thead><tr><th>分机号</th><th>客户端ip</th><th>分机状态</th><th>终端类型</th></tr></thead><tbody>';
+
+                // 遍历数组，拼接每一行的数据
+                data.forEach(function(item) {
+                    statusHtml += '<tr>';
+                    statusHtml += '<td>' + item.user + '</td>';
+                    statusHtml += '<td>' + item.networkIp + '</td>';
+                    statusHtml += '<td>' + item.status + '</td>';
+                    statusHtml += '<td>' + item.agent + '</td>';
+                    statusHtml += '</tr>';
+                });
+
+                statusHtml += '</tbody></table>';
+
+                // 将拼接好的HTML设置到模态框的body中
+                $("#modal-body").html(statusHtml);
+                $('#customModal').modal('show');
+            },
+            error: function(error) {
+                console.error('Error saving configuration:', error);
+                $.modal.msgError('系统异常！');
+            }
+        });
+    }
+
+</script>
+</body>
+</html>

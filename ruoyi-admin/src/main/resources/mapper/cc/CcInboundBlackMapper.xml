@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cc.mapper.CcInboundBlackMapper">
+    
+    <resultMap type="CcInboundBlack" id="CcInboundBlackResult">
+        <result property="id"    column="id"    />
+        <result property="caller"    column="caller"    />
+        <result property="expiredTime"    column="expired_time"    />
+        <result property="addTime"    column="add_time"    />
+        <result property="addUser"    column="add_user"    />
+    </resultMap>
+
+    <sql id="selectCcInboundBlackVo">
+        select id, caller, expired_time, add_time, add_user from cc_inbound_black
+    </sql>
+
+    <select id="selectCcInboundBlackList" parameterType="CcInboundBlack" resultMap="CcInboundBlackResult">
+        <include refid="selectCcInboundBlackVo"/>
+        <where>  
+            <if test="caller != null  and caller != ''"> and caller = #{caller}</if>
+            <if test="expiredTime != null "> and expired_time = #{expiredTime}</if>
+            <if test="addTime != null "> and add_time = #{addTime}</if>
+            <if test="addUser != null  and addUser != ''"> and add_user = #{addUser}</if>
+        </where>
+    </select>
+    
+    <select id="selectCcInboundBlackById" parameterType="Long" resultMap="CcInboundBlackResult">
+        <include refid="selectCcInboundBlackVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCcInboundBlack" parameterType="CcInboundBlack" useGeneratedKeys="true" keyProperty="id">
+        insert into cc_inbound_black
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="caller != null and caller != ''">caller,</if>
+            <if test="expiredTime != null">expired_time,</if>
+            <if test="addTime != null">add_time,</if>
+            <if test="addUser != null and addUser != ''">add_user,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="caller != null and caller != ''">#{caller},</if>
+            <if test="expiredTime != null">#{expiredTime},</if>
+            <if test="addTime != null">#{addTime},</if>
+            <if test="addUser != null and addUser != ''">#{addUser},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCcInboundBlack" parameterType="CcInboundBlack">
+        update cc_inbound_black
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="caller != null and caller != ''">caller = #{caller},</if>
+            <if test="expiredTime != null">expired_time = #{expiredTime},</if>
+            <if test="addTime != null">add_time = #{addTime},</if>
+            <if test="addUser != null and addUser != ''">add_user = #{addUser},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCcInboundBlackById" parameterType="Long">
+        delete from cc_inbound_black where id = #{id}
+    </delete>
+
+    <delete id="deleteCcInboundBlackByIds" parameterType="String">
+        delete from cc_inbound_black where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

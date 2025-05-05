@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改callcenter参数配置')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-params-edit" th:object="${ccParams}">
+            <input name="id" th:field="*{id}" type="hidden">
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label is-required">参数名：</label>
+                    <div class="col-sm-8">
+                        <input name="paramName" readonly="readonly" th:field="*{paramName}" class="form-control" type="text" required>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label is-required">参数编码：</label>
+                    <div class="col-sm-8">
+                        <input name="paramCode" readonly="readonly" th:field="*{paramCode}" class="form-control" type="text" required>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label is-required">参数值：</label>
+                    <div class="col-sm-8">
+                        <textarea name="paramValue" class="form-control" required>[[*{paramValue}]]</textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label is-required">参数类型：</label>
+                    <div class="col-sm-8">
+                        <input name="paramType" readonly="readonly" th:field="*{paramType}" class="form-control" type="text">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var prefix = ctx + "system/params";
+        $("#form-params-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-params-edit').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

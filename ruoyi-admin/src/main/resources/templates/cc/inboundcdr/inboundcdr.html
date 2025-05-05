@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('呼入记录列表')" />
+
+    <th:block th:include="include :: video-js-css" />
+    <th:block th:include="include :: video-js" />
+    <style>
+        #modal {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        #modal-content {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            width: 640px; /* 设置模态框内容的宽度 */
+        }
+        #modal-close {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        /* 隐藏video.js默认的关闭按钮 */
+        .vjs-big-play-button {
+            display: none !important;
+        }
+
+        /* 新增对话框样式 */
+        #dialog-modal {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        #dialog-modal-content {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            width: 950px; /* 设置对话框内容的宽度 */
+            overflow: auto;
+        }
+        #dialog-modal-close {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            font-size: 20px;
+            cursor: pointer;
+            height: 30px;
+            /*color: #fff;*/
+            /*background-color: #333;*/
+            /*border-radius: 50%;*/
+            /*padding: 5px;*/
+        }
+        #dialog-content {
+            margin-top: 20px;
+            max-height: 500px; /* 设置最大高度 */
+        }
+
+        .dialog-item {
+            margin-bottom: 20px; /* 增大间距 */
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 15px; /* 增大内边距 */
+        }
+
+        .content-text {
+            flex: 1;
+            word-wrap: break-word;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block; /* 修改为 inline-block */
+            padding: 5px; /* 添加内边距 */
+            background-color: inherit; /* 继承父元素背景色 */
+            border-radius: 5px; /* 添加圆角 */
+        }
+
+        .dialog-item.user {
+            background-color: #e0f7fa;
+            margin-left: auto;
+            width: 650px;
+        }
+
+        .dialog-item.assistant {
+            background-color: #fffaee;
+            margin-right: auto;
+            width: 650px;
+        }
+
+        .dialog-item.kb {
+            background-color: #f5f5f5;
+            margin-right: auto;
+            width: 850px;
+        }
+
+        .user {
+            text-align: right;
+            margin-bottom: 5px;
+        }
+
+        .assistant {
+            text-align: left;
+            margin-bottom: 5px;
+        }
+
+        .kb {
+            text-align: left;
+            margin-bottom: 5px;
+        }
+
+        .more-text {
+            margin-left: 10px; /* 添加一些间距 */
+            color: blue; /* 链接样式 */
+            text-decoration: underline; /* 链接样式 */
+            cursor: pointer; /* 鼠标悬停样式 */
+        }
+    </style>
+
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>通话uuid：</label>
+                                <input type="text" name="uuid"/>
+                            </li>
+                            <li>
+                                <label>主叫号码：</label>
+                                <input type="text" name="caller"/>
+                            </li>
+                            <li>
+                                <label>分机号：</label>
+                                <input type="text" name="extnum"/>
+                            </li>
+                            <li>
+                                <label style="width: 105px">通话时长（分）：</label>
+                                <input type="number" id="timeLenStart" style="width: 150px" placeholder="通话时长起（分钟）" name="params[timeLenStart]"/>
+                                <span>-</span>
+                                <input type="number" id="timeLenEnd" style="width: 150px" placeholder="通话时长止（分钟）" name="params[timeLenEnd]"/>
+
+                            </li>
+                            <li class="select-time">
+                                <label>呼入时间： </label>
+                                <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="inboundTimeStart" placeholder="开始时间" name="params[inboundTimeStart]"/>
+                                <span>-</span>
+                                <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="inboundTimeEnd" placeholder="结束时间" name="params[inboundTimeEnd]"/>
+                            </li>
+                            <li class="select-time">
+                                <label>接听时间： </label>
+                                <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="answeredTimeStart" placeholder="开始时间" name="params[answeredTimeStart]"/>
+                                <span>-</span>
+                                <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="answeredTimeEnd" placeholder="结束时间" name="params[answeredTimeEnd]"/>
+                            </li>
+                            <li class="select-time">
+                                <label>挂机时间： </label>
+                                <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="hangupTimeStart" placeholder="开始时间" name="params[hangupTimeStart]"/>
+                                <span>-</span>
+                                <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="hangupTimeEnd" placeholder="结束时间" name="params[hangupTimeEnd]"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+<!--            <div class="btn-group-sm" id="toolbar" role="group">-->
+<!--                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="cc:inboundcdr:export">-->
+<!--                    <i class="fa fa-download"></i> 导出-->
+<!--                </a>-->
+<!--            </div>-->
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+            <!-- 模态框 -->
+            <div id="modal">
+                <div id="modal-content">
+                    <button id="modal-close">&times;</button>
+                    <video id="audioPlayer" class="video-js vjs-default-skin vjs-big-play-centered" controls preload="auto" width="580" height="390">
+                        <source src="" type="audio/mpeg">
+                        Your browser does not support the audio tag.
+                    </video>
+                </div>
+            </div>
+
+            <!-- 新增对话框 -->
+            <div id="dialog-modal">
+                <div id="dialog-modal-content">
+                    <button id="dialog-modal-close">&times;</button>
+                    <div id="dialog-content">
+                        <!-- 对话内容将在这里显示 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var linstenFlag = [[${@permission.hasPermi('cc:inboundcdr:listen')}]];
+        var downloadFlag = [[${@permission.hasPermi('cc:inboundcdr:download')}]];
+        var prefix = ctx + "cc/inboundcdr";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "呼入记录",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'id',
+                    title: '${comment}',
+                    visible: false
+                },
+                {
+                    field: 'uuid',
+                    title: '通话uuid',
+                    width: 120
+                },
+                {
+                    field: 'caller',
+                    title: '主叫号码'
+                },
+                {
+                    field: 'wavFile',
+                    title: '音视频类型',
+                    formatter: function(value, row, index, field) {
+                        // 获取文件后缀
+                        const extension = value.split('.').pop().toLowerCase();
+                        // 判断文件类型
+                        if (['wav', 'mp3', 'aac'].includes(extension)) {
+                            return `音频`;
+                        } else if (['mp4', 'avi', 'mov'].includes(extension)) {
+                            return `视频`;
+                        } else {
+                            return `未知`;
+                        }
+                    }
+                },
+                {
+                    field: 'inboundTime',
+                    title: '呼入时间',
+                    width: 120,
+                    formatter: function(value, row, index, field) {
+                        // 假设value是时间戳，单位是毫秒
+                        var date = new Date(Number(value));
+                        // 格式化日期为年-月-日 时:分:秒
+                        var year = date.getFullYear();
+                        var month = (date.getMonth() + 1).toString().padStart(2, '0');
+                        var day = date.getDate().toString().padStart(2, '0');
+                        var hour = date.getHours().toString().padStart(2, '0');
+                        var minute = date.getMinutes().toString().padStart(2, '0');
+                        var second = date.getSeconds().toString().padStart(2, '0');
+                        return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+                    }
+                },
+                {
+                    field: 'answeredTime',
+                    title: '接听时间',
+                    width: 120,
+                    formatter: function(value, row, index, field) {
+                        // 假设value是时间戳，单位是毫秒
+                        var date = new Date(Number(value));
+                        // 格式化日期为年-月-日 时:分:秒
+                        var year = date.getFullYear();
+                        var month = (date.getMonth() + 1).toString().padStart(2, '0');
+                        var day = date.getDate().toString().padStart(2, '0');
+                        var hour = date.getHours().toString().padStart(2, '0');
+                        var minute = date.getMinutes().toString().padStart(2, '0');
+                        var second = date.getSeconds().toString().padStart(2, '0');
+                        return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+                    }
+                },
+                {
+                    field: 'extnum',
+                    title: '分机号'
+                },
+                {
+                    field: 'opnum',
+                    title: '工号'
+                },
+                {
+                    field: 'hangupTime',
+                    title: '挂机时间',
+                    width: 120,
+                    formatter: function(value, row, index, field) {
+                        // 假设value是时间戳，单位是毫秒
+                        var date = new Date(Number(value));
+                        // 格式化日期为年-月-日 时:分:秒
+                        var year = date.getFullYear();
+                        var month = (date.getMonth() + 1).toString().padStart(2, '0');
+                        var day = date.getDate().toString().padStart(2, '0');
+                        var hour = date.getHours().toString().padStart(2, '0');
+                        var minute = date.getMinutes().toString().padStart(2, '0');
+                        var second = date.getSeconds().toString().padStart(2, '0');
+                        return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+                    }
+                },
+                {
+                    field: 'answeredTimeLen',
+                    title: '服务时长',
+                    formatter: function(value, row, index, field) {
+                        // 计算分钟数，向下取整
+                        var answeredTimeLen = Math.ceil(value / 1000);
+                        const minutes = Math.floor(answeredTimeLen / 60);
+                        // 计算剩余的秒数，取余数
+                        const seconds = answeredTimeLen % 60;
+                        // 返回格式化后的时间字符串
+                        if (minutes > 0) {
+                            return `${minutes}分${seconds}秒`;
+                        } else {
+                            return `${seconds}秒`;
+                        }
+                    }
+                },
+                {
+                    field: 'timeLen',
+                    title: '通话总时长',
+                    formatter: function(value, row, index, field) {
+                        // 计算分钟数，向下取整
+                        var timeLen = Math.ceil(value / 1000);
+                        const minutes = Math.floor(timeLen / 60);
+                        // 计算剩余的秒数，取余数
+                        const seconds = timeLen % 60;
+                        // 返回格式化后的时间字符串
+                        if (minutes > 0) {
+                            return `${minutes}分${seconds}秒`;
+                        } else {
+                            return `${seconds}秒`;
+                        }
+                    }
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + linstenFlag + '" href="javascript:void(0)" onclick="openModal(\'' + row.wavFileUrl + '\')"><i class="fa fa-volume-up"></i>听录音</a> ');
+                        actions.push('<a class="btn btn-success btn-xs ' + downloadFlag + '" href="javascript:void(0)" onclick="checkFileExistence(\'' + row.wavFileUrl + '\')"><i class="fa fa-download"></i>下载录音</a>');
+                        if (row.chatContent) {
+                            actions.push('<a class="btn btn-info btn-xs" href="javascript:void(0)" onclick="openDialog(\'' + escape(JSON.stringify(row.chatContent)) + '\')"><i class="fa fa-comment"></i>查看对话</a>');
+                        }
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+
+        var player; // 定义一个全局变量来存储播放器实例
+        function openModal(filePath) {
+            // 设置video标签的source属性
+            console.log(filePath)
+            var source = document.querySelector('#audioPlayer source');
+            source.src = filePath;
+            source.type = 'audio/mpeg'; // 确保类型正确
+
+            // 初始化或更新播放器
+            if (player) {
+                player.src({ type: 'audio/mpeg', src: filePath });
+            } else {
+                player = videojs('audioPlayer');
+            }
+            $('#modal').show();
+            player.play(); // 自动播放
+        }
+
+        // 关闭模态框
+        $(document).on('click', '#modal-close', function() {
+            $('#modal').hide();
+            if (player) {
+                player.pause(); // 暂停播放
+            }
+        });
+
+        // 点击模态框外部区域关闭模态框
+        $(document).on('click', '#modal', function(e) {
+            if (e.target.id === 'modal') {
+                $('#modal').hide();
+                if (player) {
+                    player.pause(); // 暂停播放
+                }
+            }
+        });
+        function checkFileExistence(url) {
+            fetch(url, { method: 'HEAD' })
+                .then(response => {
+                    if (response.status === 200) {
+                        // 文件存在，可以下载
+                        window.location.href = url;
+                    } else {
+                        // 文件不存在，显示错误消息
+                        $.modal.msgError('文件不存在！');
+                    }
+                })
+                .catch(() => {
+                    // 网络错误或文件不存在
+                    $.modal.msgError('文件不存在！');
+                });
+        }
+
+
+        // 新增查看对话功能
+        function openDialog(escapedDialogContent) {
+            // 解码字符串
+            var dialogContent = unescape(escapedDialogContent);
+            // 清空对话框内容
+            $('#dialog-content').empty();
+            // 解析对话内容
+            var dialogItems = JSON.parse((JSON.parse(dialogContent)));
+            dialogItems.forEach(function(item) {
+                var role = item.role;
+                var roleClass = '';
+                var roleIcon = '';
+                if (role === 'user') {
+                    roleClass = 'user';
+                    roleIcon = '<i class="fa fa-user"></i>'
+                } else if (role === 'assistant') {
+                    roleClass = 'assistant'
+                    roleIcon = '<i class="fa fa-tv"></i>'
+                } else {
+                    console.log("没有对应的role，不展示！");
+                    return
+                }
+                var content = item.content;
+                // 使用正则表达式匹配 JSON 部分
+                if (containsJson(content)) {
+                    console.log("包含json")
+                    roleClass = 'kb'
+                    role = 'kb'
+                    roleIcon = '<i class="fa fa-envelope-o"></i>'
+                    // var conJson = extractJson(content);
+                    while (containsJson(content)) {
+                        content = removeJson(content);
+                    }
+                    if (!content) {
+                        return;
+                    }
+                    // content = "知识库查询" + content;
+                }
+
+
+                // 创建对话内容容器
+                var contentDiv = document.createElement('div');
+                contentDiv.className = 'dialog-item ' + roleClass;
+
+                // 创建内容段落
+                var contentSpan = document.createElement('span');
+                contentSpan.className = 'content-text';
+                contentSpan.textContent = content;
+
+                // 检查内容是否超过75个字符
+                var moreText = document.createElement('span');
+                if (content.length > 75) {
+                    moreText.className = 'more-text';
+                    moreText.textContent = '[更多]';
+                    moreText.style.cursor = 'pointer';
+                    moreText.onclick = function() {
+                        if (moreText.textContent === '[更多]') {
+                            contentSpan.textContent = content;
+                            moreText.textContent = '[收起]';
+                            contentSpan.appendChild(moreText);
+                        } else {
+                            contentSpan.textContent = content.substring(0, 75) + '...';
+                            moreText.textContent = '[更多]';
+                            contentSpan.appendChild(moreText);
+                        }
+                    };
+                    contentSpan.textContent = content.substring(0, 75) + '...';
+                    contentSpan.appendChild(moreText);
+                }
+
+                // 将图标字符串转换为 DOM 节点
+                var roleIconElement = document.createElement('span');
+                roleIconElement.innerHTML = roleIcon;
+                roleIconElement = roleIconElement.firstChild;
+
+                // 将图标字符串转换为 DOM 节点
+                var roleElement = document.createElement('span');
+
+                // 根据角色决定图标的位置
+                if (role === 'user') {
+                    contentDiv.appendChild(contentSpan);
+                    contentDiv.appendChild(roleIconElement);
+                    roleElement.textContent = "：客户";
+                    contentDiv.appendChild(roleElement);
+                } else if (role === 'assistant') {
+                    contentDiv.appendChild(roleIconElement);
+                    roleElement.textContent = "AI：";
+                    contentDiv.appendChild(roleElement);
+                    contentDiv.appendChild(contentSpan);
+                } else {
+                    contentDiv.appendChild(roleIconElement);
+                    roleElement.textContent = "知识库查询：";
+                    contentDiv.appendChild(roleElement);
+                    contentDiv.appendChild(contentSpan);
+                }
+
+                $('#dialog-content').append(contentDiv);
+            });
+            // 显示对话框
+            $('#dialog-modal').show();
+        }
+
+        // 关闭对话框
+        $(document).on('click', '#dialog-modal-close', function() {
+            $('#dialog-modal').hide();
+        });
+
+        // 点击对话框外部区域关闭对话框
+        $(document).on('click', '#dialog-modal', function(e) {
+            if (e.target.id === 'dialog-modal') {
+                $('#dialog-modal').hide();
+            }
+        });
+
+        function containsJson(input) {
+            // 正则表达式匹配 JSON 格式的子串
+            const jsonRegex = /{.*?}/s;
+
+            // 检查字符串是否包含 JSON 格式的子串
+            return jsonRegex.test(input);
+        }
+
+        // 提取json串
+        function extractJson(input) {
+            const jsonRegex = /{.*}/s;
+            const match = input.match(jsonRegex);
+            return match ? match[0] : null;
+        }
+
+        // 移除 JSON 部分
+        function removeJson(input) {
+            // 正则表达式匹配 JSON 格式的子串
+            const jsonRegex = /{[^{}]*}/s;
+
+            // 使用正则表达式替换 JSON 部分为空字符串
+            return input.replace(jsonRegex, '').trim();
+        }
+
+    </script>
+</body>
+</html>

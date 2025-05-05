@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cc.mapper.CcAgentOnlineMapper">
+    
+    <resultMap type="CcAgentOnline" id="CcAgentOnlineResult">
+        <result property="id"    column="id"    />
+        <result property="extnum"    column="extnum"    />
+        <result property="opnum"    column="opnum"    />
+        <result property="groupId"    column="group_id"    />
+        <result property="sessionId"    column="session_id"    />
+        <result property="agentStatus"    column="agent_status"    />
+        <result property="lastHangupTime"    column="last_hangup_time"    />
+        <result property="loginTime"    column="login_time"    />
+        <result property="clientIp"    column="client_ip"    />
+        <result property="busyLockTime"    column="busy_lock_time"    />
+        <result property="skillLevel"    column="skill_level"    />
+    </resultMap>
+
+    <sql id="selectCcAgentOnlineVo">
+        select id, extnum, opnum, group_id, session_id, agent_status, last_hangup_time, login_time, client_ip, busy_lock_time, skill_level from cc_agent_online
+    </sql>
+
+    <select id="selectCcAgentOnlineList" parameterType="CcAgentOnline" resultMap="CcAgentOnlineResult">
+        <include refid="selectCcAgentOnlineVo"/>
+        <where>  
+            <if test="extnum != null  and extnum != ''"> and extnum = #{extnum}</if>
+            <if test="opnum != null  and opnum != ''"> and opnum = #{opnum}</if>
+            <if test="groupId != null  and groupId != ''"> and group_id = #{groupId}</if>
+            <if test="sessionId != null  and sessionId != ''"> and session_id = #{sessionId}</if>
+            <if test="agentStatus != null "> and agent_status = #{agentStatus}</if>
+            <if test="lastHangupTime != null "> and last_hangup_time = #{lastHangupTime}</if>
+            <if test="loginTime != null "> and login_time = #{loginTime}</if>
+            <if test="clientIp != null  and clientIp != ''"> and client_ip = #{clientIp}</if>
+            <if test="busyLockTime != null "> and busy_lock_time = #{busyLockTime}</if>
+            <if test="skillLevel != null "> and skill_level = #{skillLevel}</if>
+        </where>
+    </select>
+    
+    <select id="selectCcAgentOnlineById" parameterType="String" resultMap="CcAgentOnlineResult">
+        <include refid="selectCcAgentOnlineVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCcAgentOnline" parameterType="CcAgentOnline">
+        insert into cc_agent_online
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="extnum != null and extnum != ''">extnum,</if>
+            <if test="opnum != null and opnum != ''">opnum,</if>
+            <if test="groupId != null and groupId != ''">group_id,</if>
+            <if test="sessionId != null and sessionId != ''">session_id,</if>
+            <if test="agentStatus != null">agent_status,</if>
+            <if test="lastHangupTime != null">last_hangup_time,</if>
+            <if test="loginTime != null">login_time,</if>
+            <if test="clientIp != null and clientIp != ''">client_ip,</if>
+            <if test="busyLockTime != null">busy_lock_time,</if>
+            <if test="skillLevel != null">skill_level,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="extnum != null and extnum != ''">#{extnum},</if>
+            <if test="opnum != null and opnum != ''">#{opnum},</if>
+            <if test="groupId != null and groupId != ''">#{groupId},</if>
+            <if test="sessionId != null and sessionId != ''">#{sessionId},</if>
+            <if test="agentStatus != null">#{agentStatus},</if>
+            <if test="lastHangupTime != null">#{lastHangupTime},</if>
+            <if test="loginTime != null">#{loginTime},</if>
+            <if test="clientIp != null and clientIp != ''">#{clientIp},</if>
+            <if test="busyLockTime != null">#{busyLockTime},</if>
+            <if test="skillLevel != null">#{skillLevel},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCcAgentOnline" parameterType="CcAgentOnline">
+        update cc_agent_online
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="extnum != null and extnum != ''">extnum = #{extnum},</if>
+            <if test="opnum != null and opnum != ''">opnum = #{opnum},</if>
+            <if test="groupId != null and groupId != ''">group_id = #{groupId},</if>
+            <if test="sessionId != null and sessionId != ''">session_id = #{sessionId},</if>
+            <if test="agentStatus != null">agent_status = #{agentStatus},</if>
+            <if test="lastHangupTime != null">last_hangup_time = #{lastHangupTime},</if>
+            <if test="loginTime != null">login_time = #{loginTime},</if>
+            <if test="clientIp != null and clientIp != ''">client_ip = #{clientIp},</if>
+            <if test="busyLockTime != null">busy_lock_time = #{busyLockTime},</if>
+            <if test="skillLevel != null">skill_level = #{skillLevel},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCcAgentOnlineById" parameterType="String">
+        delete from cc_agent_online where id = #{id}
+    </delete>
+
+    <delete id="deleteCcAgentOnlineByIds" parameterType="String">
+        delete from cc_agent_online where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

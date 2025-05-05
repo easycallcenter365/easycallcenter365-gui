@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cc.mapper.CcGatewaysMapper">
+    
+    <resultMap type="CcGateways" id="CcGatewaysResult">
+        <result property="id"    column="id"    />
+        <result property="gwName"    column="gw_name"    />
+        <result property="profileName"    column="profile_name"    />
+        <result property="caller"    column="caller"    />
+        <result property="calleePrefix"    column="callee_prefix"    />
+        <result property="gwAddr"    column="gw_addr"    />
+        <result property="codec"    column="codec"    />
+        <result property="gwDesc"    column="gw_desc"    />
+        <result property="maxConcurrency"    column="max_concurrency"    />
+        <result property="authUsername"    column="auth_username"    />
+        <result property="authPassword"    column="auth_password"    />
+        <result property="priority"    column="priority"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="register"    column="register"    />
+        <result property="configs"    column="configs"    />
+    </resultMap>
+
+    <sql id="selectCcGatewaysVo">
+        select id, gw_name, profile_name, caller, callee_prefix, gw_addr, codec, gw_desc, max_concurrency, auth_username, auth_password, priority, update_time, register, configs from cc_gateways
+    </sql>
+
+    <select id="selectCcGatewaysList" parameterType="CcGateways" resultMap="CcGatewaysResult">
+        <include refid="selectCcGatewaysVo"/>
+        <where>
+            <if test="gwName != null  and gwName != ''"> and gw_name = #{gwName}</if>
+            <if test="profileName != null  and profileName != ''"> and profile_name = #{profileName}</if>
+            <if test="caller != null  and caller != ''"> and caller = #{caller}</if>
+            <if test="calleePrefix != null  and calleePrefix != ''"> and callee_prefix = #{calleePrefix}</if>
+            <if test="gwAddr != null  and gwAddr != ''"> and gw_addr = #{gwAddr}</if>
+            <if test="codec != null  and codec != ''"> and codec = #{codec}</if>
+            <if test="gwDesc != null  and gwDesc != ''"> and gw_desc like concat('%', #{gwDesc}, '%')</if>
+            <if test="maxConcurrency != null "> and max_concurrency = #{maxConcurrency}</if>
+            <if test="authUsername != null  and authUsername != ''"> and auth_username like concat('%', #{authUsername}, '%')</if>
+            <if test="authPassword != null  and authPassword != ''"> and auth_password = #{authPassword}</if>
+            <if test="priority != null "> and priority = #{priority}</if>
+            <if test="register != null "> and register = #{register}</if>
+        </where>
+    </select>
+    
+    <select id="selectCcGatewaysById" parameterType="Long" resultMap="CcGatewaysResult">
+        <include refid="selectCcGatewaysVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCcGateways" parameterType="CcGateways" useGeneratedKeys="true" keyProperty="id">
+        insert into cc_gateways
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            gw_name,
+            profile_name,
+            caller,
+            callee_prefix,
+            gw_addr,
+            codec,
+            gw_desc,
+            max_concurrency,
+            auth_username,
+            auth_password,
+            priority,
+            update_time,
+            register,
+            configs,
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{gwName},
+            #{profileName},
+            #{caller},
+            #{calleePrefix},
+            #{gwAddr},
+            #{codec},
+            #{gwDesc},
+            #{maxConcurrency},
+            #{authUsername},
+            #{authPassword},
+            #{priority},
+            #{updateTime},
+            #{register},
+            #{configs},
+         </trim>
+    </insert>
+
+    <update id="updateCcGateways" parameterType="CcGateways">
+        update cc_gateways
+        <trim prefix="SET" suffixOverrides=",">
+            gw_name = #{gwName},
+            profile_name = #{profileName},
+            caller = #{caller},
+            callee_prefix = #{calleePrefix},
+            gw_desc = #{gwDesc},
+            codec = #{codec},
+            gw_addr = #{gwAddr},
+            max_concurrency = #{maxConcurrency},
+            auth_username = #{authUsername},
+            auth_password = #{authPassword},
+            priority = #{priority},
+            update_time = #{updateTime},
+            register = #{register},
+            configs = #{configs},
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCcGatewaysById" parameterType="Long">
+        delete from cc_gateways where id = #{id}
+    </delete>
+
+    <delete id="deleteCcGatewaysByIds" parameterType="String">
+        delete from cc_gateways where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

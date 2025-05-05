@@ -1,0 +1,222 @@
+﻿<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('呼入排队监控')" />
+    <th:block th:include="include :: layout-latest-css" />
+
+    <th:block th:include="include :: cc-phone-bar-css" />
+    <th:block th:include="include :: cc-phone-bar-socket-js" />
+
+</head>
+
+<body class="gray-bg">
+    <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 select-table table-striped">
+                <table id="monitor-table"></table>
+            </div>
+        </div>
+    </div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: layout-latest-js" />
+
+<script th:inline="javascript">
+    console.log("================")
+    var _phoneBar = new ccPhoneBarSocket();
+    var _scriptServer = [[${callConfig.scriptServer}]];
+    var _scriptPort = [[${callConfig.scriptPort}]];
+    var _loginToken = [[${callConfig.loginToken}]];
+    var _callConfig = null;
+    var manualDisConn = false;
+    $(function() {
+        console.log("======================页面已加载")
+        //工具条对象断开事件
+        _phoneBar.on(ccPhoneBarSocket.eventList.ws_disconnected, function(msg){
+            console.log(msg);
+            if (!manualDisConn) {
+                // 不是手动断开的，则3秒后重连
+                console.log("断开连接，自动重连")
+                $.modal.msgWarning('ws连接断开，正在重连......');
+                setTimeout(() => {
+                    _phoneBar.connect();
+                }, 3000);
+            } else {
+                console.log("手动断开连接，不需要重连")
+            }
+        });
+        //工具条对象断开事件
+        _phoneBar.on(ccPhoneBarSocket.eventList.no_power, function(msg){
+            console.log(msg);
+            $.modal.msgError('当前账号或分机没有监控权限!');
+        });
+        //工具条对象连接成功
+        _phoneBar.on(ccPhoneBarSocket.eventList.ws_connected, function(msg){
+            console.log("工具条连接成功" + msg);
+            _phoneBar.inboundCallQueuePull();
+        });
+
+
+        _phoneBar.on(ccPhoneBarSocket.eventList.status_changed, function(msg){
+            console.log("座席状态改变: " ,msg);
+        });
+
+        _phoneBar.on(ccPhoneBarSocket.eventList.call_session_status_data_changed, function(msg){
+            console.log("数据发生改变: " ,msg);
+            var data = msg.object;
+            if (Object.prototype.toString.call(data) === '[object Array]') {
+                console.log('data 是一个数组，首次连接推送全量的通话数据');
+                data.forEach(function(element, index) {
+                    handleData(element)
+                });
+            } else if (Object.prototype.toString.call(data) === '[object Object]') {
+                console.log('data 是一个对象，通话状态改变');
+                handleData(data)
+            } else {
+                console.log('data 既不是数组也不是对象');
+            }
+        });
+
+
+        _phoneBar.on(ccPhoneBarSocket.eventList.user_login_on_other_device.code, function(msg){
+            _phoneBar.updatePhoneBar(msg, ccPhoneBarSocket.eventList.user_login_on_other_device.code);
+            $.modal.msgError('当前账号或分机已在其他机器登录!');
+            manualDisConn = true; // 被挤掉线的也不自动重连
+        });
+        
+        // 电话工具条参数配置;
+        _callConfig = {
+            'useDefaultUi' : false,
+            'loginToken': _loginToken,
+            'ipccServer': _scriptServer + ':' + _scriptPort,
+            'gatewayList': [],
+            'gatewayEncrypted': false
+        };
+        console.log('loginToken = ',_loginToken);
+        if(typeof(_loginToken) != "undefined") {
+            _callConfig["loginToken"] = _loginToken;
+        } else{
+            $.modal.msgError("电话工具条：无法获取 loginToken!");
+            return;
+        }
+
+        _phoneBar.initConfig(_callConfig);
+        _phoneBar.connect();
+
+        // 初始化表格
+        $('#monitor-table').bootstrapTable({
+            pagination: false,
+            columns: [
+                {
+                    field: 'uuid', // 列名
+                    title: 'uuid' // 显示的列名
+                },
+                {
+                    field: 'customerPhone',
+                    title: '客户手机号'
+                },
+                {
+                    field: 'direction',
+                    title: '类型',
+                    formatter: function(value, row, index, field) {
+                        if (value == 'OUTBOUND') {
+                            return '外呼'
+                        } else {
+                            return '呼入'
+                        }
+                    }
+                },
+                {
+                    field: 'callTime',
+                    title: '呼入时间', // 初始名称
+                    formatter: function(value, row, index, field) {
+                        // 假设value是时间戳，单位是毫秒
+                        var date = new Date(Number(value));
+                        // 格式化日期为年-月-日 时:分:秒
+                        var year = date.getFullYear();
+                        var month = (date.getMonth() + 1).toString().padStart(2, '0');
+                        var day = date.getDate().toString().padStart(2, '0');
+                        var hour = date.getHours().toString().padStart(2, '0');
+                        var minute = date.getMinutes().toString().padStart(2, '0');
+                        var second = date.getSeconds().toString().padStart(2, '0');
+                        return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+                    }
+                },
+                {
+                    field: 'queueTimeLen',
+                    title: '排队时长（秒）',
+                    formatter: function(value, row, index, field) {
+                        // 假设value是时间戳，单位是毫秒
+                        var currentTime = new Date(); // 获取当前时间
+                        if (row.connectedTimeStamp > 0) {
+                            currentTime = new Date(row.connectedTimeStamp); // 接通时间
+                        }
+                        var pastTime = new Date(row.callTime); // 将传入的时间戳转换为Date对象
+                        var seconds = Math.floor((currentTime - pastTime) / 1000); // 计算差值并转换为秒
+                        return seconds + ""; // 返回差值和单位
+                    }
+                },
+            ],
+            events: {
+                'onLoadSuccess.bs.table': function () {
+                    var that = this;
+                    this.columns.forEach(function(column) {
+                        if (column.field === 'callTime') {
+                            that.columns[that.fieldsColumnsIndex[column.field]].title =
+                                that.data[0].direction === 'OUTBOUND' ? '外呼时间1' : '呼入时间1';
+                        }
+                    });
+                }
+            }
+        });
+    });
+
+    function handleData(element){
+        var connectedTimeStamp = element.connectedTimeStamp;
+        var hangupTimeStamp = element.hangupTimeStamp;
+        // 已成功转到坐席或者挂机
+        if (connectedTimeStamp > 0 || hangupTimeStamp > 0) {
+            console.log("接通或者挂机，移除" + element.uuid)
+            var removeParams = {
+                field: 'uuid', // 假设你的表格中有一个字段名为'id'，用于标识每一行
+                values: [element.uuid] // 要删除的数据的id数组
+            };
+            $('#monitor-table').bootstrapTable('remove', removeParams);
+        } else {
+            // 获取当前表格的所有数据
+            var tableData = $('#monitor-table').bootstrapTable('getData');
+            // 查找需要更新的行的索引
+            var index = -1;
+            for (var i = 0; i < tableData.length; i++) {
+                if (tableData[i].uuid === element.uuid) {
+                    index = i;
+                    break;
+                }
+            }
+            if (index == -1) {
+                // 没找到，追加新数据
+                console.log("新的数据，追加" + element.uuid)
+                $('#monitor-table').bootstrapTable('append', element);
+            }
+        }
+    }
+
+    // 定时更新持续时长列
+    setInterval(function() {
+        $('#monitor-table').bootstrapTable('getData').forEach(function(row, index) {
+            var currentTime = new Date(); // 获取当前时间
+            var pastTime = new Date(row.callTime); // 将传入的时间戳转换为Date对象
+            var seconds = Math.floor((currentTime - pastTime) / 1000) + row.queueTimeLen; // 计算差值并转换为秒
+            $('#monitor-table').bootstrapTable('updateCell', {
+                index: index, // 行索引
+                field: 'queueTimeLen', // 列字段名
+                value: seconds // 新值
+            });
+        });
+    }, 1000); // 每秒更新一次
+
+</script>
+
+
+</body>
+</html>

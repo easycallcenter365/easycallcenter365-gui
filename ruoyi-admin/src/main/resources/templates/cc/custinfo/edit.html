@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改客户信息')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-info-edit" th:object="${ccCustInfo}">
+            <input name="id" th:field="*{id}" type="hidden">
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">姓名：</label>
+                    <div class="col-sm-8">
+                        <input name="custName" th:field="*{custName}" class="form-control" type="text">
+                    </div>
+                </div>
+            </div>
+<!--            <div class="col-xs-12">-->
+<!--                <div class="form-group">-->
+<!--                    <label class="col-sm-3 control-label">省：</label>-->
+<!--                    <div class="col-sm-8">-->
+<!--                        <input name="province" th:field="*{province}" class="form-control" type="text">-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="col-xs-12">-->
+<!--                <div class="form-group">-->
+<!--                    <label class="col-sm-3 control-label">市：</label>-->
+<!--                    <div class="col-sm-8">-->
+<!--                        <input name="city" th:field="*{city}" class="form-control" type="text">-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="col-xs-12">-->
+<!--                <div class="form-group">-->
+<!--                    <label class="col-sm-3 control-label">区/县：</label>-->
+<!--                    <div class="col-sm-8">-->
+<!--                        <input name="county" th:field="*{county}" class="form-control" type="text">-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">省：</label>
+                    <div class="col-sm-8">
+                        <select name="provinceCode" class="form-control" id="provinceCode" th:field="*{provinceCode}">
+                            <option value="">请选择省份</option>
+                            <!-- 省份数据 -->
+                            <option th:each="province : ${provinces}" th:value="${province.extId}" th:text="${province.extName}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">市：</label>
+                    <div class="col-sm-8">
+                        <select name="cityCode" class="form-control" id="cityCode" th:field="*{cityCode}">
+                            <option value="">请选择城市</option>
+                            <!-- 城市数据 -->
+                            <!-- 城市数据会根据省份的选择动态加载 -->
+                            <option th:each="city : ${citys}" th:value="${city.extId}" th:text="${city.extName}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">区/县：</label>
+                    <div class="col-sm-8">
+                        <select name="countyCode" class="form-control" id="countyCode" th:field="*{countyCode}">
+                            <option value="">请选择区/县</option>
+                            <!-- 区/县数据 -->
+                            <!-- 区/县数据会根据城市的选择动态加载 -->
+                            <option th:each="county : ${countys}" th:value="${county.extId}" th:text="${county.extName}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">详细地址：</label>
+                    <div class="col-sm-8">
+                        <input name="address" th:field="*{address}" class="form-control" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">性别：</label>
+                    <div class="col-sm-8">
+                        <div class="input-group" style="width: 100%">
+                            <select name="gender" class="form-control m-b" th:with="type=${@dict.getType('sys_user_sex')}">
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{gender}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">号码：</label>
+                    <div class="col-sm-8">
+                        <input name="phoneNum" th:field="*{phoneNum}" class="form-control" type="text">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var prefix = ctx + "cc/custinfo";
+        $("#form-info-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                var formData = $('#form-info-edit').serializeArray();
+                var province = $('#provinceCode option:selected').text(); // 获取选中项的text值
+                var city = $('#cityCode option:selected').text(); // 获取选中项的text值
+                var county = $('#countyCode option:selected').text(); // 获取选中项的text值
+                formData.push({"name": "province", "value": province})
+                formData.push({"name": "city", "value": city})
+                formData.push({"name": "county", "value": county})
+                $.operate.save(prefix + "/edit", formData);
+            }
+        }
+
+
+        // 省份下拉框改变时，加载对应的城市数据
+        $('#provinceCode').change(function() {
+            var provinceCode = $(this).val();
+            var citySelect = $('#cityCode');
+            var countySelect = $('#countyCode');
+
+            // 清空城市和区/县下拉框
+            citySelect.html('<option value="">请选择城市</option>');
+            countySelect.html('<option value="">请选择区/县</option>');
+
+            // 发送请求获取对应的城市数据
+            if (provinceCode) {
+                $.ajax({
+                    url: ctx + "cc/divisiondata/getCitysByProvinceCode",
+                    type: 'GET',
+                    data: {provinceCode: provinceCode},
+                    success: function(response) {
+                        $.each(response.data, function(index, city) {
+                            citySelect.append($('<option>', {
+                                value: city.extId,
+                                text: city.extName
+                            }));
+                        });
+                    }
+                });
+            }
+        });
+
+        // 城市下拉框改变时，加载对应的区/县数据
+        $('#cityCode').change(function() {
+            var cityCode = $(this).val();
+            var countySelect = $('#countyCode');
+
+            // 清空区/县下拉框
+            countySelect.html('<option value="">请选择区/县</option>');
+
+            // 发送请求获取对应的区/县数据
+            if (cityCode) {
+                $.ajax({
+                    url: ctx + "cc/divisiondata/getCountysByCityCode",
+                    type: 'GET',
+                    data: {cityCode: cityCode},
+                    success: function(response) {
+                        $.each(response.data, function(index, county) {
+                            countySelect.append($('<option>', {
+                                value: county.extId,
+                                text: county.extName
+                            }));
+                        });
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

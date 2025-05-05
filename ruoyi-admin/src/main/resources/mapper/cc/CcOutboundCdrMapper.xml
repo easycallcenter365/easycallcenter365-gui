@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cc.mapper.CcOutboundCdrMapper">
+    
+    <resultMap type="CcOutboundCdr" id="CcOutboundCdrResult">
+        <result property="id"    column="id"    />
+        <result property="caller"    column="caller"    />
+        <result property="opnum"    column="opnum"    />
+        <result property="callee"    column="callee"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="answeredTime"    column="answered_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="uuid"    column="uuid"    />
+        <result property="callType"    column="call_type"    />
+        <result property="timeLen"    column="time_len"    />
+        <result property="timeLenValid"    column="time_len_valid"    />
+        <result property="recordFilename"    column="record_filename"    />
+        <result property="hangupCause"    column="hangup_cause"    />
+    </resultMap>
+
+    <sql id="selectCcOutboundCdrVo">
+        select id, caller, opnum, callee, start_time, answered_time, end_time, uuid, call_type, time_len, time_len_valid, record_filename, hangup_cause from cc_outbound_cdr
+    </sql>
+
+    <select id="selectCcOutboundCdrList" parameterType="CcOutboundCdr" resultMap="CcOutboundCdrResult">
+        <include refid="selectCcOutboundCdrVo"/>
+        <where>  
+            <if test="caller != null  and caller != ''"> and caller = #{caller}</if>
+            <if test="opnum != null  and opnum != ''"> and opnum = #{opnum}</if>
+            <if test="callee != null  and callee != ''"> and callee = #{callee}</if>
+            <if test="params.startTimeStart != null and params.startTimeStart != ''"><!-- 开始时间检索 -->
+                AND start_time &gt;= #{params.startTimeStart}
+            </if>
+            <if test="params.startTimeEnd != null and params.startTimeEnd != ''"><!-- 结束时间检索 -->
+                AND start_time &lt;= #{params.startTimeEnd}
+            </if>
+            <if test="params.answeredTimeStart != null and params.answeredTimeStart != ''"><!-- 开始时间检索 -->
+                AND answered_time &gt;= #{params.answeredTimeStart}
+            </if>
+            <if test="params.answeredTimeEnd != null and params.answeredTimeEnd != ''"><!-- 结束时间检索 -->
+                AND answered_time &lt;= #{params.answeredTimeEnd}
+            </if>
+            <if test="params.endTimeStart != null and params.endTimeStart != ''"><!-- 开始时间检索 -->
+                AND start_time &gt;= #{params.endTimeStart}
+            </if>
+            <if test="params.endTimeEnd != null and params.endTimeEnd != ''"><!-- 结束时间检索 -->
+                AND end_time &lt;= #{params.endTimeEnd}
+            </if>
+            <if test="uuid != null  and uuid != ''"> and uuid = #{uuid}</if>
+            <if test="callType != null  and callType != ''"> and call_type = #{callType}</if>
+            <if test="params.timeLenStart != null and params.timeLenStart != ''"><!-- 开始时间检索 -->
+                AND time_len &gt;= #{params.timeLenStart}
+            </if>
+            <if test="params.timeLenEnd != null and params.timeLenEnd != ''"><!-- 结束时间检索 -->
+                AND time_len &lt;= #{params.timeLenEnd}
+            </if>
+            <if test="timeLenValid != null "> and time_len_valid = #{timeLenValid}</if>
+            <if test="recordFilename != null  and recordFilename != ''"> and record_filename like concat('%', #{recordFilename}, '%')</if>
+            <if test="hangupCause != null  and hangupCause != ''"> and hangup_cause = #{hangupCause}</if>
+        </where>
+        order by start_time desc
+    </select>
+    
+    <select id="selectCcOutboundCdrById" parameterType="String" resultMap="CcOutboundCdrResult">
+        <include refid="selectCcOutboundCdrVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCcOutboundCdr" parameterType="CcOutboundCdr">
+        insert into cc_outbound_cdr
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="caller != null and caller != ''">caller,</if>
+            <if test="opnum != null and opnum != ''">opnum,</if>
+            <if test="callee != null and callee != ''">callee,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="answeredTime != null">answered_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="uuid != null and uuid != ''">uuid,</if>
+            <if test="callType != null and callType != ''">call_type,</if>
+            <if test="timeLen != null">time_len,</if>
+            <if test="timeLenValid != null">time_len_valid,</if>
+            <if test="recordFilename != null and recordFilename != ''">record_filename,</if>
+            <if test="hangupCause != null and hangupCause != ''">hangup_cause,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="caller != null and caller != ''">#{caller},</if>
+            <if test="opnum != null and opnum != ''">#{opnum},</if>
+            <if test="callee != null and callee != ''">#{callee},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="answeredTime != null">#{answeredTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="uuid != null and uuid != ''">#{uuid},</if>
+            <if test="callType != null and callType != ''">#{callType},</if>
+            <if test="timeLen != null">#{timeLen},</if>
+            <if test="timeLenValid != null">#{timeLenValid},</if>
+            <if test="recordFilename != null and recordFilename != ''">#{recordFilename},</if>
+            <if test="hangupCause != null and hangupCause != ''">#{hangupCause},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCcOutboundCdr" parameterType="CcOutboundCdr">
+        update cc_outbound_cdr
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="caller != null and caller != ''">caller = #{caller},</if>
+            <if test="opnum != null and opnum != ''">opnum = #{opnum},</if>
+            <if test="callee != null and callee != ''">callee = #{callee},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="answeredTime != null">answered_time = #{answeredTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="uuid != null and uuid != ''">uuid = #{uuid},</if>
+            <if test="callType != null and callType != ''">call_type = #{callType},</if>
+            <if test="timeLen != null">time_len = #{timeLen},</if>
+            <if test="timeLenValid != null">time_len_valid = #{timeLenValid},</if>
+            <if test="recordFilename != null and recordFilename != ''">record_filename = #{recordFilename},</if>
+            <if test="hangupCause != null and hangupCause != ''">hangup_cause = #{hangupCause},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCcOutboundCdrById" parameterType="String">
+        delete from cc_outbound_cdr where id = #{id}
+    </delete>
+
+    <delete id="deleteCcOutboundCdrByIds" parameterType="String">
+        delete from cc_outbound_cdr where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

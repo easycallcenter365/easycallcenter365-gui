@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('证书配置')" />
+    <th:block th:include="include :: layout-latest-css" />
+    <th:block th:include="include :: ztree-css" />
+    <style>
+    </style>
+</head>
+
+<body>
+<div class="main-content">
+    <div class="h4 form-header">网页电话证书配置</div>
+    <div id="baseConfigs" class="row">
+        <div class="form-group col-sm-12">
+            <label class="col-sm-1 control-label">证书内容：</label>
+            <div class="col-sm-10">
+                <textarea id="certValue" name="certValue" rows="5" class="form-control"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- 保存按钮 -->
+    <div class="row" ></div>
+    <div class="row" >
+        <div class="col-sm-offset-5 col-sm-10">
+            <button id="saveConfig" type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>保 存</button>&nbsp;
+        </div>
+    </div>
+</div>
+
+
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: layout-latest-js" />
+<script>
+    // 页面加载完成后，发送AJAX请求获取配置数据
+    var prefix = ctx + "cc/fsconf";
+    $(function() {
+        $.ajax({
+            url: prefix + '/getCertWssPen',
+            type: 'GET',
+            success: function(_data) {
+                // 假设后端返回的数据格式为 {"certValue":"xxx"}
+                var data = _data.data;
+                $('#certValue').val(data.certValue);
+            },
+            error: function(error) {
+                console.error('Error fetching configuration:', error);
+            }
+        });
+    });
+
+    // 保存配置
+    $('#saveConfig').click(function() {
+        var config = {
+            certValue: $("#certValue").val().trim()
+        };
+        $.ajax({
+            url: prefix + '/setCertWssPen', // 假设后端保存配置的接口是 /setConfig
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(config),
+            success: function(response) {
+                $.modal.msgSuccess('配置保存成功！');
+            },
+            error: function(error) {
+                console.error('Error saving configuration:', error);
+                $.modal.msgError('配置保存失败！');
+            }
+        });
+    });
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,153 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<title>Call Monitor </title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="page.css" />
+    <script type="text/javascript" src="jquery-1.11.0.js"></script>
+    <script type="text/javascript" src="ccPhoneBarSocket.js"></script>
+	  
+    <script type="text/javascript">
+        var _phoneBar = new ccPhoneBarSocket();
+
+        var scriptServer = "192.168.67.201";
+        var  extnum = '1019-agentMonitor';
+        var opnum = '1019-agentMonitor';
+        var skillLevel = 9;
+        var groupId = 0;
+        if(window.location.href.toString().indexOf("?") != -1){
+            console.log( ccPhoneBarSocket.utils );
+            extnum = ccPhoneBarSocket.utils.getQueryParam("extNum");
+            opnum = ccPhoneBarSocket.utils.getQueryParam("opNum");
+            groupId = ccPhoneBarSocket.utils.getQueryParam("groupId");
+            console.log("extNum=", extnum, "opNum=", opnum);
+        }
+
+        function resetExtNumAndOpNum(ext, op, groupId) {
+            window.location.href = "?extNum=" + ext + "&opNum=" + op + "&groupId=" + groupId;
+        };
+
+
+		function loadLoginToken(){
+
+            // 目前已经把 projectId 和 groupId合并为同一个参数;
+            var getTokenUrl = "http://"+ scriptServer +":8880/call-center/create-token";
+            var destUrl = getTokenUrl + "?extnum=" + extnum + "&opnum=" + opnum
+            + "&groupId=" + groupId +"&skillLevel=" + skillLevel ;
+
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = destUrl;
+            document.getElementsByTagName('head')[0].appendChild(script);
+		};
+        loadLoginToken();
+
+        function loadExtPassword(){
+            var  extPassword = '1234567';
+            var url = "http://"+ scriptServer +":8880/call-center/create-ext-password?pass=" + extPassword;
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = url;
+            document.getElementsByTagName('head')[0].appendChild(script);
+        };
+        loadExtPassword();
+
+        function loadGatewayList(){
+            var url = "http://"+ scriptServer +":8880/call-center/create-gateway-list" ;
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = url;
+            document.getElementsByTagName('head')[0].appendChild(script);
+        };
+        loadGatewayList();
+
+        function resetExtNumAndOpNum(ext, op) {
+            window.location.href = "?extNum=" + ext + "&opNum=" + op;
+        };
+
+
+	</script>
+
+<script>
+var _callConfig = null;
+window.onload = function(){
+
+	//工具条对象断开事件
+	_phoneBar.on(ccPhoneBarSocket.eventList.ws_disconnected, function(msg){
+		console.log(msg);
+	});
+
+    //工具条对象连接成功
+    _phoneBar.on(ccPhoneBarSocket.eventList.ws_connected, function(msg){
+        console.log(msg);
+
+        _phoneBar.callMonitorDataPull();
+    }); 
+	
+    _phoneBar.on(ccPhoneBarSocket.eventList.user_login_on_other_device.code, function(msg){
+        _phoneBar.updatePhoneBar(msg, ccPhoneBarSocket.eventList.user_login_on_other_device.code);
+        alert('当前账号或分机已在其他机器登录!');
+    });
+
+
+    // 电话工具条参数配置;
+	_callConfig = {
+        'useDefaultUi' : false,
+        'loginToken': '',
+        'ipccServer': scriptServer + ':1081',
+        'gatewayList': [],       
+        'gatewayEncrypted': false
+    };
+
+	console.log('loginToken = ',loginToken);
+	if(typeof(loginToken) != "undefined") {
+        _callConfig["loginToken"] = loginToken;
+    } else{
+	    alert("电话工具条：无法获取 loginToken!");
+	    return;
+    }
+
+    console.log('_phoneEncryptPassword = ',_phoneEncryptPassword);
+    if(typeof(_phoneEncryptPassword) != "undefined") {
+        _callConfig["extPassword"] = _phoneEncryptPassword;
+    } else{
+        alert("电话工具条：无法获取 _phoneEncryptPassword!");
+        return;
+    }
+
+    console.log('_configGatewayList = ', _configGatewayList);
+    if(typeof(_configGatewayList) != "undefined" && _callConfig["gatewayEncrypted"]) {
+        //_callConfig["gatewayList"] = _configGatewayList;
+    } else{
+       //  alert("电话工具条：无法获取 _configGatewayList!");
+    }
+
+    _phoneBar.initConfig(_callConfig);
+
+};
+
+
+
+</script>
+
+</head>
+<body>
+
+<form>
+
+<table width="830">
+<tr>
+<td width="70%">
+<div>
+ 
+</div>
+</td>
+ 
+</tr> 
+</table>
+</form>
+
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('日志监控')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>uuid：</label>
+                                <input type="text" id="uuid"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="queryBtn"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <label>freeswitch日志：</label>
+                <textarea style="width: 100%;height: 350px" id="fsLogs" readonly></textarea>
+
+                <label>callcenter日志：</label>
+                <textarea style="width: 100%;height: 700px" id="ccLogs" readonly></textarea>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('cc:bizgroup:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('cc:bizgroup:remove')}]];
+        var prefix = ctx + "cc/fsconf";
+
+        $("#queryBtn").click(function() {
+            var uuid = $("#uuid").val()
+            $("#fsLogs").html("");
+            $("#ccLogs").html("");
+            $.ajax({
+                url: prefix + '/getLogs?uuid=' + uuid , // 假设后端保存配置的接口是 /setConfig
+                type: 'GET',
+                contentType: 'application/json',
+                beforeSend: function () {
+                    $.modal.loading("正在处理中，请稍候...");
+                    $.modal.disable();
+                },
+                success: function(_data) {
+                    var data = _data.data;
+                    $("#fsLogs").val(data.fsLogs);
+                    $("#ccLogs").val(data.ccLogs);
+                    $.modal.closeLoading();
+                    $.modal.enable();
+                }
+            });
+        });
+
+        $(function() {
+            var options = {
+                url: prefix + "/getLogs",
+                modalName: "日志监控",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'groupId',
+                    title: '业务组编号'
+                },
+                {
+                    field: 'bizGroupName',
+                    title: '业务组名称'
+                },
+                {
+                    field: 'sortNo',
+                    title: '排序'
+                },
+                {
+                    field: 'notes',
+                    title: '备注'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.groupId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        // actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.groupId + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+
+
+
+    </script>
+</body>
+</html>

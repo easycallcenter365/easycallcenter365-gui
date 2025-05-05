@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cc.mapper.FsVariablesMapper">
+    
+    <resultMap type="FsVariables" id="FsVariablesResult">
+    	<id     property="id"      column="id"      />
+        <result property="cat"    column="cat"    />
+        <result property="varFieldName"     column="var_field_name"     />
+        <result property="varFieldAlias"   column="var_field_alias"   />
+    </resultMap>
+
+	<sql id="selectFieldVo">
+		select id,cat,var_field_name,var_field_alias
+		from fs_variables
+	</sql>
+
+    <select id="getFsVariablesList" parameterType="FsVariables" resultMap="FsVariablesResult">
+        <include refid="selectFieldVo"/>
+        <where>
+			<if test="cat != null and cat != ''">
+				AND cat = #{cat}
+			</if>
+		</where>
+    </select>
+
+</mapper>

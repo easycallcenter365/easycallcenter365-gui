@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cc.mapper.CcCustInfoMapper">
+    
+    <resultMap type="CcCustInfo" id="CcCustInfoResult">
+        <result property="id"    column="id"    />
+        <result property="custName"    column="cust_name"    />
+        <result property="province"    column="province"    />
+        <result property="city"    column="city"    />
+        <result property="county"    column="county"    />
+        <result property="provinceCode"    column="province_code"    />
+        <result property="cityCode"    column="city_code"    />
+        <result property="countyCode"    column="county_code"    />
+        <result property="address"    column="address"    />
+        <result property="gender"    column="gender"    />
+        <result property="phoneNum"    column="phone_num"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectCcCustInfoVo">
+        select id, cust_name, province, city, county, province_code, city_code, county_code, address, gender, phone_num, create_time, update_time from cc_cust_info
+    </sql>
+
+    <select id="selectCcCustInfoList" parameterType="CcCustInfo" resultMap="CcCustInfoResult">
+        <include refid="selectCcCustInfoVo"/>
+        <where>  
+            <if test="custName != null  and custName != ''"> and cust_name like concat('%', #{custName}, '%')</if>
+            <if test="province != null  and province != ''"> and province = #{province}</if>
+            <if test="city != null  and city != ''"> and city = #{city}</if>
+            <if test="county != null  and county != ''"> and county = #{county}</if>
+            <if test="provinceCode != null  and provinceCode != ''"> and province = #{provinceCode}</if>
+            <if test="cityCode != null  and cityCode != ''"> and city_code = #{cityCode}</if>
+            <if test="countyCode != null  and countyCode != ''"> and county_code = #{countyCode}</if>
+            <if test="address != null  and address != ''"> and address = #{address}</if>
+            <if test="gender != null "> and gender = #{gender}</if>
+            <if test="phoneNum != null  and phoneNum != ''"> and phone_num = #{phoneNum}</if>
+        </where>
+    </select>
+    
+    <select id="selectCcCustInfoById" parameterType="Long" resultMap="CcCustInfoResult">
+        <include refid="selectCcCustInfoVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCcCustInfo" parameterType="CcCustInfo">
+        insert into cc_cust_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="custName != null">cust_name,</if>
+            <if test="province != null">province,</if>
+            <if test="city != null">city,</if>
+            <if test="county != null">county,</if>
+            <if test="provinceCode != null">province_code,</if>
+            <if test="cityCode != null">city_code,</if>
+            <if test="countyCode != null">county_code,</if>
+            <if test="address != null">address,</if>
+            <if test="gender != null">gender,</if>
+            <if test="phoneNum != null">phone_num,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="custName != null">#{custName},</if>
+            <if test="province != null">#{province},</if>
+            <if test="city != null">#{city},</if>
+            <if test="county != null">#{county},</if>
+            <if test="provinceCode != null">#{provinceCode},</if>
+            <if test="cityCode != null">#{cityCode},</if>
+            <if test="countyCode != null">#{countyCode},</if>
+            <if test="address != null">#{address},</if>
+            <if test="gender != null">#{gender},</if>
+            <if test="phoneNum != null">#{phoneNum},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCcCustInfo" parameterType="CcCustInfo">
+        update cc_cust_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="custName != null">cust_name = #{custName},</if>
+            <if test="province != null">province = #{province},</if>
+            <if test="city != null">city = #{city},</if>
+            <if test="county != null">county = #{county},</if>
+            <if test="provinceCode != null">province_code = #{provinceCode},</if>
+            <if test="cityCode != null">city_code = #{cityCode},</if>
+            <if test="countyCode != null">county_code = #{countyCode},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="phoneNum != null">phone_num = #{phoneNum},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCcCustInfoById" parameterType="Long">
+        delete from cc_cust_info where id = #{id}
+    </delete>
+
+    <delete id="deleteCcCustInfoByIds" parameterType="String">
+        delete from cc_cust_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

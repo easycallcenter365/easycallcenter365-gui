@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cc.mapper.SysDivisionDataMapper">
+    
+    <resultMap type="SysDivisionData" id="SysDivisionDataResult">
+        <result property="id"    column="id"    />
+        <result property="pid"    column="pid"    />
+        <result property="deep"    column="deep"    />
+        <result property="name"    column="name"    />
+        <result property="pinyinPrefix"    column="pinyin_prefix"    />
+        <result property="pinyin"    column="pinyin"    />
+        <result property="extId"    column="ext_id"    />
+        <result property="extName"    column="ext_name"    />
+    </resultMap>
+
+    <sql id="selectSysDivisionDataVo">
+        select id, pid, deep, name, pinyin_prefix, pinyin, ext_id, ext_name from sys_division_data
+    </sql>
+
+    <select id="selectSysDivisionDataList" parameterType="SysDivisionData" resultMap="SysDivisionDataResult">
+        <include refid="selectSysDivisionDataVo"/>
+        <where>  
+            <if test="pid != null and pid != ''"> and pid = #{pid}</if>
+            <if test="deep != null "> and deep = #{deep}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="pinyinPrefix != null  and pinyinPrefix != ''"> and pinyin_prefix = #{pinyinPrefix}</if>
+            <if test="pinyin != null  and pinyin != ''"> and pinyin = #{pinyin}</if>
+            <if test="extId != null and extId != ''"> and ext_id = #{extId}</if>
+            <if test="extName != null  and extName != ''"> and ext_name like concat('%', #{extName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectSysDivisionDataById" parameterType="Long" resultMap="SysDivisionDataResult">
+        <include refid="selectSysDivisionDataVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSysDivisionData" parameterType="SysDivisionData">
+        insert into sys_division_data
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="pid != null">pid,</if>
+            <if test="deep != null">deep,</if>
+            <if test="name != null">name,</if>
+            <if test="pinyinPrefix != null">pinyin_prefix,</if>
+            <if test="pinyin != null">pinyin,</if>
+            <if test="extId != null">ext_id,</if>
+            <if test="extName != null">ext_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="pid != null">#{pid},</if>
+            <if test="deep != null">#{deep},</if>
+            <if test="name != null">#{name},</if>
+            <if test="pinyinPrefix != null">#{pinyinPrefix},</if>
+            <if test="pinyin != null">#{pinyin},</if>
+            <if test="extId != null">#{extId},</if>
+            <if test="extName != null">#{extName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysDivisionData" parameterType="SysDivisionData">
+        update sys_division_data
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="pid != null">pid = #{pid},</if>
+            <if test="deep != null">deep = #{deep},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="pinyinPrefix != null">pinyin_prefix = #{pinyinPrefix},</if>
+            <if test="pinyin != null">pinyin = #{pinyin},</if>
+            <if test="extId != null">ext_id = #{extId},</if>
+            <if test="extName != null">ext_name = #{extName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysDivisionDataById" parameterType="String">
+        delete from sys_division_data where id = #{id}
+    </delete>
+
+    <delete id="deleteSysDivisionDataByIds" parameterType="String">
+        delete from sys_division_data where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

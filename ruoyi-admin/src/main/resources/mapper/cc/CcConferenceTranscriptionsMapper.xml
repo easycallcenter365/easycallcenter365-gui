@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cc.mapper.CcConferenceTranscriptionsMapper">
+    
+    <resultMap type="CcConferenceTranscriptions" id="CcConferenceTranscriptionsResult">
+        <result property="id"    column="id"    />
+        <result property="conferenceId"    column="conference_id"    />
+        <result property="confMemberMobile"    column="conf_member_mobile"    />
+        <result property="asrText"    column="asr_text"    />
+        <result property="vadStartTime"    column="vad_start_time"    />
+        <result property="vadEndTime"    column="vad_end_time"    />
+    </resultMap>
+
+    <sql id="selectCcConferenceTranscriptionsVo">
+        select id, conference_id, conf_member_mobile, asr_text, vad_start_time, vad_end_time from cc_conference_transcriptions
+    </sql>
+
+    <select id="selectCcConferenceTranscriptionsList" parameterType="CcConferenceTranscriptions" resultMap="CcConferenceTranscriptionsResult">
+        <include refid="selectCcConferenceTranscriptionsVo"/>
+        <where>  
+            <if test="conferenceId != null "> and conference_id = #{conferenceId}</if>
+            <if test="confMemberMobile != null  and confMemberMobile != ''"> and conf_member_mobile = #{confMemberMobile}</if>
+            <if test="asrText != null  and asrText != ''"> and asr_text = #{asrText}</if>
+            <if test="vadStartTime != null "> and vad_start_time = #{vadStartTime}</if>
+            <if test="vadEndTime != null "> and vad_end_time = #{vadEndTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectCcConferenceTranscriptionsById" parameterType="Long" resultMap="CcConferenceTranscriptionsResult">
+        <include refid="selectCcConferenceTranscriptionsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCcConferenceTranscriptions" parameterType="CcConferenceTranscriptions" useGeneratedKeys="true" keyProperty="id">
+        insert into cc_conference_transcriptions
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="conferenceId != null">conference_id,</if>
+            <if test="confMemberMobile != null and confMemberMobile != ''">conf_member_mobile,</if>
+            <if test="asrText != null and asrText != ''">asr_text,</if>
+            <if test="vadStartTime != null">vad_start_time,</if>
+            <if test="vadEndTime != null">vad_end_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="conferenceId != null">#{conferenceId},</if>
+            <if test="confMemberMobile != null and confMemberMobile != ''">#{confMemberMobile},</if>
+            <if test="asrText != null and asrText != ''">#{asrText},</if>
+            <if test="vadStartTime != null">#{vadStartTime},</if>
+            <if test="vadEndTime != null">#{vadEndTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCcConferenceTranscriptions" parameterType="CcConferenceTranscriptions">
+        update cc_conference_transcriptions
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="conferenceId != null">conference_id = #{conferenceId},</if>
+            <if test="confMemberMobile != null and confMemberMobile != ''">conf_member_mobile = #{confMemberMobile},</if>
+            <if test="asrText != null and asrText != ''">asr_text = #{asrText},</if>
+            <if test="vadStartTime != null">vad_start_time = #{vadStartTime},</if>
+            <if test="vadEndTime != null">vad_end_time = #{vadEndTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCcConferenceTranscriptionsById" parameterType="Long">
+        delete from cc_conference_transcriptions where id = #{id}
+    </delete>
+
+    <delete id="deleteCcConferenceTranscriptionsByIds" parameterType="String">
+        delete from cc_conference_transcriptions where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

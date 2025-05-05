@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cc.mapper.CcExtNumMapper">
+    
+    <resultMap type="CcExtNum" id="CcExtNumResult">
+        <result property="extId"    column="ext_id"    />
+        <result property="extNum"    column="ext_num"    />
+        <result property="extPass"    column="ext_pass"    />
+        <result property="userCode"    column="user_code"    />
+    </resultMap>
+
+    <sql id="selectCcExtNumVo">
+        select ext_id, ext_num, ext_pass, user_code from cc_ext_num
+    </sql>
+
+    <select id="selectCcExtNumList" parameterType="CcExtNum" resultMap="CcExtNumResult">
+        <include refid="selectCcExtNumVo"/>
+        <where>  
+            <if test="extNum != null "> and ext_num = #{extNum}</if>
+            <if test="extPass != null  and extPass != ''"> and ext_pass = #{extPass}</if>
+            <if test="userCode != null  and userCode != ''"> and user_code = #{userCode}</if>
+        </where>
+    </select>
+    
+    <select id="selectCcExtNumByExtId" parameterType="Long" resultMap="CcExtNumResult">
+        <include refid="selectCcExtNumVo"/>
+        where ext_id = #{extId}
+    </select>
+
+    <insert id="insertCcExtNum" parameterType="CcExtNum" useGeneratedKeys="true" keyProperty="extId">
+        insert into cc_ext_num
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            ext_num,
+            ext_pass,
+            user_code,
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{extNum},
+            #{extPass},
+            #{userCode},
+         </trim>
+    </insert>
+
+    <update id="updateCcExtNum" parameterType="CcExtNum">
+        update cc_ext_num
+        <trim prefix="SET" suffixOverrides=",">
+            ext_num = #{extNum},
+            ext_pass = #{extPass},
+            user_code = #{userCode},
+        </trim>
+        where ext_id = #{extId}
+    </update>
+
+    <delete id="deleteCcExtNumByExtId" parameterType="Long">
+        delete from cc_ext_num where ext_id = #{extId}
+    </delete>
+
+    <delete id="deleteCcExtNumByExtIds" parameterType="String">
+        delete from cc_ext_num where ext_id in 
+        <foreach item="extId" collection="array" open="(" separator="," close=")">
+            #{extId}
+        </foreach>
+    </delete>
+
+</mapper>

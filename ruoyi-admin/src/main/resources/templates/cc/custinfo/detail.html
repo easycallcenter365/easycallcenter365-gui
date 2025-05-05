@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('客户信息详情')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-info-edit" th:object="${ccCustInfo}">
+            <input name="id" th:field="*{id}" type="hidden">
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">姓名：</label>
+                    <div class="col-sm-8">
+                        <input name="custName" th:field="*{custName}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">省：</label>
+                    <div class="col-sm-8">
+                        <input name="province" th:field="*{province}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">市：</label>
+                    <div class="col-sm-8">
+                        <input name="city" th:field="*{city}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">区/县：</label>
+                    <div class="col-sm-8">
+                        <input name="county" th:field="*{county}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">详细地址：</label>
+                    <div class="col-sm-8">
+                        <input name="address" th:field="*{address}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">性别：</label>
+                    <div class="col-sm-8">
+                        <div class="input-group" style="width: 100%">
+                            <select name="gender" class="form-control m-b" th:with="type=${@dict.getType('sys_user_sex')}" readonly>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{gender}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">号码：</label>
+                    <div class="col-sm-8">
+                        <input name="phoneNum" th:field="*{phoneNum}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 沟通记录显示区域 -->
+            <hr> <!-- 在每条记录之间添加分隔线 -->
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">沟通记录：</label>
+                    <div class="col-sm-8">
+                        <div th:each="callRecord : ${ccCustInfo.callRecordList}" class="record">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <strong>沟通时间：</strong>
+                                    <span th:text="${#dates.format(callRecord.createTime, 'yyyy-MM-dd HH:mm:ss')}"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <strong>沟通内容：</strong>
+                                    <span th:text="${callRecord.notes}"></span>
+                                </div>
+                            </div>
+                            <hr> <!-- 在每条记录之间添加分隔线 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var prefix = ctx + "cc/custinfo";
+        $("#form-info-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-info-edit').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

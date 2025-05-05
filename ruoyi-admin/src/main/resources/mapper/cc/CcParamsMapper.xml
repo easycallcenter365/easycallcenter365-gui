@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cc.mapper.CcParamsMapper">
+    
+    <resultMap type="CcParams" id="CcParamsResult">
+        <result property="id"    column="id"    />
+        <result property="paramName"    column="param_name"    />
+        <result property="paramCode"    column="param_code"    />
+        <result property="paramValue"    column="param_value"    />
+        <result property="paramType"    column="param_type"    />
+    </resultMap>
+
+    <sql id="selectCcParamsVo">
+        select id, param_name, param_code, param_value, param_type from cc_params
+    </sql>
+
+    <select id="selectCcParamsList" parameterType="CcParams" resultMap="CcParamsResult">
+        <include refid="selectCcParamsVo"/>
+        <where>  
+            <if test="paramName != null  and paramName != ''"> and param_name like concat('%', #{paramName}, '%')</if>
+            <if test="paramCode != null  and paramCode != ''"> and param_code = #{paramCode}</if>
+            <if test="paramValue != null  and paramValue != ''"> and param_value = #{paramValue}</if>
+            <if test="paramType != null  and paramType != ''"> and param_type = #{paramType}</if>
+        </where>
+    </select>
+    
+    <select id="selectCcParamsById" parameterType="Long" resultMap="CcParamsResult">
+        <include refid="selectCcParamsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCcParams" parameterType="CcParams" useGeneratedKeys="true" keyProperty="id">
+        insert into cc_params
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="paramName != null and paramName != ''">param_name,</if>
+            <if test="paramCode != null and paramCode != ''">param_code,</if>
+            <if test="paramValue != null and paramValue != ''">param_value,</if>
+            <if test="paramType != null and paramType != ''">param_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="paramName != null and paramName != ''">#{paramName},</if>
+            <if test="paramCode != null and paramCode != ''">#{paramCode},</if>
+            <if test="paramValue != null and paramValue != ''">#{paramValue},</if>
+            <if test="paramType != null and paramType != ''">#{paramType},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCcParams" parameterType="CcParams">
+        update cc_params
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="paramName != null and paramName != ''">param_name = #{paramName},</if>
+            <if test="paramCode != null and paramCode != ''">param_code = #{paramCode},</if>
+            <if test="paramValue != null and paramValue != ''">param_value = #{paramValue},</if>
+            <if test="paramType != null and paramType != ''">param_type = #{paramType},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCcParamsById" parameterType="Long">
+        delete from cc_params where id = #{id}
+    </delete>
+
+    <delete id="deleteCcParamsByIds" parameterType="String">
+        delete from cc_params where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

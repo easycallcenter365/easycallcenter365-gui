@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cc.mapper.CcFsModulesCatMapper">
+    
+    <resultMap type="CcFsModulesCat" id="CcFsModulesCatResult">
+        <result property="id"    column="id"    />
+        <result property="catName"    column="cat_name"    />
+    </resultMap>
+
+    <sql id="selectCcFsModulesCatVo">
+        select id, cat_name from cc_fs_modules_cat
+    </sql>
+
+    <select id="selectCcFsModulesCatList" parameterType="CcFsModulesCat" resultMap="CcFsModulesCatResult">
+        <include refid="selectCcFsModulesCatVo"/>
+        <where>  
+            <if test="catName != null  and catName != ''"> and cat_name like concat('%', #{catName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectCcFsModulesCatById" parameterType="Long" resultMap="CcFsModulesCatResult">
+        <include refid="selectCcFsModulesCatVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCcFsModulesCat" parameterType="CcFsModulesCat" useGeneratedKeys="true" keyProperty="id">
+        insert into cc_fs_modules_cat
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="catName != null and catName != ''">cat_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="catName != null and catName != ''">#{catName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCcFsModulesCat" parameterType="CcFsModulesCat">
+        update cc_fs_modules_cat
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="catName != null and catName != ''">cat_name = #{catName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCcFsModulesCatById" parameterType="Long">
+        delete from cc_fs_modules_cat where id = #{id}
+    </delete>
+
+    <delete id="deleteCcFsModulesCatByIds" parameterType="String">
+        delete from cc_fs_modules_cat where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

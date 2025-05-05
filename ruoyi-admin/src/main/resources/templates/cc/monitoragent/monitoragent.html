@@ -1,0 +1,416 @@
+﻿<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('坐席监控')" />
+    <th:block th:include="include :: layout-latest-css" />
+    <th:block th:include="include :: cc-phone-bar-css" />
+
+    <th:block th:include="include :: cc-phone-bar-socket-js" />
+
+</head>
+
+<body class="gray-bg">
+    <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 select-table table-striped">
+                <table id="monitor-table"></table>
+            </div>
+        </div>
+    </div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: layout-latest-js" />
+
+<script th:inline="javascript">
+    console.log("================")
+    var _listenUuid = {}; // key 分机号， value 该分机号正在通话的uuid
+    var _callRecord = {}; // key 分机号， value 该分机正在通话的数据
+    var listenFlag = [[${@permission.hasPermi('cc:monitor:agent:listen')}]];
+    // var _listenExtnum = [];
+    var _phoneBar = new ccPhoneBarSocket();
+    var _scriptServer = [[${callConfig.scriptServer}]];
+    var _scriptPort = [[${callConfig.scriptPort}]];
+    var _loginToken = [[${callConfig.loginToken}]];
+    var groupId = 0;  // 固定值
+    var skillLevel = 9;
+    var _callConfig = null;
+    var d0 = new Date();
+    var manualDisConn = false;
+    $(function() {
+        console.log("======================页面已加载")
+        //工具条对象断开事件
+        _phoneBar.on(ccPhoneBarSocket.eventList.ws_disconnected, function(msg){
+            console.log(msg);
+            console.log(manualDisConn);
+            if (!manualDisConn) {
+                // 不是手动断开的，则3秒后重连
+                console.log("断开连接，自动重连")
+                $.modal.msgWarning('ws连接断开，正在重连......');
+                setTimeout(() => {
+                    _phoneBar.connect();
+                }, 3000);
+            } else {
+                console.log("手动断开连接，不需要重连")
+            }
+        });
+        //工具条对象连接成功
+        _phoneBar.on(ccPhoneBarSocket.eventList.ws_connected, function(msg){
+            console.log(msg);
+            // 订阅坐席状态列表
+            _phoneBar.subscribeAgentList();
+            // 订阅通话数据
+            _phoneBar.callMonitorDataPull();
+        });
+
+
+        _phoneBar.on(ccPhoneBarSocket.eventList.status_changed, function(msg){
+            console.log("座席状态改变: " ,msg);
+        });
+
+        _phoneBar.on(ccPhoneBarSocket.eventList.agent_status_data_changed, function(msg){
+            console.log("数据发生改变: " ,msg);
+            var data = JSON.parse(msg.object);
+            if (Object.prototype.toString.call(data) === '[object Array]') {
+                console.log('坐席状态数据 data 是一个数组，循环处理');
+                data.forEach(function(element, index) {
+                    handleData(element);
+                });
+            } else if (Object.prototype.toString.call(data) === '[object Object]') {
+                console.log('坐席状态数据 data 是一个对象，处理单条数据');
+                handleData(data);
+            } else {
+                console.log('坐席状态数据 data 既不是数组也不是对象');
+            }
+        });
+
+
+        _phoneBar.on(ccPhoneBarSocket.eventList.call_session_status_data_changed, function(msg){
+            console.log("数据发生改变: " ,msg);
+            var data = msg.object;
+            if (Object.prototype.toString.call(data) === '[object Array]') {
+                console.log('通话数据 data 是一个数组');
+                data.forEach(function(element, idx) {
+                    _callRecord[element.extNum] = element
+                    // 记录uuid
+                    if (element.extNum && element.connectedTimeStamp > 0) {
+                        _listenUuid[element.extNum] = element.uuid
+                        if (element.hangupTimeStamp > 0) {
+                            delete _listenUuid[element.extNum];
+                        }
+                    }
+                });
+            } else if (Object.prototype.toString.call(data) === '[object Object]') {
+                console.log('通话数据 data 是一个对象，通话状态改变');
+                _callRecord[element.extNum] = element
+                // 记录uuid
+                if (data.extNum && data.connectedTimeStamp > 0) {
+                    _listenUuid[data.extNum] = data.uuid
+                    if (data.hangupTimeStamp > 0) {
+                        delete _listenUuid[data.extNum];
+                    }
+                }
+            } else {
+                console.log('通话数据 data 既不是数组也不是对象');
+            }
+        });
+
+
+        _phoneBar.on(ccPhoneBarSocket.eventList.user_login_on_other_device.code, function(msg){
+            _phoneBar.updatePhoneBar(msg, ccPhoneBarSocket.eventList.user_login_on_other_device.code);
+            $.modal.msgError('当前账号或分机已在其他机器登录!');
+            manualDisConn = true;
+        });
+        
+        // 电话工具条参数配置;
+        _callConfig = {
+            'useDefaultUi' : true,
+            'loginToken': _loginToken,
+            'ipccServer': _scriptServer + ':' + _scriptPort,
+            'gatewayList': [],
+            'gatewayEncrypted': false
+        };
+        console.log('loginToken = ',_loginToken);
+        if(typeof(_loginToken) != "undefined") {
+            _callConfig["loginToken"] = _loginToken;
+        } else{
+            $.modal.msgError("电话工具条：无法获取 loginToken!");
+            return;
+        }
+
+        // 初始化连接
+        _phoneBar.initConfig(_callConfig);
+        _phoneBar.connect();
+
+        // 初始化表格
+        $('#monitor-table').bootstrapTable({
+            pagination: false,
+            columns: [
+                {
+                    field: 'extnum', // 列名
+                    title: '分机号' // 显示的列名
+                },
+                {
+                    field: 'opnum',
+                    title: '工号'
+                },
+                {
+                    field: 'loginTime',
+                    title: '上线时间',
+                    formatter: function(value, row, index, field) {
+                        // 假设value是时间戳，单位是毫秒
+                        var date = new Date(Number(value));
+                        // 格式化日期为年-月-日 时:分:秒
+                        var year = date.getFullYear();
+                        var month = (date.getMonth() + 1).toString().padStart(2, '0');
+                        var day = date.getDate().toString().padStart(2, '0');
+                        var hour = date.getHours().toString().padStart(2, '0');
+                        var minute = date.getMinutes().toString().padStart(2, '0');
+                        var second = date.getSeconds().toString().padStart(2, '0');
+                        return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+                    }
+                },
+                {
+                    field: 'lastHangupTime',
+                    title: '最后挂机时间',
+                    formatter: function(value, row, index, field) {
+                        var lastHangupTime = value;
+                        // 假设value是时间戳，单位是毫秒
+                        var date = new Date(lastHangupTime);
+                        // 格式化日期为年-月-日 时:分:秒
+                        var year = date.getFullYear();
+                        if (year < 2025) {
+                            return "";
+                        }
+                        var month = (date.getMonth() + 1).toString().padStart(2, '0');
+                        var day = date.getDate().toString().padStart(2, '0');
+                        var hour = date.getHours().toString().padStart(2, '0');
+                        var minute = date.getMinutes().toString().padStart(2, '0');
+                        var second = date.getSeconds().toString().padStart(2, '0');
+                        return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+                    }
+                },
+                // {
+                //     field: 'agentStatus',
+                //     title: '分机状态',
+                //     formatter: function(value, row, index, field) {
+                //         if (value == 1) {
+                //             return '空闲'
+                //         } else if (value == 2) {
+                //             return '通话中'
+                //         } else if (value == 3) {
+                //             return '事后处理中'
+                //         } else if (value == 4) {
+                //             return '休息中'
+                //         } else if (value == 5) {
+                //             return '培训中'
+                //         } else if (value == 6) {
+                //             return '会议中'
+                //         } else if (value == 7) {
+                //             return '刚登录系统'
+                //         } else {
+                //             return ""
+                //         }
+                //     }
+                // },
+                {
+                    field: 'agentStatus',
+                    title: '坐席状态',
+                    formatter: function(value, row, index, field) {
+                        if (_listenUuid[row.extnum]) {
+                            return '忙碌'
+                        } else {
+                            return '空闲'
+                        }
+                    }
+                },
+                {
+                    field: 'direction',
+                    title: '通话类型',
+                    formatter: function(value, row, index, field) {
+                        if (_listenUuid[row.extnum]) {
+                            var lastCallRecord = _callRecord[row.extnum];
+                            if (lastCallRecord && lastCallRecord.direction == 'OUTBOUND') {
+                                return '外呼'
+                            }
+                            if (lastCallRecord && lastCallRecord.direction == 'INBOUND') {
+                                return '呼入'
+                            }
+                        }
+                        return ''
+                    }
+                },
+                {
+                    field: 'callType',
+                    title: '音视频类型',
+                    formatter: function(value, row, index, field) {
+                        if (_listenUuid[row.extnum]) {
+                            var lastCallRecord = _callRecord[row.extnum];
+                            if (lastCallRecord && lastCallRecord.callType == 'video') {
+                                return '视频通话'
+                            }
+                            if (lastCallRecord && lastCallRecord.callType == 'audio') {
+                                return '音频通话'
+                            }
+                        }
+                        return ''
+                    }
+                },
+                {
+                    field: 'timeLen',
+                    title: '通话时长（秒）',
+                    formatter: function(value, row, index, field) {
+                        if (_listenUuid[row.extnum]) {
+                            var lastCallRecord = _callRecord[row.extnum];
+                            if (lastCallRecord) {
+                                // 假设value是时间戳，单位是毫秒
+                                var currentTime = new Date(); // 获取当前时间
+                                if (lastCallRecord.connectedTimeStamp > 0) {
+                                    var pastTime = new Date(lastCallRecord.connectedTimeStamp); // 将传入的时间戳转换为Date对象
+                                    var seconds = Math.floor((currentTime - pastTime) / 1000); // 计算差值并转换为秒
+                                    return seconds + ""; // 返回差值和单位
+                                }
+                            }
+                        }
+                        return ''
+                    }
+                },
+                {
+                    field: 'operater',
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        // 通话中的显示监听按钮
+                        if (_listenUuid[row.extnum]) {
+                            actions.push('<a class="btn btn-success btn-xs ' + listenFlag + '" href="javascript:void(0)" onclick="listenCall(\'' + row.extnum + '\')"><i class="fa fa-edit"></i>监听</a> ');
+                        }
+                        return actions.join('');
+                    }
+                }
+            ],
+        });
+    });
+
+    function handleData(element) {
+        // 获取当前表格的所有数据
+        var logoutTime = element.logoutTime;
+        // 已下线
+        if (logoutTime > 0) {
+            var removeParams = {
+                field: 'extnum', // 假设你的表格中有一个字段名为'id'，用于标识每一行
+                values: [element.extnum] // 要删除的数据的id数组
+            };
+            $('#monitor-table').bootstrapTable('remove', removeParams);
+        } else if (element.extnum.length <= 4) {
+            // 1001-inboundMonitor，1001-agentMonitor和1001，推过来是3条数据，只显示不带后缀的1001
+            var tableData = $('#monitor-table').bootstrapTable('getData');
+            // 查找需要更新的行的索引
+            var index = -1;
+            for (var i = 0; i < tableData.length; i++) {
+                if (tableData[i].extnum === element.extnum) {
+                    index = i;
+                    break;
+                }
+            }
+            // 如果找到了对应的行，更新它
+            if (index !== -1) {
+                $('#monitor-table').bootstrapTable('updateRow', {
+                    index: index, // 行的索引
+                    row: element
+                });
+            } else {
+                // 没找到，追加新数据
+                $('#monitor-table').bootstrapTable('append', element);
+            }
+        }
+    }
+
+    function listenCall(extnum) {
+        console.log(_listenUuid)
+        console.log("监听======分机号：" + extnum + "，uuid:" + _listenUuid[extnum]);
+        if (_listenUuid[extnum]) {
+            _phoneBar.callMonitorStart(_listenUuid[extnum]);
+        } else {
+            $.modal.msgError("通话已挂机，无法监听！");
+        }
+    }
+
+
+    // 定时更新通话时长列
+    setInterval(function() {
+        console.log("===========================")
+        $('#monitor-table').bootstrapTable('getData').forEach(function(row, index) {
+            if (_listenUuid[row.extnum]) {
+                var lastCallRecord = _callRecord[row.extnum];
+                if (lastCallRecord) {
+                    // 通话时长处理
+                    var currentTime = new Date(); // 获取当前时间
+                    if (lastCallRecord.connectedTimeStamp > 0) {
+                        var pastTime = new Date(lastCallRecord.connectedTimeStamp); // 将传入的时间戳转换为Date对象
+                        var seconds = Math.floor((currentTime - pastTime) / 1000); // 计算差值并转换为秒
+                        if (seconds < 0) {
+                            seconds = 0;
+                        }
+                        $('#monitor-table').bootstrapTable('updateCell', {
+                            index: index, // 行索引
+                            field: 'timeLen', // 列字段名
+                            value: seconds // 新值
+                        });
+                    }
+                }
+            } else {
+                // 最后挂机时间处理
+                var lastCallRecord = _callRecord[row.extnum];
+                if (lastCallRecord && lastCallRecord.hangupTimeStamp > 0) {
+                    var lastHangupTime = lastCallRecord.hangupTimeStamp;
+                    // 假设value是时间戳，单位是毫秒
+                    var date = new Date(lastHangupTime);
+                    // 格式化日期为年-月-日 时:分:秒
+                    var year = date.getFullYear();
+                    if (year < 2025) {
+                        return "";
+                    }
+                    var month = (date.getMonth() + 1).toString().padStart(2, '0');
+                    var day = date.getDate().toString().padStart(2, '0');
+                    var hour = date.getHours().toString().padStart(2, '0');
+                    var minute = date.getMinutes().toString().padStart(2, '0');
+                    var second = date.getSeconds().toString().padStart(2, '0');
+                    var v = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
+                    $('#monitor-table').bootstrapTable('updateCell', {
+                        index: index, // 行索引
+                        field: 'lastHangupTime', // 列字段名
+                        value: v // 新值
+                    });
+                }
+
+                $('#monitor-table').bootstrapTable('updateCell', {
+                    index: index, // 行索引
+                    field: 'timeLen', // 列字段名
+                    value: '0' // 新值
+                });
+
+                $('#monitor-table').bootstrapTable('updateCell', {
+                    index: index, // 行索引
+                    field: 'agentStatus', // 列字段名
+                    value: '空闲' // 新值
+                });
+
+                $('#monitor-table').bootstrapTable('updateCell', {
+                    index: index, // 行索引
+                    field: 'direction', // 列字段名
+                    value: '' // 新值
+                });
+
+                $('#monitor-table').bootstrapTable('updateCell', {
+                    index: index, // 行索引
+                    field: 'operater', // 列字段名
+                    value: '' // 新值
+                });
+            }
+        });
+    }, 1000); // 每秒更新一次
+</script>
+
+
+</body>
+</html>

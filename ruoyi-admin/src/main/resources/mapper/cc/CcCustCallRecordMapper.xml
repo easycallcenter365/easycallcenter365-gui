@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cc.mapper.CcCustCallRecordMapper">
+    
+    <resultMap type="CcCustCallRecord" id="CcCustCallRecordResult">
+        <result property="id"    column="id"    />
+        <result property="uuid"    column="uuid"    />
+        <result property="callType"    column="call_type"    />
+        <result property="custId"    column="cust_id"    />
+        <result property="notes"    column="notes"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="userId"    column="user_id"    />
+        <result property="userRealName"    column="user_real_name"    />
+    </resultMap>
+
+    <sql id="selectCcCustCallRecordVo">
+        select id, uuid, call_type, cust_id, notes, create_time, user_id, user_real_name from cc_cust_call_record
+    </sql>
+
+    <select id="selectCcCustCallRecordList" parameterType="CcCustCallRecord" resultMap="CcCustCallRecordResult">
+        <include refid="selectCcCustCallRecordVo"/>
+        <where>  
+            <if test="uuid != null  and uuid != ''"> and uuid = #{uuid}</if>
+            <if test="callType != null "> and call_type = #{callType}</if>
+            <if test="custId != null "> and cust_id = #{custId}</if>
+            <if test="notes != null  and notes != ''"> and notes = #{notes}</if>
+            <if test="userId != null  and userId != ''"> and user_id = #{userId}</if>
+             order by create_time desc
+        </where>
+    </select>
+    
+    <select id="selectCcCustCallRecordById" parameterType="Long" resultMap="CcCustCallRecordResult">
+        <include refid="selectCcCustCallRecordVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCcCustCallRecord" parameterType="CcCustCallRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into cc_cust_call_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="uuid != null">uuid,</if>
+            <if test="callType != null">call_type,</if>
+            <if test="custId != null">cust_id,</if>
+            <if test="notes != null">notes,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="userId != null">user_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="uuid != null">#{uuid},</if>
+            <if test="callType != null">#{callType},</if>
+            <if test="custId != null">#{custId},</if>
+            <if test="notes != null">#{notes},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="userId != null">#{userId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCcCustCallRecord" parameterType="CcCustCallRecord">
+        update cc_cust_call_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="uuid != null">uuid = #{uuid},</if>
+            <if test="callType != null">call_type = #{callType},</if>
+            <if test="custId != null">cust_id = #{custId},</if>
+            <if test="notes != null">notes = #{notes},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCcCustCallRecordById" parameterType="Long">
+        delete from cc_cust_call_record where id = #{id}
+    </delete>
+
+    <delete id="deleteCcCustCallRecordByIds" parameterType="String">
+        delete from cc_cust_call_record where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

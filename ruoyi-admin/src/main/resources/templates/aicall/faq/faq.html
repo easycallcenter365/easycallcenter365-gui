@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('FAQ 管理')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-success" onclick="add()" shiro:hasPermission="aicall:faq:add">
+                <i class="fa fa-plus"></i> 添加
+            </a>
+            <a class="btn btn-warning" onclick="exportFaq()" shiro:hasPermission="aicall:faq:export">
+                <i class="fa fa-download"></i> 导出
+            </a>
+            <a class="btn btn-info" onclick="importFaq()" shiro:hasPermission="aicall:faq:import">
+                <i class="fa fa-upload"></i> 导入
+            </a>
+            <a class="btn btn-info" onclick="batchSaveFaqs()" shiro:hasPermission="aicall:faq:add">
+                <i class="fa fa-save"></i> 保存
+            </a>
+
+        </div>
+        <div class="col-sm-12">
+            <div id="faq-list" class="faq-list">
+                <!-- FAQ 项将在这里动态生成 -->
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var prefix = ctx + "aicall/faq";
+    var faqList = [];
+
+    $(function() {
+        loadFaqList();
+    });
+
+    // 加载 FAQ 列表
+    function loadFaqList() {
+        $.ajax({
+            url: prefix + "/list",
+            type: "GET",
+            success: function(data) {
+                faqList = data;
+                renderFaqList();
+            },
+            error: function() {
+                $.modal.msgError("加载 FAQ 列表失败");
+            }
+        });
+    }
+
+    // 渲染 FAQ 列表
+    function renderFaqList() {
+        var $faqListDiv = $("#faq-list");
+        $faqListDiv.empty();
+        faqList.forEach(function(faq, index) {
+            var $faqItem = $("<div>").addClass("faq-item form-group");
+            var $question = $("<input>").addClass("form-control").attr("name", "faqQuestion").attr("type", "text").val(faq.question).data("index", index).data("field", "question");
+            var $answer = $("<textarea>").addClass("form-control").attr("name", "faqAnswer").val(faq.answer).data("index", index).data("field", "answer");
+            var $actions = $("<div>").addClass("actions");
+
+            var $deleteBtn = $("<a>").addClass("btn btn-danger btn-xs")
+                .attr("onclick", "remove(" + index + ")")
+                .html('<i class="fa fa-remove"></i> 删除');
+
+            $actions.append($deleteBtn);
+            $faqItem.append($question).append($answer).append($actions);
+            $faqListDiv.append($faqItem);
+        });
+    }
+
+    // 添加 FAQ
+    add = function() {
+        faqList.push({ question: "", answer: "" });
+        renderFaqList();
+    };
+
+    // 修改 FAQ
+    edit = function(index) {
+        faqList.splice(index, 1);
+        renderFaqList();
+    };
+
+    // 删除 FAQ
+    remove = function(index) {
+
+    };
+
+    // 导出 FAQ
+    exportFaq = function() {
+        window.location.href = prefix + "/export";
+    };
+
+    // 导入 FAQ
+    importFaq = function() {
+        var formData = new FormData();
+        var fileInput = $('<input type="file" name="file" />')[0];
+        $(fileInput).change(function() {
+            formData.append('file', fileInput.files[0]);
+            $.ajax({
+                url: prefix + "/import",
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    $.modal.msgSuccess('导入成功');
+                    loadFaqList();
+                },
+                error: function() {
+                    $.modal.msgError('导入失败');
+                }
+            });
+        });
+        $(fileInput).click();
+    };
+    // 保存
+    function batchSaveFaqs() {
+        var faqs = [];
+        $('input[name="faqQuestion"]').each(function(index) {
+            var question = $(this).val();
+            var answer = $('textarea[name="faqAnswer"]').eq(index).val();
+            faqs.push({ question: question, answer: answer });
+        });
+        $.ajax({
+            url: prefix + '/batchSave',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(faqs),
+            success: function(response) {
+                if (response.code == 0) {
+                    $.modal.msgSuccess('保存成功');
+                } else {
+                    $.modal.msgError('保存失败');
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>
