@@ -20,3 +20,27 @@
 bug反馈或者咨询问题请在gitee/github上，新建 Issue，并贴上日志。
 
 ![联系方式](wetchat.png)
+ 
+
+### 编译指南
+
+#### 使用maven导入`freeswitch-esl`库
+
+   mvn install:install-file -Dfile=thirdparty\freeswitch-esl-1.3.release.jar -DgroupId=link.thingscloud -DartifactId=freeswitch-esl  -Dversion=1.3.release  -Dpackaging=jar
+   
+   
+#### 设置数据库参数
+ 
+    修改 ruoyi-admin\src\main\resources\application-dev.yml, 这里它和 `easycallcenter365` 项目使用的是同一个数据库;
+
+	url: jdbc:mysql://easycallcenter365:3306/easycallcenter365?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+	username: root
+	password: 123456
+
+
+#### 编译
+
+   执行源代码根目录下的 bin\bin\package.bat 脚本，编译完成后，jar包位于 ruoyi-admin\target 目录下，名字是 easycallcenter365-gui.jar 。
+   
+   
+   

@@ -206,7 +206,7 @@
                 </includes>
             </resource>
         </resources>
-        <finalName>callcenter-manager</finalName>
+        <finalName>easycallcenter365-gui</finalName>
     </build>
 
 </project>
