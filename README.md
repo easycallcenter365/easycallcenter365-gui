@@ -51,7 +51,7 @@ mvn install:install-file -Dfile=thirdparty\freeswitch-esl-1.3.release.jar -Dgrou
    
 #### 部署
 
-部署参考： https://gitee.com/easycallcenter365/easycallcenter365/blob/master/Deploy.txt   
+部署参考： https://github.com/easycallcenter365/easycallcenter365/blob/master/Deploy.txt  
    
    
    
