@@ -47,7 +47,11 @@ mvn install:install-file -Dfile=thirdparty\freeswitch-esl-1.3.release.jar -Dgrou
 
 #### 编译
 
-   执行源代码根目录下的 bin\bin\package.bat 脚本，编译完成后，jar包位于 ruoyi-admin\target 目录下，名字是 easycallcenter365-gui.jar 。
+   执行源代码根目录下的 bin\package.bat 脚本，编译完成后，jar包位于 ruoyi-admin\target 目录下，名字是 easycallcenter365-gui.jar 。
+   
+#### 部署
+
+部署参考： https://gitee.com/easycallcenter365/easycallcenter365/blob/master/Deploy.txt   
    
    
    
