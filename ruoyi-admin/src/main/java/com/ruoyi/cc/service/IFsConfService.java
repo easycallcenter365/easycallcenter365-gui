@@ -95,7 +95,7 @@ public interface IFsConfService {
      * @param profileName
      * @param params
      */
-    void setProfileConf(String profileName, String profileType, JSONArray params);
+    String setProfileConf(String profileName, String profileType, JSONArray params);
 
     /**
      * 获取profile配置

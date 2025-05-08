@@ -15,6 +15,7 @@ import com.ruoyi.cc.service.IFsConfService;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.CommonUtils;
 import com.ruoyi.common.utils.StringUtils;
+import io.netty.util.internal.StringUtil;
 import link.thingscloud.freeswitch.esl.EslConnectionUtil;
 import link.thingscloud.freeswitch.esl.transport.message.EslMessage;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -553,7 +554,10 @@ public class FsConfController extends BaseController {
         logger.info("profileName:" + profileName);
         logger.info("profileType:" + profileType);
         logger.info("operaType:" + operaType);
-        fsConfService.setProfileConf(profileName, profileType, xmlParams);
+        String saveSuccess = fsConfService.setProfileConf(profileName, profileType, xmlParams);
+        if(!StringUtils.isEmpty(saveSuccess)){
+            return AjaxResult.error(saveSuccess);
+        }
         if ("add".equals(operaType)) {
             // 新增后启动
             EslMessage eslMessage = EslConnectionUtil.sendSyncApiCommand("sofia", "profile " + profileName + " start");

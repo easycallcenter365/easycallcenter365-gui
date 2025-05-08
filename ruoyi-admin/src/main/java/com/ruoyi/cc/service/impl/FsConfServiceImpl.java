@@ -554,7 +554,7 @@ public class FsConfServiceImpl implements IFsConfService {
     }
 
     @Override
-    public void setProfileConf(String profileName, String profileType, JSONArray params) {
+    public String setProfileConf(String profileName, String profileType, JSONArray params) {
         String fsConfDirectory = ccParamsService.getParamValueByCode("fs_conf_directory", "");
         try {
             // 创建DocumentBuilderFactory对象
@@ -583,6 +583,9 @@ public class FsConfServiceImpl implements IFsConfService {
             profile.setAttribute("name", profileName);
             // 获取X-PRE-PROCESS元素，修改data
             Element gatways = (Element)document.getElementsByTagName("X-PRE-PROCESS").item(0);
+            if(gatways == null){
+                return "profile 模板文件错误，无法读取网关配置节点!";
+            }
             gatways.setAttribute("data", profileName + "/*.xml");
             // 获取settings元素
             Element settings = (Element)document.getElementsByTagName("settings").item(0);
@@ -626,8 +629,9 @@ public class FsConfServiceImpl implements IFsConfService {
             // 将updatedXML写入文件
             java.nio.file.Files.write(java.nio.file.Paths.get(profilefXmlPath), updatedXML.getBytes());
         } catch (Exception e) {
-            e.printStackTrace();
+           return String.format("修改profile失败, %s \n %s", e.toString(), CommonUtils.getStackTraceString(e.getStackTrace()));
         }
+        return "";
     }
 
     @Override
