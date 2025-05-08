@@ -50,5 +50,6 @@ public class EslPoolStarter implements ApplicationListener<ApplicationReadyEvent
         nodeInfo.setPoolSize(poolSize);
         nodeList.add(nodeInfo);
         EslConnectionUtil.initConnPool(nodeList);
+        EslConnectionUtil.setEslExecuteTime(5000);
     }
 }
