@@ -15,11 +15,13 @@ import com.ruoyi.cc.service.IFsConfService;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.CommonUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import io.netty.util.internal.StringUtil;
 import link.thingscloud.freeswitch.esl.EslConnectionUtil;
 import link.thingscloud.freeswitch.esl.transport.message.EslMessage;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -49,6 +51,7 @@ public class FsConfController extends BaseController {
     private IFsVariablesService fsVariablesService;
     @Autowired
     private ICcParamsService ccParamsService;
+
 
     /**
      * 系统全局配置
@@ -259,6 +262,7 @@ public class FsConfController extends BaseController {
        return getConfigFileJsonData("/autoload_configs/xunfei_asr.conf.xml", 4);
     }
 
+
     private AjaxResult getConfigFileJsonData(String configFile, int cat){
         JSONObject confAllVars = fsConfService.getAsrConf(configFile);
         if(confAllVars.size() != 0) {
@@ -267,7 +271,12 @@ public class FsConfController extends BaseController {
             for (String name : confAllVars.keySet()) {
                 JSONObject var = new JSONObject();
                 var.put("name", name);
-                var.put("value", confAllVars.getString(name));
+                boolean hidden =  fsConfService.checkNeedHidden(name);
+                if(hidden){
+                    var.put("value", CommonUtils.maskStringUtil(confAllVars.getString(name)));
+                }else {
+                    var.put("value", confAllVars.getString(name));
+                }
                 if (fsVars.keySet().contains(name)) {
                     // 基本配置
                     var.put("aliasName", fsVars.getString(name)); // 别名

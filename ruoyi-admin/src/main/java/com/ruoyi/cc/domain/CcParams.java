@@ -38,4 +38,7 @@ public class CcParams implements Serializable {
     @Excel(name = "参数类型")
     private String paramType;
 
+    /** 是否在网页上隐藏参数值 */
+    @Excel(name = "隐藏参数值")
+    private int hideValue;
 }

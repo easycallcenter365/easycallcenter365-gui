@@ -11,6 +11,14 @@ import java.util.List;
  */
 public interface IFsConfService {
 
+
+    /**
+     *  检查是否需要隐藏指定的字段值
+     * @param fieldName
+     * @return
+     */
+    boolean checkNeedHidden(String fieldName);
+
     /**
      * 设置switch.conf.xml文件的参数值
      */

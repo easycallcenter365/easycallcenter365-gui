@@ -41,14 +41,32 @@ public class FsConfServiceImpl implements IFsConfService {
     @Autowired
     private ICcParamsService ccParamsService;
 
-//    @Value("${fs.conf.path}")
-//    private String confXmlPath;
-//    @Value("${fs.conf.template.profile}")
-//    private String profileTemplatePath;
-//    @Value("${fs.conf.template.gateway-register}")
-//    private String registerGatewayTemplatePath;
-//    @Value("${fs.conf.template.gateway-unregister}")
-//    private String unregisterGatewayTemplatePath;
+    @Value("${sysconfig.hide-secret}")
+    private String sysConfigHideSecret;
+
+    @Value("${sysconfig.hidden-key-list}")
+    private String sysConfigHideKeyList;
+
+    /**
+     * 检查是否需要隐藏指定的字段值
+     * @param fieldName
+     * @return
+     */
+    @Override
+    public boolean checkNeedHidden(String fieldName){
+        boolean hidden = Boolean.parseBoolean(sysConfigHideSecret);
+        if(!hidden){
+            return false;
+        }
+        String[] array = sysConfigHideKeyList.split("/");
+        for (String s : array) {
+            if(fieldName.toLowerCase().contains(s)){
+                return  true;
+            }
+        }
+        return false;
+    }
+
 
     @Override
     public void setSwitchConf(JSONArray params) {
@@ -392,8 +410,12 @@ public class FsConfServiceImpl implements IFsConfService {
                     for (int j = 0; j < params.size(); j++) {
                         JSONObject param = params.getJSONObject(j);
                         String attrName = param.getString("name");
+                        boolean needHidden = checkNeedHidden(attrName);
+                        boolean containsMaskStr =  param.getString("value").contains("**");
                         if (attrName.equals(element.getAttribute("name"))) {
-                            element.setAttribute("value", param.getString("value").trim());
+                            if(!needHidden || !containsMaskStr) {
+                                element.setAttribute("value", param.getString("value").trim());
+                            }
                         }
                     }
                 }

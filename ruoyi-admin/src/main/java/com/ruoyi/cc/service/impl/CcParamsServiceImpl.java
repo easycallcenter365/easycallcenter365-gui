@@ -5,7 +5,10 @@ import java.util.List;
 import com.ruoyi.cc.domain.CcParams;
 import com.ruoyi.cc.mapper.CcParamsMapper;
 import com.ruoyi.cc.service.ICcParamsService;
+import com.ruoyi.common.utils.CommonUtils;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import com.ruoyi.common.core.text.Convert;
 
@@ -21,6 +24,11 @@ public class CcParamsServiceImpl implements ICcParamsService
     @Autowired
     private CcParamsMapper ccParamsMapper;
 
+
+    @Value("${sysconfig.hide-secret}")
+    private String sysConfigHideSecret;
+
+
     /**
      * 查询callcenter参数配置
      * 
@@ -30,7 +38,13 @@ public class CcParamsServiceImpl implements ICcParamsService
     @Override
     public CcParams selectCcParamsById(Long id)
     {
-        return ccParamsMapper.selectCcParamsById(id);
+        CcParams params =  ccParamsMapper.selectCcParamsById(id);
+        boolean hideSecret = Boolean.parseBoolean(sysConfigHideSecret);
+        if(params.getHideValue() == 1 && hideSecret){
+            String hideString = params.getParamValue();
+            params.setParamValue(CommonUtils.maskStringUtil(hideString));
+        }
+        return params;
     }
 
     /**
@@ -42,7 +56,17 @@ public class CcParamsServiceImpl implements ICcParamsService
     @Override
     public List<CcParams> selectCcParamsList(CcParams ccParams)
     {
-        return ccParamsMapper.selectCcParamsList(ccParams);
+        List<CcParams> origList = ccParamsMapper.selectCcParamsList(ccParams);
+        boolean hideSecret = Boolean.parseBoolean(sysConfigHideSecret);
+        if(hideSecret) {
+            for (CcParams params : origList) {
+                if (params.getHideValue() == 1) {
+                    String hideString = params.getParamValue();
+                    params.setParamValue(CommonUtils.maskStringUtil(hideString));
+                }
+            }
+        }
+        return origList;
     }
 
     /**
