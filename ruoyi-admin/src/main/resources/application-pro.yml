@@ -201,5 +201,5 @@ swagger:
 sysconfig:
   # 包含哪些关键词的配置文件参数，将会被mask打码隐藏
   hidden-key-list: api/app/token/key/secret/access
-  # 是否开启敏感参数隐藏
+  # 是否开启敏感参数隐藏功能
   hide-secret: true

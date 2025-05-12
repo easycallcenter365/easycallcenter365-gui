@@ -96,7 +96,12 @@ public class CcParamsServiceImpl implements ICcParamsService
         ccParams.setParamCode(ccParamsOld.getParamCode());
         ccParams.setParamType(ccParamsOld.getParamType());
 
-        return ccParamsMapper.updateCcParams(ccParams);
+        boolean hideSecret = Boolean.parseBoolean(sysConfigHideSecret);
+        boolean containsMaskStr =  ccParams.getParamValue().contains("**");
+        if(!hideSecret || !containsMaskStr) {
+            return ccParamsMapper.updateCcParams(ccParams);
+        }
+        return 1;
     }
 
     /**
