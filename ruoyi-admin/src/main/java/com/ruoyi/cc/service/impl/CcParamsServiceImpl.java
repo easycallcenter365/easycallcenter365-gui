@@ -130,7 +130,7 @@ public class CcParamsServiceImpl implements ICcParamsService
 
     @Override
     public String getParamValueByCode(String paramCode, String defaultValue) {
-        List<CcParams> list = selectCcParamsList(new CcParams().setParamCode(paramCode));
+        List<CcParams> list = ccParamsMapper.selectCcParamsList(new CcParams().setParamCode(paramCode));
         if (list.size() > 0) {
             return list.get(0).getParamValue();
         }
