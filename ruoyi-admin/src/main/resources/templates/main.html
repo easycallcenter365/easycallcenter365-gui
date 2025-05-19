@@ -203,7 +203,7 @@
 
     <script th:inline="javascript">
         var _phoneBar = new ccPhoneBarSocket();
-        var _scriptServer = [[${callConfig.scriptServer}]];
+        var _scriptServer = window.location.host.split(":")[0];
         var _scriptPort = [[${callConfig.scriptPort}]];
         var _loginToken = [[${callConfig.loginToken}]];
         var _gatewayList = [[${callConfig.gatewayList}]];
@@ -489,6 +489,13 @@
             // 以下代码设置加密的参数： loginToken、extPassword、gatewayList；   在本页面的demo演示中需要调用服务器端接口获取密文字符串;
             console.log(_callConfig);
             _phoneBar.initConfig(_callConfig);
+
+
+            // 设置自动连接电话工具条
+            setTimeout(function () {
+                console.log(" 正在尝试连接电话工具条, 端口 1081 ");
+                _phoneBar.connect();
+            }, 2000);
 
         });
 
