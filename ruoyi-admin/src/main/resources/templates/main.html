@@ -249,6 +249,19 @@
                 _phoneBar.updatePhoneBar(msg, ccPhoneBarSocket.eventListWithTextInfo.ws_connected.code);
             });
 
+            _phoneBar.on(ccPhoneBarSocket.eventList.caller_not_login, function (msg) {
+                $.modal.msgError(msg["msg"]);
+            });
+            _phoneBar.on(ccPhoneBarSocket.eventList.outbound_finished, function (msg) {
+                $.modal.msgError(msg["msg"]);
+            });
+            _phoneBar.on(ccPhoneBarSocket.eventList.server_error_audio_codec_not_match, function (msg) {
+                $.modal.msgError(msg["msg"]);
+            });
+            _phoneBar.on(ccPhoneBarSocket.eventList.server_error, function (msg) {
+                $.modal.msgError(msg["msg"]);
+            });
+
             // 被叫振铃事件
             _phoneBar.on(ccPhoneBarSocket.eventListWithTextInfo.callee_ringing.code, function(msg){
                 console.log(msg.content, "被叫振铃事件");
@@ -495,7 +508,7 @@
             setTimeout(function () {
                 console.log(" 正在尝试连接电话工具条, 端口 1081 ");
                 _phoneBar.connect();
-            }, 2000);
+            }, 1500);
 
         });
 
