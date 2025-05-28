@@ -177,6 +177,7 @@ public class SysIndexController extends BaseController
             configGateway.put("gatewayAddr", ccGateways.getGwAddr());
             configGateway.put("callerNumber", ccGateways.getCaller());
             configGateway.put("calleePrefix", ccGateways.getCalleePrefix());
+            configGateway.put("callProfile", ccGateways.getProfileName());
             configGateway.put("priority", ccGateways.getPriority());
             configGateway.put("concurrency", ccGateways.getMaxConcurrency());
             if (ccGateways.getRegister() == 1) {
