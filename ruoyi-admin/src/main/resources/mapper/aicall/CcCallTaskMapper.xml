@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.aicall.mapper.CcCallTaskMapper">
+    
+    <resultMap type="CcCallTask" id="CcCallTaskResult">
+        <result property="batchId"    column="batch_id"    />
+        <result property="groupId"    column="group_id"    />
+        <result property="batchName"    column="batch_name"    />
+        <result property="ifcall"    column="ifcall"    />
+        <result property="rate"    column="rate"    />
+        <result property="threadNum"    column="thread_num"    />
+        <result property="createtime"    column="createtime"    />
+        <result property="executing"    column="executing"    />
+        <result property="stopTime"    column="stop_time"    />
+        <result property="userid"    column="userid"    />
+        <result property="phonenumBuffer"    column="phonenum_buffer"    />
+        <result property="batchcallWaitTime"    column="batchcall_wait_time"    />
+        <result property="gatewayId"    column="gateway_id"    />
+        <result property="voiceCode"    column="voice_code"    />
+        <result property="voiceSource"    column="voice_source"    />
+    </resultMap>
+
+    <sql id="selectCcCallTaskVo">
+        select batch_id, group_id, batch_name, ifcall, rate, thread_num, createtime, executing, stop_time, userid, phonenum_buffer, batchcall_wait_time, gateway_id, voice_code, voice_source from cc_call_task
+    </sql>
+
+    <select id="selectCcCallTaskList" parameterType="CcCallTask" resultMap="CcCallTaskResult">
+        <include refid="selectCcCallTaskVo"/>
+        <where>  
+            <if test="groupId != null  and groupId != ''"> and group_id = #{groupId}</if>
+            <if test="batchName != null  and batchName != ''"> and batch_name like concat('%', #{batchName}, '%')</if>
+            <if test="ifcall != null "> and ifcall = #{ifcall}</if>
+            <if test="rate != null "> and rate = #{rate}</if>
+            <if test="threadNum != null "> and thread_num = #{threadNum}</if>
+            <if test="createtime != null "> and createtime = #{createtime}</if>
+            <if test="executing != null "> and executing = #{executing}</if>
+            <if test="stopTime != null "> and stop_time = #{stopTime}</if>
+            <if test="userid != null  and userid != ''"> and userid = #{userid}</if>
+            <if test="phonenumBuffer != null "> and phonenum_buffer = #{phonenumBuffer}</if>
+            <if test="batchcallWaitTime != null "> and batchcall_wait_time = #{batchcallWaitTime}</if>
+            <if test="gatewayId != null "> and gateway_id = #{gatewayId}</if>
+            <if test="voiceCode != null and voiceCode != ''"> and voice_code = #{voiceCode}</if>
+            <if test="voiceSource != null and voiceSource != ''"> and voice_source = #{voiceSource}</if>
+            <if test="params.createTimeStart != null and params.createTimeStart != ''"><!-- 开始时间检索 -->
+                AND createtime &gt;= #{params.createTimeStart}
+            </if>
+            <if test="params.createTimeEnd != null and params.createTimeEnd != ''"><!-- 结束时间检索 -->
+                AND createtime &lt;= #{params.createTimeEnd}
+            </if>
+        </where>
+    </select>
+    
+    <select id="selectCcCallTaskByBatchId" parameterType="Long" resultMap="CcCallTaskResult">
+        <include refid="selectCcCallTaskVo"/>
+        where batch_id = #{batchId}
+    </select>
+
+    <insert id="insertCcCallTask" parameterType="CcCallTask" useGeneratedKeys="true" keyProperty="batchId">
+        insert into cc_call_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="groupId != null and groupId != ''">group_id,</if>
+            <if test="batchName != null and batchName != ''">batch_name,</if>
+            <if test="ifcall != null">ifcall,</if>
+            <if test="rate != null">rate,</if>
+            <if test="threadNum != null">thread_num,</if>
+            <if test="createtime != null">createtime,</if>
+            <if test="executing != null">executing,</if>
+            <if test="stopTime != null">stop_time,</if>
+            <if test="userid != null and userid != ''">userid,</if>
+            <if test="phonenumBuffer != null">phonenum_buffer,</if>
+            <if test="batchcallWaitTime != null">batchcall_wait_time,</if>
+            <if test="gatewayId != null">gateway_id,</if>
+            <if test="voiceCode != null and voiceCode != ''">voice_code,</if>
+            <if test="voiceSource != null and voiceSource != ''">voice_source,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="groupId != null and groupId != ''">#{groupId},</if>
+            <if test="batchName != null and batchName != ''">#{batchName},</if>
+            <if test="ifcall != null">#{ifcall},</if>
+            <if test="rate != null">#{rate},</if>
+            <if test="threadNum != null">#{threadNum},</if>
+            <if test="createtime != null">#{createtime},</if>
+            <if test="executing != null">#{executing},</if>
+            <if test="stopTime != null">#{stopTime},</if>
+            <if test="userid != null and userid != ''">#{userid},</if>
+            <if test="phonenumBuffer != null">#{phonenumBuffer},</if>
+            <if test="batchcallWaitTime != null">#{batchcallWaitTime},</if>
+            <if test="gatewayId != null">#{gatewayId},</if>
+            <if test="voiceCode != null and voiceCode != ''">#{voiceCode},</if>
+            <if test="voiceSource != null and voiceSource != ''">#{voiceSource},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCcCallTask" parameterType="CcCallTask">
+        update cc_call_task
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="groupId != null and groupId != ''">group_id = #{groupId},</if>
+            <if test="batchName != null and batchName != ''">batch_name = #{batchName},</if>
+            <if test="ifcall != null">ifcall = #{ifcall},</if>
+            <if test="rate != null">rate = #{rate},</if>
+            <if test="threadNum != null">thread_num = #{threadNum},</if>
+            <if test="createtime != null">createtime = #{createtime},</if>
+            <if test="executing != null">executing = #{executing},</if>
+            <if test="stopTime != null">stop_time = #{stopTime},</if>
+            <if test="userid != null and userid != ''">userid = #{userid},</if>
+            <if test="phonenumBuffer != null">phonenum_buffer = #{phonenumBuffer},</if>
+            <if test="batchcallWaitTime != null">batchcall_wait_time = #{batchcallWaitTime},</if>
+            <if test="gatewayId != null">gateway_id = #{gatewayId},</if>
+            <if test="voiceCode != null and voiceCode != ''">voice_code = #{voiceCode},</if>
+            <if test="voiceSource != null and voiceSource != ''">voice_source = #{voiceSource},</if>
+        </trim>
+        where batch_id = #{batchId}
+    </update>
+
+    <delete id="deleteCcCallTaskByBatchId" parameterType="Long">
+        delete from cc_call_task where batch_id = #{batchId}
+    </delete>
+
+    <delete id="deleteCcCallTaskByBatchIds" parameterType="String">
+        delete from cc_call_task where batch_id in 
+        <foreach item="batchId" collection="array" open="(" separator="," close=")">
+            #{batchId}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -216,4 +216,16 @@ public class CcGatewaysController extends BaseController
     {
         return toAjax(ccGatewaysService.deleteCcGatewaysByIds(ids));
     }
+
+    /**
+     * 全部网关列表
+     * @return
+     */
+    @GetMapping("/all")
+    @ResponseBody
+    public AjaxResult all()
+    {
+        List<CcGateways> list = ccGatewaysService.selectCcGatewaysList(new CcGateways());
+        return AjaxResult.success(list);
+    }
 }

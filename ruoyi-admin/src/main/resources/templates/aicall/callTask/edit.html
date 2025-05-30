@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改外呼任务')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-callTask-edit" th:object="${ccCallTask}">
+            <input name="batchId" th:field="*{batchId}" type="hidden">
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label is-required">任务名称：</label>
+                    <div class="col-sm-8">
+                        <input name="batchName" th:field="*{batchName}" class="form-control" type="text" required>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label is-required">最大并发：</label>
+                    <div class="col-sm-8">
+                        <input name="threadNum" th:field="*{threadNum}" class="form-control" type="text" required>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label is-required">外呼线路：</label>
+                    <div class="col-sm-8">
+                        <select name="gatewayId" th:field="*{gatewayId}" class="form-control" required>
+                            <option value="">请选择外呼线路</option>
+                            <!-- 网关选项将通过接口动态加载 -->
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">音色：</label>
+                    <div class="col-sm-8">
+                        <select name="voiceCode" th:field="*{voiceCode}" class="form-control">
+                            <option value="">请选择音色</option>
+                            <!-- 音色选项将通过接口动态加载 -->
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+
+        var prefix = ctx + "aicall/callTask";
+
+        $(function() {
+            // 加载网关下拉框数据
+            $.ajax({
+                url: ctx + "cc/gateways/all",
+                success: function(rsp) {
+                    var gatewaySelect = $('select[name="gatewayId"]');
+                    gatewaySelect.empty();
+                    gatewaySelect.append('<option value="">请选择线路</option>');
+                    rsp.data.forEach(function(gateway) {
+                        gatewaySelect.append($("<option>").attr("value", gateway.id).text(gateway.gwDesc));
+                    });
+                    // 设置网关下拉框的选中项
+                    var gatewayId = /*[[${ccCallTask.gatewayId}]]*/ '';
+                    if (gatewayId) {
+                        gatewaySelect.val(gatewayId);
+                    }
+                }
+            });
+
+            // 加载音色下拉框数据
+            $.ajax({
+                url: ctx + "aicall/ttsAliyun/all",
+                success: function(rsp) {
+                    var voiceSelect = $('select[name="voiceCode"]');
+                    voiceSelect.empty();
+                    voiceSelect.append('<option value="">请选择音色</option>');
+                    rsp.data.forEach(function(voice) {
+                        voiceSelect.append($("<option>").attr("value", voice.voiceCode).text(voice.voiceName));
+                    });
+                    // 设置音色下拉框的选中项
+                    var voiceCode = /*[[${ccCallTask.voiceCode}]]*/ '';
+                    if (voiceCode) {
+                        voiceSelect.val(voiceCode);
+                    }
+                }
+            });
+        });
+
+        $("#form-callTask-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-callTask-edit').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

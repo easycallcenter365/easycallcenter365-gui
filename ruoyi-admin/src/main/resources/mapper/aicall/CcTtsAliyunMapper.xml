@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.aicall.mapper.CcTtsAliyunMapper">
+    
+    <resultMap type="CcTtsAliyun" id="CcTtsAliyunResult">
+        <result property="id"    column="id"    />
+        <result property="voiceName"    column="voice_name"    />
+        <result property="voiceCode"    column="voice_code"    />
+        <result property="voiceEnabled"    column="voice_enabled"    />
+    </resultMap>
+
+    <sql id="selectCcTtsAliyunVo">
+        select id, voice_name, voice_code, voice_enabled from cc_tts_aliyun
+    </sql>
+
+    <select id="selectCcTtsAliyunList" parameterType="CcTtsAliyun" resultMap="CcTtsAliyunResult">
+        <include refid="selectCcTtsAliyunVo"/>
+        <where>  
+            <if test="voiceName != null  and voiceName != ''"> and voice_name like concat('%', #{voiceName}, '%')</if>
+            <if test="voiceCode != null  and voiceCode != ''"> and voice_code = #{voiceCode}</if>
+            <if test="voiceEnabled != null "> and voice_enabled = #{voiceEnabled}</if>
+        </where>
+    </select>
+    
+    <select id="selectCcTtsAliyunById" parameterType="Integer" resultMap="CcTtsAliyunResult">
+        <include refid="selectCcTtsAliyunVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCcTtsAliyun" parameterType="CcTtsAliyun" useGeneratedKeys="true" keyProperty="id">
+        insert into cc_tts_aliyun
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="voiceName != null and voiceName != ''">voice_name,</if>
+            <if test="voiceCode != null and voiceCode != ''">voice_code,</if>
+            <if test="voiceEnabled != null">voice_enabled,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="voiceName != null and voiceName != ''">#{voiceName},</if>
+            <if test="voiceCode != null and voiceCode != ''">#{voiceCode},</if>
+            <if test="voiceEnabled != null">#{voiceEnabled},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCcTtsAliyun" parameterType="CcTtsAliyun">
+        update cc_tts_aliyun
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="voiceName != null and voiceName != ''">voice_name = #{voiceName},</if>
+            <if test="voiceCode != null and voiceCode != ''">voice_code = #{voiceCode},</if>
+            <if test="voiceEnabled != null">voice_enabled = #{voiceEnabled},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCcTtsAliyunById" parameterType="Integer">
+        delete from cc_tts_aliyun where id = #{id}
+    </delete>
+
+    <delete id="deleteCcTtsAliyunByIds" parameterType="String">
+        delete from cc_tts_aliyun where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

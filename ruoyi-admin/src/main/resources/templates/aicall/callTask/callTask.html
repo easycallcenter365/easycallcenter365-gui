@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('外呼任务列表')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label>任务名称：</label>
+                            <input type="text" name="batchName"/>
+                        </li>
+                        <li>
+                            <label>任务状态：</label>
+                            <select name="ifcall">
+                                <option value="">全部</option>
+                                <option value="1">外呼中</option>
+                                <option value="0">停止外呼</option>
+                            </select>
+                        </li>
+                        <li class="select-time">
+                            <label>创建时间： </label>
+                            <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="createTimeStart" placeholder="开始时间" name="params[createTimeStart]"/>
+                            <span>-</span>
+                            <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="createTimeEnd" placeholder="结束时间" name="params[createTimeEnd]"/>
+                        </li>
+                        <li>
+                            <label>外呼线路：</label>
+                            <select name="gatewayId" id="gatewayIdSelect">
+                                <!-- 下拉框选项将通过接口动态加载 -->
+                            </select>
+                        </li>
+                        <li>
+                            <label>音色：</label>
+                            <select name="voiceCode" id="voiceCodeSelect">
+                                <!-- 音色下拉框选项将通过接口动态加载 -->
+                            </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="aicall:callTask:add">
+                <i class="fa fa-plus"></i> 添加
+            </a>
+            <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="aicall:callTask:edit">
+                <i class="fa fa-edit"></i> 修改
+            </a>
+<!--            <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="aicall:callTask:remove">-->
+<!--                <i class="fa fa-remove"></i> 删除-->
+<!--            </a>-->
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('aicall:callTask:edit')}]];
+    var removeFlag = [[${@permission.hasPermi('aicall:callTask:remove')}]];
+    var startFlag = [[${@permission.hasPermi('aicall:callTask:start')}]];
+    var pauseFlag = [[${@permission.hasPermi('aicall:callTask:pause')}]];
+    var importFlag = [[${@permission.hasPermi('aicall:callTask:import')}]]; // 新增导入权限
+    var prefix = ctx + "aicall/callTask";
+
+    $(function() {
+        // 定义一个变量来存储线路 ID 到名称的映射
+        var gatewayMap = {};
+        // 定义一个变量来存储音色 ID 到名称的映射
+        var voiceMap = {};
+
+        // 加载线路下拉框数据
+        $.ajax({
+            url: ctx + "cc/gateways/all",
+            success: function(rsp) {
+                var gatewaySelect = $("#gatewayIdSelect");
+                gatewaySelect.empty();
+                gatewaySelect.append($("<option>").attr("value", "").text("全部"))
+                rsp.data.forEach(function(gateway) {
+                    gatewaySelect.append($("<option>").attr("value", gateway.id).text(gateway.gwDesc));
+                    gatewayMap[gateway.id] = gateway.gwDesc;
+                });
+            }
+        });
+        // 加载音色下拉框数据
+        $.ajax({
+            url: ctx + "aicall/ttsAliyun/all",
+            success: function(rsp) {
+                var voiceSelect = $("#voiceCodeSelect");
+                voiceSelect.empty();
+                voiceSelect.append($("<option>").attr("value", "").text("全部"));
+                rsp.data.forEach(function(voice) {
+                    voiceSelect.append($("<option>").attr("value", voice.voiceCode).text(voice.voiceName));
+                    voiceMap[voice.voiceCode] = voice.voiceName;
+                });
+            }
+        });
+
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            modalName: "外呼任务",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'batchId',
+                    title: '任务id',
+                    visible: false
+                },
+                {
+                    field: 'batchName',
+                    title: '任务名称'
+                },
+                {
+                    field: 'ifcall',
+                    title: '外呼状态',
+                    formatter: function(value, row, index) {
+                        return value === '1' ? '外呼中' : '停止外呼';
+                    }
+                },
+                {
+                    field: 'threadNum',
+                    title: '最大并发'
+                },
+                {
+                    field: 'gatewayId',
+                    title: '线路名称',
+                    formatter: function(value, row, index) {
+                        return gatewayMap[value] || '未知';
+                    }
+                },
+                {
+                    field: 'voiceCode',
+                    title: '音色',
+                    formatter: function(value, row, index) {
+                        return voiceMap[value] || '未知';
+                    }
+                },
+                {
+                    field: 'createtime',
+                    title: '创建时间',
+                    formatter: function(value, row, index) {
+                        return value > 0 ? formatDate(value) : '';
+                    }
+                },
+                {
+                    field: 'phoneCount',
+                    title: '总名单量'
+                },
+                {
+                    field: 'noCallCount',
+                    title: '未拨打'
+                },
+                {
+                    field: 'callCount',
+                    title: '已拨打'
+                },
+                {
+                    field: 'connectCount',
+                    title: '接通量'
+                },
+                {
+                    field: 'noConnectCount',
+                    title: '未接通量'
+                },
+                // {
+                //     field: 'stopTime',
+                //     title: '停止时间',
+                //     formatter: function(value, row, index) {
+                //         return value > 0 ? formatDate(value) : '';
+                //     }
+                // },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.batchId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        // actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.batchId + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        if (row.ifcall == '0') {
+                            actions.push('<a class="btn btn-primary btn-xs" href="javascript:void(0)" onclick="$.operate.start(\'' + row.batchId + '\')"><i class="fa fa-play"></i>启动外呼</a>');
+                        }
+                        if (row.ifcall == '1') {
+                            actions.push('<a class="btn btn-warning btn-xs" href="javascript:void(0)" onclick="$.operate.pause(\'' + row.batchId + '\')"><i class="fa fa-pause"></i>暂停外呼</a>');
+                        }
+                        // 添加导入数据按钮
+                        actions.push('<a class="btn btn-info btn-xs" href="javascript:void(0)" onclick="$.operate.importFile(\'' + row.batchId + '\')"><i class="fa fa-upload"></i>导入数据</a>');
+                        return actions.join('');
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    // 启动外呼
+    $.operate.start = function(id) {
+        $.ajax({
+            url: prefix + "/start/" + id,
+            type: "POST",
+            success: function() {
+                $.table.refresh();
+            }
+        });
+    };
+
+    // 暂停外呼
+    $.operate.pause = function(id) {
+        $.ajax({
+            url: prefix + "/pause/" + id,
+            type: "POST",
+            success: function() {
+                $.table.refresh();
+            }
+        });
+    };
+
+    // 时间格式化
+    function formatDate(timestamp) {
+        if (timestamp <= 0) return '';
+        var date = new Date(Number(timestamp));
+        var year = date.getFullYear();
+        var month = ('0' + (date.getMonth() + 1)).slice(-2);
+        var day = ('0' + date.getDate()).slice(-2);
+        var hours = ('0' + date.getHours()).slice(-2);
+        var minutes = ('0' + date.getMinutes()).slice(-2);
+        var seconds = ('0' + date.getSeconds()).slice(-2);
+        var str = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
+        return str;
+    }
+
+    // 导入数据
+    $.operate.importFile = function(batchId) {
+        var input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.xlsx, .xls'; // 限制只能选择 Excel 文件
+        input.onchange = function(event) {
+            var file = event.target.files[0];
+            if (file) {
+                var formData = new FormData();
+                formData.append('file', file);
+                formData.append('batchId', batchId); // 将任务 ID 附加到表单数据中
+                $.ajax({
+                    url: prefix + "/importFile",
+                    type: "POST",
+                    data: formData,
+                    processData: false, // 告诉 jQuery 不要去处理发送的数据
+                    contentType: false, // 告诉 jQuery 不要去设置 Content-Type 请求头
+                    success: function(response) {
+                        $.modal.msgSuccess("文件导入成功！");
+                        $.table.refresh();
+                    },
+                    error: function() {
+                        $.modal.msgError("文件导入失败，请检查文件格式是否正确！");
+                    }
+                });
+            }
+        };
+        input.click();
+    };
+</script>
+</body>
+</html>
