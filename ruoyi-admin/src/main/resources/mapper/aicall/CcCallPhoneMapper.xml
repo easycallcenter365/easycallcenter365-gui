@@ -48,33 +48,40 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="groupId != null  and groupId != ''"> and group_id = #{groupId}</if>
             <if test="batchId != null "> and batch_id = #{batchId}</if>
             <if test="telephone != null  and telephone != ''"> and telephone = #{telephone}</if>
-            <if test="createtime != null "> and createtime = #{createtime}</if>
             <if test="callstatus != null "> and callstatus = #{callstatus}</if>
-            <if test="calloutTime != null "> and callout_time = #{calloutTime}</if>
-            <if test="callcount != null "> and callcount = #{callcount}</if>
-            <if test="callEndTime != null "> and call_end_time = #{callEndTime}</if>
-            <if test="timeLen != null "> and time_len = #{timeLen}</if>
-            <if test="validTimeLen != null "> and valid_time_len = #{validTimeLen}</if>
-            <if test="uuid != null  and uuid != ''"> and uuid = #{uuid}</if>
-            <if test="uuidRobot != null  and uuidRobot != ''"> and uuid_robot = #{uuidRobot}</if>
-            <if test="connectedTime != null "> and connected_time = #{connectedTime}</if>
-            <if test="hangupCause != null  and hangupCause != ''"> and hangup_cause = #{hangupCause}</if>
-            <if test="queueTime != null "> and queue_time = #{queueTime}</if>
-            <if test="answeredTime != null "> and answered_time = #{answeredTime}</if>
-            <if test="dialogue != null  and dialogue != ''"> and dialogue = #{dialogue}</if>
-            <if test="wavfile != null  and wavfile != ''"> and wavfile = #{wavfile}</if>
-            <if test="recordServerUrl != null  and recordServerUrl != ''"> and record_server_url = #{recordServerUrl}</if>
-            <if test="bizJson != null  and bizJson != ''"> and biz_json = #{bizJson}</if>
-            <if test="ringingFileFlag != null "> and ringing_file_flag = #{ringingFileFlag}</if>
-            <if test="ringingWavFile != null  and ringingWavFile != ''"> and ringing_wav_file = #{ringingWavFile}</if>
-            <if test="ringingFileProcessed != null "> and ringing_file_processed = #{ringingFileProcessed}</if>
-            <if test="asrProduct != null "> and asr_product = #{asrProduct}</if>
+            <if test="params.calloutTimeStart != null and params.calloutTimeStart != ''"><!-- 开始时间检索 -->
+                AND callout_time &gt;= #{params.calloutTimeStart}
+            </if>
+            <if test="params.calloutTimeEnd != null and params.calloutTimeEnd != ''"><!-- 结束时间检索 -->
+                AND callout_time &lt;= #{params.calloutTimeEnd}
+            </if>
+            <if test="params.callEndTimeStart != null and params.callEndTimeStart != ''"><!-- 开始时间检索 -->
+                AND call_end_time &gt;= #{params.callEndTimeStart}
+            </if>
+            <if test="params.callEndTimeEnd != null and params.callEndTimeEnd != ''"><!-- 结束时间检索 -->
+                AND call_end_time &lt;= #{params.callEndTimeEnd}
+            </if>
+            <if test="params.timeLenStart != null and params.timeLenStart != ''"><!-- 开始时间检索 -->
+                AND time_len &gt;= #{params.timeLenStart}
+            </if>
+            <if test="params.timeLenEnd != null and params.timeLenEnd != ''"><!-- 结束时间检索 -->
+                AND time_len &lt;= #{params.timeLenEnd}
+            </if>
+            <if test="params.connectedTimeStart != null and params.connectedTimeStart != ''"><!-- 开始时间检索 -->
+                AND connected_time &gt;= #{params.connectedTimeStart}
+            </if>
+            <if test="params.connectedTimeEnd != null and params.connectedTimeEnd != ''"><!-- 结束时间检索 -->
+                AND connected_time &lt;= #{connectedTimeEnd}
+            </if>
+            <if test="params.answeredTimeStart != null and params.answeredTimeStart != ''"><!-- 开始时间检索 -->
+                AND answered_time &gt;= #{params.answeredTimeStart}
+            </if>
+            <if test="params.answeredTimeEnd != null and params.answeredTimeEnd != ''"><!-- 结束时间检索 -->
+                AND answered_time &lt;= #{params.answeredTimeEnd}
+            </if>
             <if test="whoHangup != null "> and who_hangup = #{whoHangup}</if>
-            <if test="dialogueCount != null "> and dialogue_count = #{dialogueCount}</if>
             <if test="gatewayId != null "> and gateway_id = #{gatewayId}</if>
             <if test="voiceCode != null  and voiceCode != ''"> and voice_code = #{voiceCode}</if>
-            <if test="voiceSource != null  and voiceSource != ''"> and voice_source = #{voiceSource}</if>
-            <if test="recordPath != null  and recordPath != ''"> and record_path = #{recordPath}</if>
         </where>
     </select>
     

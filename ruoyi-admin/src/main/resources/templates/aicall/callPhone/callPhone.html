@@ -155,10 +155,6 @@
                             <input type="text" name="telephone"/>
                         </li>
                         <li>
-                            <label>外呼任务：</label>
-                            <input type="text" name="batchId"/>
-                        </li>
-                        <li>
                             <label style="width: 105px">通话时长（分）：</label>
                             <input type="number" id="timeLenStart" style="width: 150px" placeholder="通话时长起（分钟）" name="params[timeLenStart]"/>
                             <span>-</span>
@@ -179,13 +175,9 @@
                         </li>
                         <li class="select-time">
                             <label>挂机时间： </label>
-                            <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="hangupTimeStart" placeholder="开始时间" name="params[hangupTimeStart]"/>
+                            <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="callEndTimeStart" placeholder="开始时间" name="params[callEndTimeStart]"/>
                             <span>-</span>
-                            <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="hangupTimeEnd" placeholder="结束时间" name="params[hangupTimeEnd]"/>
-                        </li>
-                        <li>
-                            <label>外呼状态：</label>
-                            <input type="text" name="callstatus"/>
+                            <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="callEndTimeEnd" placeholder="结束时间" name="params[callEndTimeEnd]"/>
                         </li>
                         <li>
                             <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
@@ -259,7 +251,51 @@
                 },
                 {
                     field: 'callstatus',
-                    title: '外呼状态'
+                    title: '外呼状态',
+                    formatter: function(value, row, index) {
+                        switch (value) {
+                            case 0:
+                                return '未拨打';
+                            case 1:
+                                return '已经进入呼叫队列';
+                            case 2:
+                                return '正在呼叫（进行中）';
+                            case 3:
+                                return '未接通';
+                            case 4:
+                                return '已接通';
+                            case 5:
+                                return '呼损';
+                            case 6:
+                                return '成功转接座席或者AI';
+                            case 7:
+                                return '线路故障';
+                            case 31:
+                                return '客户正在通话中';
+                            case 32:
+                                return '关机';
+                            case 33:
+                                return '空号';
+                            case 34:
+                                return '无人接听';
+                            case 35:
+                                return '停机';
+                            case 41:
+                                return '接通后我方挂断';
+                            case 42:
+                                return '接通后对方挂断';
+                            case 51:
+                                return '未触发（未到达弹屏节点）';
+                            case 52:
+                                return '未弹屏（到达弹屏节点，没有弹屏出来）';
+                            case 53:
+                                return '仅弹屏（仅弹屏给座席但座席未介入通话，包括呼损）';
+                            case 54:
+                                return '己介入（弹屏给到座席座席介入通话）';
+                            default:
+                                return '未知状态';
+                        }
+                    }
                 },
                 {
                     field: 'calloutTime',
@@ -270,6 +306,9 @@
                         var date = new Date(Number(value));
                         // 格式化日期为年-月-日 时:分:秒
                         var year = date.getFullYear();
+                        if (year <= 2000) {
+                            return "-";
+                        }
                         var month = (date.getMonth() + 1).toString().padStart(2, '0');
                         var day = date.getDate().toString().padStart(2, '0');
                         var hour = date.getHours().toString().padStart(2, '0');
@@ -287,6 +326,9 @@
                         var date = new Date(Number(value));
                         // 格式化日期为年-月-日 时:分:秒
                         var year = date.getFullYear();
+                        if (year <= 2000) {
+                            return "-";
+                        }
                         var month = (date.getMonth() + 1).toString().padStart(2, '0');
                         var day = date.getDate().toString().padStart(2, '0');
                         var hour = date.getHours().toString().padStart(2, '0');
@@ -296,7 +338,7 @@
                     }
                 },
                 {
-                    field: 'hangupTime',
+                    field: 'callEndTime',
                     title: '挂机时间',
                     width: 120,
                     formatter: function(value, row, index, field) {
@@ -304,6 +346,9 @@
                         var date = new Date(Number(value));
                         // 格式化日期为年-月-日 时:分:秒
                         var year = date.getFullYear();
+                        if (year <= 2000) {
+                            return "-";
+                        }
                         var month = (date.getMonth() + 1).toString().padStart(2, '0');
                         var day = date.getDate().toString().padStart(2, '0');
                         var hour = date.getHours().toString().padStart(2, '0');
