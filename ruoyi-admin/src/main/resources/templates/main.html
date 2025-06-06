@@ -3,13 +3,17 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/js/jquery.i18n.properties.min.js}"></script>
+    <div id="root-path" th:text="${#servletContext.contextPath}" style="display:none;"></div>
+    <div id="lang-country" th:text="${#locale.language + '_' + #locale.country}" style="display:none;"></div>
+    <script th:src="@{/js/i18n.js}"></script>
     <!--360浏览器优先以webkit内核解析-->
     <title>我的工作台</title>
     <link rel="shortcut icon" href="favicon.ico">
     <link href="../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
     <link href="../static/css/font-awesome.min.css" th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
     <link href="../static/css/style.min.css" th:href="@{/css/style.min.css}" rel="stylesheet"/>
-
     <link rel="stylesheet" th:href="@{/phone-bar/page.css}"></link>
     <script th:src="@{/phone-bar/ccPhoneBarSocket.js}"></script>
     <script>

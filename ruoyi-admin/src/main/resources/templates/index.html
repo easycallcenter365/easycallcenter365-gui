@@ -4,7 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="renderer" content="webkit">
-    <title>呼叫管理系统</title>
+	<script th:src="@{/js/jquery.min.js}"></script>
+	<script th:src="@{/js/jquery.i18n.properties.min.js}"></script>
+	<div id="root-path" th:text="${#servletContext.contextPath}" style="display:none;"></div>
+	<div id="lang-country" th:text="${#locale.language + '_' + #locale.country}" style="display:none;"></div>
+	<script th:src="@{/js/i18n.js}"></script>
+	<title>呼叫管理系统</title>
     <!-- 避免IE使用兼容模式 -->
  	<meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link th:href="@{favicon.ico}" rel="shortcut icon"/>
