@@ -791,8 +791,8 @@ var table = {
             alert: function(content, type) {
                 top.layer.alert(content, {
                     icon: $.modal.icon(type),
-                    title: "系统提示",
-                    btn: ['确认'],
+                    title: i18n('modal.confirm.title'),
+                    btn: [i18n('btn.ok')],
                     btnclass: ['btn btn-primary'],
                 });
             },
@@ -849,8 +849,8 @@ var table = {
             confirm: function (content, callBack) {
                 top.layer.confirm(content, {
                     icon: 3,
-                    title: "系统提示",
-                    btn: ['确认', '取消']
+                    title: i18n('modal.confirm.title'),
+                    btn: [i18n('btn.ok'), i18n('btn.cancel')]
                 }, function (index) {
                     $.modal.close(index);
                     callBack(true);
@@ -890,7 +890,7 @@ var table = {
                     shade: 0.3,
                     title: title,
                     content: url,
-                    btn: ['确定', '关闭'],
+                    btn: [i18n('btn.ok'), i18n('btn.close')],
                     // 弹层外区域关闭
                     shadeClose: true,
                     yes: callback,
@@ -983,7 +983,7 @@ var table = {
                     shade: 0.3,
                     title: title,
                     content: url,
-                    btn: ['确定', '关闭'],
+                    btn: [i18n('btn.ok'), i18n('btn.close')],
                     // 弹层外区域关闭
                     shadeClose: true,
                     yes: function(index, layero) {

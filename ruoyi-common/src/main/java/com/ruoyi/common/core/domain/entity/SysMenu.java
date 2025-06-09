@@ -19,6 +19,9 @@ public class SysMenu extends BaseEntity
     /** 菜单ID */
     private Long menuId;
 
+    /** 菜单编号（国际化用这个字段作为key） */
+    private String menuCode;
+
     /** 菜单名称 */
     private String menuName;
 
@@ -189,6 +192,14 @@ public class SysMenu extends BaseEntity
     public void setChildren(List<SysMenu> children)
     {
         this.children = children;
+    }
+
+    public String getMenuCode() {
+        return menuCode;
+    }
+
+    public void setMenuCode(String menuCode) {
+        this.menuCode = menuCode;
     }
 
     @Override

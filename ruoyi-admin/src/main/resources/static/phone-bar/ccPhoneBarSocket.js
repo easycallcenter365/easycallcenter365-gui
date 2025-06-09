@@ -488,14 +488,14 @@ function ccPhoneBarSocket() {
 
 	//定义视频level-id
 	ccPhoneBarSocket.videoLevels = {
-		"Smooth" :  { "levelId" : "42e00b",  "description" : "流畅"  },
-		"Smooth2" :  { "levelId" : "42e00c",  "description" : "流畅+"  },
-		"Smooth3" :  { "levelId" : "42e00d",  "description" : "流畅++"  },
-		"Clear" : { "levelId" : "42e014",  "description" : "清晰"  },
-		"Clear2" :  { "levelId" : "42e015",  "description" : "清晰+"  },
-		"Clear3" :  { "levelId" : "42e016",  "description" : "清晰++"  },
-		"HD" :   { "levelId" : "42e01e",  "description" : "高清"  },
-		"HD2" :  { "levelId" : "42e01f",  "description" : "高清+"  }
+		"Smooth" :  { "levelId" : "42e00b",  "description" : i18n('phonebar.video.levels.smooth')  },
+		"Smooth2" :  { "levelId" : "42e00c",  "description" : i18n('phonebar.video.levels.smooth') + "+"  },
+		"Smooth3" :  { "levelId" : "42e00d",  "description" : i18n('phonebar.video.levels.smooth') + "++"  },
+		"Clear" : { "levelId" : "42e014",  "description" : i18n('phonebar.video.levels.clear')  },
+		"Clear2" :  { "levelId" : "42e015",  "description" : i18n('phonebar.video.levels.clear') + "+"  },
+		"Clear3" :  { "levelId" : "42e016",  "description" : i18n('phonebar.video.levels.clear') + "++"  },
+		"HD" :   { "levelId" : "42e01e",  "description" : i18n('phonebar.video.levels.hd')  },
+		"HD2" :  { "levelId" : "42e01f",  "description" : i18n('phonebar.video.levels.hd') + "+"  }
 	};
 
 
@@ -899,15 +899,15 @@ function ccPhoneBarSocket() {
 	 */
 	  ccPhoneBarSocket.eventListWithTextInfo = {
 		"ws_connected": { "code": 200,  msg:"已签入",
-			btn_text:[{id:"#onLineBtn",name:"签出"}],
+			btn_text:[{id:"#onLineBtn", name:i18n('phonebar.btn.offLine')}],
 			enabled_btn:['#setFree','#callBtn','#onLineBtn']
 		},
-		"ws_disconnected": { "code" : 202, msg:"服务器连接断开",
-			btn_text:[{id:"#onLineBtn",name:"签入"}],
+		"ws_disconnected": { "code" : 202, msg:i18n('phonebar.ws.state.disconnect'),
+			btn_text:[{id:"#onLineBtn", name:i18n('phonebar.btn.onLine')}],
 			enabled_btn:['#onLineBtn']
 		},
 		"user_login_on_other_device": { "code" : 201, msg:"用户已在其他设备登录",
-			btn_text:[{id:"#onLineBtn",name:"签入"}],
+			btn_text:[{id:"#onLineBtn", name:i18n('phonebar.btn.onLine')}],
 			enabled_btn:['#onLineBtn']
 		},
 		"request_args_error":{ "code" : 400, msg:"客户端请求参数错误",

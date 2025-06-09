@@ -1,5 +1,6 @@
 package com.ruoyi.common.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import com.ruoyi.common.utils.spring.SpringUtils;
@@ -9,6 +10,7 @@ import com.ruoyi.common.utils.spring.SpringUtils;
  * 
  * @author ruoyi
  */
+@Slf4j
 public class MessageUtils
 {
     /**
@@ -18,9 +20,13 @@ public class MessageUtils
      * @param args 参数
      * @return 获取国际化翻译值
      */
-    public static String message(String code, Object... args)
-    {
-        MessageSource messageSource = SpringUtils.getBean(MessageSource.class);
-        return messageSource.getMessage(code, args, LocaleContextHolder.getLocale());
+    public static String message(String code, Object... args) {
+        try {
+            MessageSource messageSource = SpringUtils.getBean(MessageSource.class);
+            return messageSource.getMessage(code, args, LocaleContextHolder.getLocale());
+        } catch (Exception e) {
+            log.error("获取国际化配置失败:{}", ExceptionUtil.getExceptionMessage(e));
+        }
+        return "";
     }
 }

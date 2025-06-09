@@ -9,12 +9,17 @@ $.i18n.properties({
     name: 'messages', // 文件名开头
     language: LANG_COUNTRY, // 语言区域
     mode: 'map', // 默认值
+    // callback: function() {
+    //     console.log('Internationalization files loaded');
+    //     console.log('All translations:', $.i18n.map); // 打印所有加载的翻译键值对
+    // }
 });
 
 // 初始化i18n函数
 function i18n(msgKey) {
     try {
-        return I18N.prop(msgKey);
+        var v = I18N.prop(msgKey);
+        return v
     } catch (e) {
         console.error(e)
         return msgKey; // 如果找不到翻译则返回键值

@@ -8,7 +8,7 @@
     <div id="root-path" th:text="${#servletContext.contextPath}" style="display:none;"></div>
     <div id="lang-country" th:text="${#locale.language + '_' + #locale.country}" style="display:none;"></div>
     <script th:src="@{/js/i18n.js}"></script>
-    <title>登录呼叫管理系统</title>
+    <title th:text="#{user.login.title}"></title>
     <meta name="description" content="呼叫管理系统">
     <link href="../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
     <link href="../static/css/font-awesome.min.css" th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
@@ -23,6 +23,18 @@
     <style type="text/css">label.error { position:inherit;  }</style>
     <script>
         if(window.top!==window.self){alert('未登录或登录超时。请重新登录');window.top.location=window.location};
+    </script>
+
+    <script th:inline="javascript">
+        // //获取国际化翻译值
+        // console.log("-----------------")
+        // console.log(ROOT)
+        // console.log(LANG_COUNTRY)
+        // console.log(i18n('user.login.username'));
+        // console.log(i18n('user.login.password'));
+        // console.log(i18n('user.login.code'));
+        // console.log(i18n('user.login.remember'));
+        // console.log(i18n('user.login.submit'));
     </script>
 
     <style>
@@ -55,21 +67,21 @@
             <div class="col-sm-7">
                 <div class="signin-info">
                     <div class="m-b"></div>
-                    <h4>欢迎使用 <strong>呼叫管理系统</strong></h4>
+                    <h4 th:text="#{user.login.welcome} + ' ' + #{sys.sysName}"></h4>
                 </div>
             </div>
             <div class="col-sm-5">
                 <form id="signupForm" autocomplete="off">
                     <h4 class="no-margins"><span th:text="#{user.login.submit}"></span>：</h4>
-                    <input type="text"     name="username" class="form-control uname"     placeholder="#{user.login.username}" value="admin"    />
-                    <input type="password" name="password" class="form-control pword"     placeholder="#{user.login.password}"   value="admin123" />
-                    <input type="text"     name="extNum" class="form-control uname"     placeholder="分机号" value="1001"    />
-<!--                    <input type="text"     name="username" class="form-control uname"     placeholder="#{user.login.username}" value="easycallcenter365"    />-->
-<!--                    <input type="password" name="password" class="form-control pword"     placeholder="#{user.login.password}"   value="easycallcenter365" />-->
-<!--                    <input type="text"     name="extNum" class="form-control uname"     placeholder="分机号" value="1002"    />-->
-<!--                    <input type="text"     name="username" class="form-control uname"     placeholder="#{user.login.username}" value=""    />-->
-<!--                    <input type="password" name="password" class="form-control pword"     placeholder="#{user.login.password}"   value="" />-->
-<!--                    <input type="text"     name="extNum" class="form-control uname"     placeholder="分机号" value=""    />-->
+                    <input type="text"     name="username" class="form-control uname"     th:attr="placeholder=#{user.login.username}" value="admin"    />
+                    <input type="password" name="password" class="form-control pword"     th:attr="placeholder=#{user.login.password}" value="admin123" />
+                    <input type="text"     name="extNum" class="form-control uname"     th:attr="placeholder=#{user.login.extnum}" value="1001"    />
+<!--                    <input type="text"     name="username" class="form-control uname"   th:attr="placeholder=#{user.login.username}" value="easycallcenter365"    />-->
+<!--                    <input type="password" name="password" class="form-control pword"   th:attr="placeholder=#{user.login.password}"   value="easycallcenter365" />-->
+<!--                    <input type="text"     name="extNum" class="form-control uname"     th:attr="placeholder=#{user.login.extnum}" value="1002"    />-->
+<!--                    <input type="text"     name="username" class="form-control uname"   th:attr="placeholder=#{user.login.username}" value=""    />-->
+<!--                    <input type="password" name="password" class="form-control pword"   th:attr="placeholder=#{user.login.password}"  value="" />-->
+<!--                    <input type="text"     name="extNum" class="form-control uname"     th:attr="placeholder=#{user.login.extnum}" value=""    />-->
 					<div class="row m-t" th:if="${captchaEnabled==true}">
 						<div class="col-xs-6">
 						    <input type="text" name="validateCode" class="form-control code" placeholder="验证码" maxlength="5" />
@@ -81,7 +93,7 @@
 						</div>
 					</div>
                     <div class="checkbox-custom" th:if="${isRemembered}" th:classappend="${captchaEnabled==false} ? 'm-t'">
-				        <input type="checkbox" id="rememberme" name="rememberme"> <label for="rememberme">记住我</label>
+				        <input type="checkbox" id="rememberme" name="rememberme"> <label for="rememberme" th:text="#{user.login.remember}"></label>
 				    </div>
                     <button class="btn btn-success btn-block" id="btnSubmit" data-loading="正在验证登录，请稍候..."><span th:text="#{user.login.submit}"></span></button>
                 </form>
@@ -104,6 +116,7 @@
 <script src="../static/ruoyi/login.js" th:src="@{/ruoyi/login.js}"></script>
 <script th:inline="javascript">
     function setLanguage(lang) {
+        console.log('设置语言：' + lang)
         if (lang) {
             localStorage.setItem('lang', lang); // 存储语言到本地存储
             window.location.href = window.location.pathname + "?lang=" + lang; // 通过 URL 参数切换语言
@@ -119,11 +132,13 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         var lang = new URLSearchParams(window.location.search).get('lang') || localStorage.getItem('lang') || 'zh_CN';
+        console.log('当前语言：' + lang)
         localStorage.setItem('lang', lang); // 更新本地存储的语言设置
 
         // 如果 URL 中没有 lang 参数，且本地存储中有 lang 设置，则更新 URL 参数
         if (lang && !new URLSearchParams(window.location.search).has('lang')) {
-            window.history.replaceState({}, document.title, window.location.pathname + "?lang=" + lang);
+            setLanguage(lang)
+            // window.history.replaceState({}, document.title, window.location.pathname + "?lang=" + lang);
         }
     });
 </script>

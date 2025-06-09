@@ -9,6 +9,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
+import com.ruoyi.common.utils.MessageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.common.constant.UserConstants;
@@ -55,6 +57,15 @@ public class SysMenuServiceImpl implements ISysMenuService
         else
         {
             menus = menuMapper.selectMenusByUserId(user.getUserId());
+        }
+        for (SysMenu sysMenu: menus) {
+            // 菜单国际化
+            if (StringUtils.isNotEmpty(sysMenu.getMenuCode())) {
+                String menuName = MessageUtils.message("_menu." + sysMenu.getMenuCode());
+                if (StringUtils.isNotEmpty(menuName)) {
+                    sysMenu.setMenuName(menuName);
+                }
+            }
         }
         return getChildPerms(menus, 0);
     }
