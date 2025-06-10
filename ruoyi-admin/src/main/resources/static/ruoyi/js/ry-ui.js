@@ -1161,17 +1161,17 @@ var table = {
             // 添加信息
             add: function(id) {
                 table.set();
-                $.modal.open("添加" + table.options.modalName, $.operate.addUrl(id));
+                $.modal.open(i18n('btn.add') + table.options.modalName, $.operate.addUrl(id));
             },
             // 添加信息，以tab页展现
             addTab: function (id) {
                 table.set();
-                $.modal.openTab("添加" + table.options.modalName, $.operate.addUrl(id));
+                $.modal.openTab(i18n('btn.add') + table.options.modalName, $.operate.addUrl(id));
             },
             // 添加信息 全屏
             addFull: function(id) {
                 table.set();
-                $.modal.openFull("添加" + table.options.modalName, $.operate.addUrl(id));
+                $.modal.openFull(i18n('btn.add') + table.options.modalName, $.operate.addUrl(id));
             },
             // 添加访问地址
             addUrl: function(id) {
@@ -1188,15 +1188,15 @@ var table = {
                         return;
                     }
                     var url = table.options.updateUrl.replace("{id}", row[table.options.uniqueId]);
-                    $.modal.open("修改" + table.options.modalName, url);
+                    $.modal.open(i18n('btn.edit') + table.options.modalName, url);
                 } else {
-                    $.modal.open("修改" + table.options.modalName, $.operate.editUrl(id));
+                    $.modal.open(i18n('btn.edit') + table.options.modalName, $.operate.editUrl(id));
                 }
             },
             // 修改信息，以tab页展现
             editTab: function(id) {
                 table.set();
-                $.modal.openTab("修改" + table.options.modalName, $.operate.editUrl(id));
+                $.modal.openTab(i18n('btn.edit') + table.options.modalName, $.operate.editUrl(id));
             },
             // 修改信息 全屏
             editFull: function(id) {
@@ -1217,7 +1217,7 @@ var table = {
                         url = table.options.updateUrl.replace("{id}", row);
                     }
                 }
-                $.modal.openFull("修改" + table.options.modalName, url);
+                $.modal.openFull(i18n('btn.edit') + table.options.modalName, url);
             },
             // 修改访问地址
             editUrl: function(id) {
