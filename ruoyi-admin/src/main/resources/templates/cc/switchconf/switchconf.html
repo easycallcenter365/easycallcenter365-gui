@@ -10,18 +10,18 @@
 
 <body>
 <div class="main-content">
-    <div class="h4 form-header">基础配置</div>
+    <div class="h4 form-header" th:text="#{switchconf.label.baseConfigs}"></div>
     <div id="baseConfigs"></div>
 
-    <div id="showAdvancedConfig" style="margin-top:210px" class="h6 form-header">更多</div>
+    <div id="showAdvancedConfig" style="margin-top:210px" class="h6 form-header" th:text="#{switchconf.label.more}"></div>
     <div id="advancedConfigs" style="display: none"></div>
 
     <!-- 保存按钮 -->
     <div class="row" ></div>
     <div class="row" >
         <div class="col-sm-offset-5 col-sm-10">
-            <button id="saveConfig" type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>保存</button>&nbsp;
-            <button id="restartFs" type="button" class="btn btn-sm btn-primary" ><i class="fa fa-check"></i>重启服务</button>&nbsp;
+            <button id="saveConfig" type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i><span th:text="#{switchconf.btn.save}"></span></button>&nbsp;
+            <button id="restartFs" type="button" class="btn btn-sm btn-primary" ><i class="fa fa-check"></i><span th:text="#{switchconf.btn.restart}"></span></button>&nbsp;
         </div>
     </div>
 </div>
@@ -74,10 +74,10 @@
     function toggleAdvancedConfig() {
         if ($("#advancedConfigs").css('display') === 'none') {
             $("#advancedConfigs").show();
-            $('#showAdvancedConfig').text("收起");
+            $('#showAdvancedConfig').text(i18n('switchconf.label.fold'));
         } else {
             $("#advancedConfigs").hide();
-            $('#showAdvancedConfig').text("更多");
+            $('#showAdvancedConfig').text(i18n('switchconf.label.more'));
         }
     }
     // 为每个高级配置的标签添加点击事件
@@ -105,7 +105,7 @@
                 $.modal.disable();
             },
             success: function(response) {
-                $.modal.msgSuccess('配置保存成功！');
+                $.modal.msgSuccess(i18n('switchconf.msg.save.success'));
                 $.modal.closeLoading();
                 $.modal.enable();
             },
@@ -129,7 +129,7 @@
                 $.modal.disable();
             },
             success: function(response) {
-                $.modal.msgSuccess('重启成功！');
+                $.modal.msgSuccess(i18n('switchconf.msg.restart.success'));
                 $.modal.closeLoading();
                 $.modal.enable();
             },
