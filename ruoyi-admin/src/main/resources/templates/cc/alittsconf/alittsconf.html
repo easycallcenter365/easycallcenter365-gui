@@ -10,14 +10,14 @@
 
 <body>
 <div class="main-content">
-    <div class="h4 form-header">阿里云tts参数配置</div>
+    <div class="h4 form-header" th:text="#{switchconf.tts.ali.header}"></div>
     <div id="baseConfigs"></div>
 
     <!-- 保存按钮 -->
     <div class="row" ></div>
     <div class="row" >
         <div class="col-sm-offset-5 col-sm-10">
-            <button id="saveConfig" type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>保 存</button>&nbsp;
+            <button id="saveConfig" type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i><span th:text="#{switchconf.btn.save}"></span></button>&nbsp;
         </div>
     </div>
 </div>

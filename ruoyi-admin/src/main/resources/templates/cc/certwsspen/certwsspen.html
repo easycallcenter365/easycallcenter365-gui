@@ -10,10 +10,10 @@
 
 <body>
 <div class="main-content">
-    <div class="h4 form-header">网页电话证书配置</div>
+    <div class="h4 form-header" th:text="#{switchconf.cert.header}"></div>
     <div id="baseConfigs" class="row">
         <div class="form-group col-sm-12">
-            <label class="col-sm-1 control-label">证书内容：</label>
+            <label class="col-sm-1 control-label" th:text="#{switchconf.cert.label}"></label>
             <div class="col-sm-10">
                 <textarea id="certValue" name="certValue" rows="5" class="form-control"></textarea>
             </div>
@@ -24,7 +24,7 @@
     <div class="row" ></div>
     <div class="row" >
         <div class="col-sm-offset-5 col-sm-10">
-            <button id="saveConfig" type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>保 存</button>&nbsp;
+            <button id="saveConfig" type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i><span th:text="#{switchconf.btn.save}"></span></button>&nbsp;
         </div>
     </div>
 </div>
@@ -62,7 +62,7 @@
             contentType: 'application/json',
             data: JSON.stringify(config),
             success: function(response) {
-                $.modal.msgSuccess('配置保存成功！');
+                $.modal.msgSuccess(i18n('switchconf.msg.save.success'));
             },
             error: function(error) {
                 console.error('Error saving configuration:', error);

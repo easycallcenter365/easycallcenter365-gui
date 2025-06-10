@@ -13,13 +13,13 @@
     <div id="baseConfigs" th:object="${mod}">
         <div className="row">
             <div class="col-sm-12">
-                <label class="col-sm-2 control-label">asr引擎选择</label>
+                <label class="col-sm-2 control-label" th:text="#{switchconf.asr.engine.header}"></label>
                 <div class="col-sm-6">
                     <select name="asrengine" id="asrengine" class="form-control m-b" th:field="*{modValue}">
-                        <option value="">无</option>
-                        <option value="mod_funasr">FunASR(免费)</option>
-                        <option value="mod_aliyun_asr">阿里ASR</option>
-                        <option value="mod_xunfei_asr">讯飞ASR</option>
+                        <option value="" th:text="#{switchconf.asr.engine.option1}"></option>
+                        <option value="mod_funasr" th:text="#{switchconf.asr.engine.option2}"></option>
+                        <option value="mod_aliyun_asr" th:text="#{switchconf.asr.engine.option3}"></option>
+                        <option value="mod_xunfei_asr" th:text="#{switchconf.asr.engine.option4}"></option>
                     </select>
                 </div>
             </div>
