@@ -15,15 +15,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="executing"    column="executing"    />
         <result property="stopTime"    column="stop_time"    />
         <result property="userid"    column="userid"    />
-        <result property="phonenumBuffer"    column="phonenum_buffer"    />
-        <result property="batchcallWaitTime"    column="batchcall_wait_time"    />
         <result property="gatewayId"    column="gateway_id"    />
         <result property="voiceCode"    column="voice_code"    />
         <result property="voiceSource"    column="voice_source"    />
     </resultMap>
 
     <sql id="selectCcCallTaskVo">
-        select batch_id, group_id, batch_name, ifcall, rate, thread_num, createtime, executing, stop_time, userid, phonenum_buffer, batchcall_wait_time, gateway_id, voice_code, voice_source from cc_call_task
+        select batch_id, group_id, batch_name, ifcall, rate, thread_num, createtime, executing, stop_time, userid, gateway_id, voice_code, voice_source from cc_call_task
     </sql>
 
     <select id="selectCcCallTaskList" parameterType="CcCallTask" resultMap="CcCallTaskResult">
@@ -38,8 +36,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="executing != null "> and executing = #{executing}</if>
             <if test="stopTime != null "> and stop_time = #{stopTime}</if>
             <if test="userid != null  and userid != ''"> and userid = #{userid}</if>
-            <if test="phonenumBuffer != null "> and phonenum_buffer = #{phonenumBuffer}</if>
-            <if test="batchcallWaitTime != null "> and batchcall_wait_time = #{batchcallWaitTime}</if>
             <if test="gatewayId != null "> and gateway_id = #{gatewayId}</if>
             <if test="voiceCode != null and voiceCode != ''"> and voice_code = #{voiceCode}</if>
             <if test="voiceSource != null and voiceSource != ''"> and voice_source = #{voiceSource}</if>
@@ -69,8 +65,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="executing != null">executing,</if>
             <if test="stopTime != null">stop_time,</if>
             <if test="userid != null and userid != ''">userid,</if>
-            <if test="phonenumBuffer != null">phonenum_buffer,</if>
-            <if test="batchcallWaitTime != null">batchcall_wait_time,</if>
             <if test="gatewayId != null">gateway_id,</if>
             <if test="voiceCode != null and voiceCode != ''">voice_code,</if>
             <if test="voiceSource != null and voiceSource != ''">voice_source,</if>
@@ -85,8 +79,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="executing != null">#{executing},</if>
             <if test="stopTime != null">#{stopTime},</if>
             <if test="userid != null and userid != ''">#{userid},</if>
-            <if test="phonenumBuffer != null">#{phonenumBuffer},</if>
-            <if test="batchcallWaitTime != null">#{batchcallWaitTime},</if>
             <if test="gatewayId != null">#{gatewayId},</if>
             <if test="voiceCode != null and voiceCode != ''">#{voiceCode},</if>
             <if test="voiceSource != null and voiceSource != ''">#{voiceSource},</if>
@@ -105,8 +97,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="executing != null">executing = #{executing},</if>
             <if test="stopTime != null">stop_time = #{stopTime},</if>
             <if test="userid != null and userid != ''">userid = #{userid},</if>
-            <if test="phonenumBuffer != null">phonenum_buffer = #{phonenumBuffer},</if>
-            <if test="batchcallWaitTime != null">batchcall_wait_time = #{batchcallWaitTime},</if>
             <if test="gatewayId != null">gateway_id = #{gatewayId},</if>
             <if test="voiceCode != null and voiceCode != ''">voice_code = #{voiceCode},</if>
             <if test="voiceSource != null and voiceSource != ''">voice_source = #{voiceSource},</if>

@@ -17,29 +17,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="timeLen"    column="time_len"    />
         <result property="validTimeLen"    column="valid_time_len"    />
         <result property="uuid"    column="uuid"    />
-        <result property="uuidRobot"    column="uuid_robot"    />
         <result property="connectedTime"    column="connected_time"    />
         <result property="hangupCause"    column="hangup_cause"    />
-        <result property="queueTime"    column="queue_time"    />
         <result property="answeredTime"    column="answered_time"    />
         <result property="dialogue"    column="dialogue"    />
         <result property="wavfile"    column="wavfile"    />
         <result property="recordServerUrl"    column="record_server_url"    />
         <result property="bizJson"    column="biz_json"    />
-        <result property="ringingFileFlag"    column="ringing_file_flag"    />
-        <result property="ringingWavFile"    column="ringing_wav_file"    />
-        <result property="ringingFileProcessed"    column="ringing_file_processed"    />
-        <result property="asrProduct"    column="asr_product"    />
-        <result property="whoHangup"    column="who_hangup"    />
         <result property="dialogueCount"    column="dialogue_count"    />
-        <result property="gatewayId"    column="gateway_id"    />
-        <result property="voiceCode"    column="voice_code"    />
-        <result property="voiceSource"    column="voice_source"    />
-        <result property="recordPath"    column="record_path"    />
+        <result property="acdOpnum"    column="acd_opnum"    />
+        <result property="acdQueueTime"    column="dialogue_count"    />
+        <result property="acdWaitTime"    column="dialogue_count"    />
     </resultMap>
 
     <sql id="selectCcCallPhoneVo">
-        select id, group_id, batch_id, telephone, createtime, callstatus, callout_time, callcount, call_end_time, time_len, valid_time_len, uuid, uuid_robot, connected_time, hangup_cause, queue_time, answered_time, dialogue, wavfile, record_server_url, biz_json, ringing_file_flag, ringing_wav_file, ringing_file_processed, asr_product, who_hangup, dialogue_count, gateway_id, voice_code, voice_source, record_path from cc_call_phone
+        select id, group_id, batch_id, telephone, createtime, callstatus, callout_time, callcount, call_end_time, time_len, valid_time_len, uuid, connected_time, hangup_cause, answered_time, dialogue, wavfile, record_server_url, biz_json, dialogue_count, acd_opnum, acd_queue_time, acd_wait_time from cc_call_phone
     </sql>
 
     <select id="selectCcCallPhoneList" parameterType="CcCallPhone" resultMap="CcCallPhoneResult">
@@ -79,9 +71,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="params.answeredTimeEnd != null and params.answeredTimeEnd != ''"><!-- 结束时间检索 -->
                 AND answered_time &lt;= #{params.answeredTimeEnd}
             </if>
-            <if test="whoHangup != null "> and who_hangup = #{whoHangup}</if>
-            <if test="gatewayId != null "> and gateway_id = #{gatewayId}</if>
-            <if test="voiceCode != null  and voiceCode != ''"> and voice_code = #{voiceCode}</if>
         </where>
     </select>
     
@@ -105,25 +94,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="timeLen != null">time_len,</if>
             <if test="validTimeLen != null">valid_time_len,</if>
             <if test="uuid != null and uuid != ''">uuid,</if>
-            <if test="uuidRobot != null and uuidRobot != ''">uuid_robot,</if>
             <if test="connectedTime != null">connected_time,</if>
             <if test="hangupCause != null and hangupCause != ''">hangup_cause,</if>
-            <if test="queueTime != null">queue_time,</if>
             <if test="answeredTime != null">answered_time,</if>
             <if test="dialogue != null">dialogue,</if>
             <if test="wavfile != null and wavfile != ''">wavfile,</if>
             <if test="recordServerUrl != null and recordServerUrl != ''">record_server_url,</if>
             <if test="bizJson != null and bizJson != ''">biz_json,</if>
-            <if test="ringingFileFlag != null">ringing_file_flag,</if>
-            <if test="ringingWavFile != null and ringingWavFile != ''">ringing_wav_file,</if>
-            <if test="ringingFileProcessed != null">ringing_file_processed,</if>
-            <if test="asrProduct != null">asr_product,</if>
-            <if test="whoHangup != null">who_hangup,</if>
             <if test="dialogueCount != null">dialogue_count,</if>
-            <if test="gatewayId != null">gateway_id,</if>
-            <if test="voiceCode != null">voice_code,</if>
-            <if test="voiceSource != null">voice_source,</if>
-            <if test="recordPath != null">record_path,</if>
+            <if test="acdOpnum != null and acdOpnum != ''">acd_opnum,</if>
+            <if test="acdQueueTime != null">acd_queue_time,</if>
+            <if test="acdWaitTime != null">acd_wait_time,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -138,25 +119,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="timeLen != null">#{timeLen},</if>
             <if test="validTimeLen != null">#{validTimeLen},</if>
             <if test="uuid != null and uuid != ''">#{uuid},</if>
-            <if test="uuidRobot != null and uuidRobot != ''">#{uuidRobot},</if>
             <if test="connectedTime != null">#{connectedTime},</if>
             <if test="hangupCause != null and hangupCause != ''">#{hangupCause},</if>
-            <if test="queueTime != null">#{queueTime},</if>
             <if test="answeredTime != null">#{answeredTime},</if>
             <if test="dialogue != null">#{dialogue},</if>
             <if test="wavfile != null and wavfile != ''">#{wavfile},</if>
             <if test="recordServerUrl != null and recordServerUrl != ''">#{recordServerUrl},</if>
             <if test="bizJson != null and bizJson != ''">#{bizJson},</if>
-            <if test="ringingFileFlag != null">#{ringingFileFlag},</if>
-            <if test="ringingWavFile != null and ringingWavFile != ''">#{ringingWavFile},</if>
-            <if test="ringingFileProcessed != null">#{ringingFileProcessed},</if>
-            <if test="asrProduct != null">#{asrProduct},</if>
-            <if test="whoHangup != null">#{whoHangup},</if>
             <if test="dialogueCount != null">#{dialogueCount},</if>
-            <if test="gatewayId != null">#{gatewayId},</if>
-            <if test="voiceCode != null">#{voiceCode},</if>
-            <if test="voiceSource != null">#{voiceSource},</if>
-            <if test="recordPath != null">#{recordPath},</if>
+            <if test="acdOpnum != null and acdOpnum != ''">#{acdOpnum},</if>
+            <if test="acdQueueTime != null">#{acdQueueTime},</if>
+            <if test="acdWaitTime != null">#{acdWaitTime},</if>
          </trim>
     </insert>
 
@@ -174,25 +147,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="timeLen != null">time_len = #{timeLen},</if>
             <if test="validTimeLen != null">valid_time_len = #{validTimeLen},</if>
             <if test="uuid != null and uuid != ''">uuid = #{uuid},</if>
-            <if test="uuidRobot != null and uuidRobot != ''">uuid_robot = #{uuidRobot},</if>
             <if test="connectedTime != null">connected_time = #{connectedTime},</if>
             <if test="hangupCause != null and hangupCause != ''">hangup_cause = #{hangupCause},</if>
-            <if test="queueTime != null">queue_time = #{queueTime},</if>
             <if test="answeredTime != null">answered_time = #{answeredTime},</if>
             <if test="dialogue != null">dialogue = #{dialogue},</if>
             <if test="wavfile != null and wavfile != ''">wavfile = #{wavfile},</if>
             <if test="recordServerUrl != null and recordServerUrl != ''">record_server_url = #{recordServerUrl},</if>
             <if test="bizJson != null and bizJson != ''">biz_json = #{bizJson},</if>
-            <if test="ringingFileFlag != null">ringing_file_flag = #{ringingFileFlag},</if>
-            <if test="ringingWavFile != null and ringingWavFile != ''">ringing_wav_file = #{ringingWavFile},</if>
-            <if test="ringingFileProcessed != null">ringing_file_processed = #{ringingFileProcessed},</if>
-            <if test="asrProduct != null">asr_product = #{asrProduct},</if>
-            <if test="whoHangup != null">who_hangup = #{whoHangup},</if>
             <if test="dialogueCount != null">dialogue_count = #{dialogueCount},</if>
-            <if test="gatewayId != null">gateway_id = #{gatewayId},</if>
-            <if test="voiceCode != null">voice_code = #{voiceCode},</if>
-            <if test="voiceSource != null">voice_source = #{voiceSource},</if>
-            <if test="recordPath != null">record_path = #{recordPath},</if>
+            <if test="acdOpnum != null and acdOpnum != ''">acd_opnum = #{acdOpnum},</if>
+            <if test="acdQueueTime != null">acd_queue_time = #{acdQueueTime},</if>
+            <if test="acdWaitTime != null">acd_wait_time = #{acdWaitTime},</if>
         </trim>
         where id = #{id}
     </update>
@@ -222,11 +187,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         INSERT INTO cc_call_phone (
         id, group_id, batch_id, telephone, createtime, callstatus,
         callout_time, callcount, call_end_time, time_len, valid_time_len,
-        uuid, uuid_robot, connected_time, hangup_cause, queue_time,
+        uuid, connected_time, hangup_cause,
         answered_time, dialogue, wavfile, record_server_url, biz_json,
-        ringing_file_flag, ringing_wav_file, ringing_file_processed,
-        asr_product, who_hangup, dialogue_count, gateway_id,
-        voice_code, voice_source, record_path
+        dialogue_count,acd_opnum,acd_queue_time,acd_wait_time
         )
         VALUES
         <foreach collection="list" item="item" separator=",">
@@ -234,14 +197,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{item.id}, #{item.groupId}, #{item.batchId}, #{item.telephone},
             #{item.createtime}, #{item.callstatus}, #{item.calloutTime},
             #{item.callcount}, #{item.callEndTime}, #{item.timeLen},
-            #{item.validTimeLen}, #{item.uuid}, #{item.uuidRobot},
-            #{item.connectedTime}, #{item.hangupCause}, #{item.queueTime},
+            #{item.validTimeLen}, #{item.uuid},
+            #{item.connectedTime}, #{item.hangupCause},
             #{item.answeredTime}, #{item.dialogue}, #{item.wavfile},
-            #{item.recordServerUrl}, #{item.bizJson}, #{item.ringingFileFlag},
-            #{item.ringingWavFile}, #{item.ringingFileProcessed},
-            #{item.asrProduct}, #{item.whoHangup}, #{item.dialogueCount},
-            #{item.gatewayId}, #{item.voiceCode}, #{item.voiceSource},
-            #{item.recordPath}
+            #{item.recordServerUrl}, #{item.bizJson}, #{item.dialogueCount},
+            #{acdOpnum}, #{acdQueueTime}, #{acdWaitTime}
             )
         </foreach>
     </insert>
