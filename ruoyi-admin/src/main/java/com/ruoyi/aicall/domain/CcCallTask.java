@@ -59,13 +59,13 @@ public class CcCallTask implements Serializable {
     @Excel(name = "任务创建者用户id")
     private String userid;
 
-    /** 号码缓存池大小; 标记为删除，代码已经不在引用该字段。 */
-    @Excel(name = "号码缓存池大小; 标记为删除，代码已经不在引用该字段。")
-    private Long phonenumBuffer;
-
-    /** 一批数据外呼后等待时间。标记为删除，代码已经不在引用该字段。 */
-    @Excel(name = "一批数据外呼后等待时间。标记为删除，代码已经不在引用该字段。")
-    private Long batchcallWaitTime;
+//    /** 号码缓存池大小; 标记为删除，代码已经不在引用该字段。 */
+//    @Excel(name = "号码缓存池大小; 标记为删除，代码已经不在引用该字段。")
+//    private Long phonenumBuffer;
+//
+//    /** 一批数据外呼后等待时间。标记为删除，代码已经不在引用该字段。 */
+//    @Excel(name = "一批数据外呼后等待时间。标记为删除，代码已经不在引用该字段。")
+//    private Long batchcallWaitTime;
 
     /** 使用哪条线路外呼 */
     @Excel(name = "使用哪条线路外呼")

@@ -276,25 +276,17 @@ public class CcCallTaskController extends BaseController
                 callPhone.setTimeLen(0L);
                 callPhone.setValidTimeLen(0L);
                 callPhone.setUuid("");
-                callPhone.setUuidRobot("");
                 callPhone.setConnectedTime(0L);
                 callPhone.setHangupCause("");
-                callPhone.setQueueTime(0L);
                 callPhone.setAnsweredTime(0L);
                 callPhone.setDialogue("");
-                callPhone.setRingingWavFile("");
                 callPhone.setWavfile("");
-                callPhone.setRecordPath("");
                 callPhone.setRecordServerUrl("");
                 callPhone.setBizJson("");
-                callPhone.setRingingFileFlag(0);
-                callPhone.setAsrProduct(0L);
-                callPhone.setWhoHangup(1L);
                 callPhone.setDialogueCount(0L);
-                callPhone.setRingingFileProcessed(0);
-                callPhone.setGatewayId(ccCallTask.getGatewayId());
-                callPhone.setVoiceCode(ccCallTask.getVoiceCode());
-                callPhone.setVoiceSource(ccCallTask.getVoiceSource());
+                callPhone.setAcdOpnum("");
+                callPhone.setAcdQueueTime(0L);
+                callPhone.setAcdWaitTime(0);
                 phoneList.add(callPhone);
             }
             ccCallPhoneService.batchInsertCcCallPhone(phoneList);
