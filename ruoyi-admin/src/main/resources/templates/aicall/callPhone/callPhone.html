@@ -147,34 +147,34 @@
                 <div class="select-list">
                     <ul>
                         <li>
-                            <label th:text="#{callPhone.table.uuid}"></label>
+                            <label th:text="#{callPhone.query.uuid}"></label>
                             <input type="text" name="uuid"/>
                         </li>
                         <li>
-                            <label th:text="#{callPhone.table.telephone}"></label>
+                            <label th:text="#{callPhone.query.telephone}"></label>
                             <input type="text" name="telephone"/>
                         </li>
                         <li>
-                            <label style="width: 105px" th:text="#{callPhone.table.timeLen}"></label>
+                            <label style="width: 105px" th:text="#{callPhone.query.timeLen}"></label>
                             <input type="number" id="timeLenStart" style="width: 150px" th:placeholder="#{callPhone.query.placeholder.timeLenStart}" name="params[timeLenStart]"/>
                             <span>-</span>
                             <input type="number" id="timeLenEnd" style="width: 150px" th:placeholder="#{callPhone.query.placeholder.timeLenEnd}" name="params[timeLenEnd]"/>
 
                         </li>
                         <li class="select-time">
-                            <label th:text="#{callPhone.table.calloutTime}"> </label>
+                            <label th:text="#{callPhone.query.calloutTime}"> </label>
                             <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="calloutTimeStart" th:placeholder="#{callPhone.query.placeholder.startTime}" name="params[calloutTimeStart]"/>
                             <span>-</span>
                             <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="calloutTimeEnd" th:placeholder="#{callPhone.query.placeholder.endTime}" name="params[calloutTimeEnd]"/>
                         </li>
                         <li class="select-time">
-                            <label th:text="#{callPhone.table.answeredTime}"> </label>
+                            <label th:text="#{callPhone.query.answeredTime}"> </label>
                             <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="answeredTimeStart" th:placeholder="#{callPhone.query.placeholder.startTime}" name="params[answeredTimeStart]"/>
                             <span>-</span>
                             <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="answeredTimeEnd" th:placeholder="#{callPhone.query.placeholder.endTime}" name="params[answeredTimeEnd]"/>
                         </li>
                         <li class="select-time">
-                            <label th:text="#{callPhone.table.callEndTime}"> </label>
+                            <label th:text="#{callPhone.query.callEndTime}"> </label>
                             <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="callEndTimeStart" th:placeholder="#{callPhone.query.placeholder.startTime}" name="params[callEndTimeStart]"/>
                             <span>-</span>
                             <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="callEndTimeEnd" th:placeholder="#{callPhone.query.placeholder.endTime}" name="params[callEndTimeEnd]"/>
