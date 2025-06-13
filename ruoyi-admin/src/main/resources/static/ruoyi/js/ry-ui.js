@@ -1092,7 +1092,7 @@ var table = {
                 table.set();
                 var _url = $.operate.detailUrl(id);
                 var options = {
-                    title: table.options.modalName + "详细",
+                    title: table.options.modalName + i18n('btn.detail'),
                     width: width,
                     height: height,
                     url: _url,
@@ -1106,7 +1106,7 @@ var table = {
             // 详细信息，以tab页展现
             detailTab: function(id) {
                 table.set();
-                $.modal.openTab("详细" + table.options.modalName, $.operate.detailUrl(id));
+                $.modal.openTab(i18n('btn.detail') + table.options.modalName, $.operate.detailUrl(id));
             },
             // 详细访问地址
             detailUrl: function(id) {

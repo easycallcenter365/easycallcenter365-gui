@@ -8,42 +8,18 @@
         <form class="form-horizontal m" id="form-info-add">
             <div class="col-xs-12">
                 <div class="form-group">
-                    <label class="col-sm-3 control-label">姓名：</label>
+                    <label class="col-sm-3 control-label" th:text="#{custinfo.form.custName}"></label>
                     <div class="col-sm-8">
                         <input name="custName" class="form-control" type="text">
                     </div>
                 </div>
             </div>
-<!--            <div class="col-xs-12">-->
-<!--                <div class="form-group">-->
-<!--                    <label class="col-sm-3 control-label">省：</label>-->
-<!--                    <div class="col-sm-8">-->
-<!--                        <input name="province" class="form-control" type="text">-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--            <div class="col-xs-12">-->
-<!--                <div class="form-group">-->
-<!--                    <label class="col-sm-3 control-label">市：</label>-->
-<!--                    <div class="col-sm-8">-->
-<!--                        <input name="city" class="form-control" type="text">-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--            <div class="col-xs-12">-->
-<!--                <div class="form-group">-->
-<!--                    <label class="col-sm-3 control-label">区/县：</label>-->
-<!--                    <div class="col-sm-8">-->
-<!--                        <input name="county" class="form-control" type="text">-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
             <div class="col-xs-12">
                 <div class="form-group">
-                    <label class="col-sm-3 control-label">省：</label>
+                    <label class="col-sm-3 control-label" th:text="#{custinfo.form.province}"></label>
                     <div class="col-sm-8">
                         <select name="provinceCode" class="form-control" id="provinceCode">
-                            <option value="">请选择省份</option>
+                            <option value="" th:text="#{custinfo.form.province.empty}"></option>
                             <!-- 省份数据 -->
                             <option th:each="province : ${provinces}" th:value="${province.extId}" th:text="${province.extName}"></option>
                         </select>
@@ -52,10 +28,10 @@
             </div>
             <div class="col-xs-12">
                 <div class="form-group">
-                    <label class="col-sm-3 control-label">市：</label>
+                    <label class="col-sm-3 control-label" th:text="#{custinfo.form.city}"></label>
                     <div class="col-sm-8">
                         <select name="cityCode" class="form-control" id="cityCode">
-                            <option value="">请选择城市</option>
+                            <option value="" th:text="#{custinfo.form.city.empty}"></option>
                             <!-- 城市数据 -->
                             <!-- 城市数据会根据省份的选择动态加载 -->
                         </select>
@@ -64,10 +40,10 @@
             </div>
             <div class="col-xs-12">
                 <div class="form-group">
-                    <label class="col-sm-3 control-label">区/县：</label>
+                    <label class="col-sm-3 control-label" th:text="#{custinfo.form.county}"></label>
                     <div class="col-sm-8">
                         <select name="countyCode" class="form-control" id="countyCode">
-                            <option value="">请选择区/县</option>
+                            <option value="" th:text="#{custinfo.form.county.empty}"></option>
                             <!-- 区/县数据 -->
                             <!-- 区/县数据会根据城市的选择动态加载 -->
                         </select>
@@ -76,7 +52,7 @@
             </div>
             <div class="col-xs-12">
                 <div class="form-group">
-                    <label class="col-sm-3 control-label">详细地址：</label>
+                    <label class="col-sm-3 control-label" th:text="#{custinfo.form.address}"></label>
                     <div class="col-sm-8">
                         <input name="address" class="form-control" type="text">
                     </div>
@@ -84,7 +60,7 @@
             </div>
             <div class="col-xs-12">
                 <div class="form-group">
-                    <label class="col-sm-3 control-label">性别：</label>
+                    <label class="col-sm-3 control-label" th:text="#{custinfo.form.gender}"></label>
                     <div class="col-sm-8">
                         <div class="input-group" style="width: 100%">
                             <select name="gender" class="form-control m-b" th:with="type=${@dict.getType('sys_user_sex')}">
@@ -96,7 +72,7 @@
             </div>
             <div class="col-xs-12">
                 <div class="form-group">
-                    <label class="col-sm-3 control-label">号码：</label>
+                    <label class="col-sm-3 control-label" th:text="#{custinfo.form.phoneNum}"></label>
                     <div class="col-sm-8">
                         <input name="phoneNum" class="form-control" type="text">
                     </div>
@@ -131,8 +107,8 @@
             var countySelect = $('#countyCode');
 
             // 清空城市和区/县下拉框
-            citySelect.html('<option value="">请选择城市</option>');
-            countySelect.html('<option value="">请选择区/县</option>');
+            citySelect.html('<option value="">' + i18n('custinfo.form.city.empty') + '</option>');
+            countySelect.html('<option value="">' + i18n('custinfo.form.county.empty') + '</option>');
 
             // 发送请求获取对应的城市数据
             if (provinceCode) {
@@ -158,7 +134,7 @@
             var countySelect = $('#countyCode');
 
             // 清空区/县下拉框
-            countySelect.html('<option value="">请选择区/县</option>');
+            countySelect.html('<option value="">' + i18n('custinfo.form.county.empty') + '</option>');
 
             // 发送请求获取对应的区/县数据
             if (cityCode) {
