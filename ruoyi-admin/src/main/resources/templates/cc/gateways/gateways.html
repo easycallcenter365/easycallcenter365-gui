@@ -18,27 +18,27 @@
                     <div class="select-list">
                         <ul>
                             <li>
-                                <label>网关名称：</label>
+                                <label th:text="#{gateways.query.gwName}"></label>
                                 <input type="text" name="gwName"/>
                             </li>
                             <li>
-                                <label>profile：</label>
+                                <label th:text="#{gateways.query.profileName}"></label>
                                 <select name="profileName">
-                                    <option value="">所有</option>
+                                    <option value="" th:text="#{options.all}"></option>
                                     <option th:each="profileData:${profileList}" th:value="${profileData.profileName}" th:text="${profileData.profileName}" ></option>
                                 </select>
                             </li>
                             <li>
-                                <label>主叫号码：</label>
+                                <label th:text="#{gateways.query.caller}"></label>
                                 <input type="text" name="caller"/>
                             </li>
                             <li>
-                                <label>被叫前缀：</label>
+                                <label th:text="#{gateways.query.calleePrefix}"></label>
                                 <input type="text" name="calleePrefix"/>
                             </li>
                             <li>
-                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
-                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;<span th:text="#{btn.search}"></span></a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;<span th:text="#{btn.reset}"></span></a>
                             </li>
                         </ul>
                     </div>
@@ -47,13 +47,13 @@
 
             <div class="btn-group-sm" id="toolbar" role="group">
                 <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="cc:gateways:add">
-                    <i class="fa fa-plus"></i> 添加
+                    <i class="fa fa-plus"></i> <span th:text="#{btn.add}"></span>
                 </a>
                 <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="cc:gateways:edit">
-                    <i class="fa fa-edit"></i> 修改
+                    <i class="fa fa-edit"></i> <span th:text="#{btn.edit}"></span>
                 </a>
                 <a class="btn btn-info" onclick="createJson()" >
-                    <i class="fa fa-search"></i> 生成网关配置json
+                    <i class="fa fa-search"></i> <span th:text="#{gateways.btn.createJson}"></span>
                 </a>
             </div>
             <div class="col-sm-12 select-table table-striped">
@@ -65,7 +65,7 @@
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title">JSON 数据</h5>
+                            <h5 class="modal-title" th:text="#{gateways.title.jsonData}"></h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -90,7 +90,7 @@
                 url: prefix + "/list",
                 createUrl: prefix + "/add",
                 updateUrl: prefix + "/edit/{id}",
-                modalName: "线路配置",
+                modalName: i18n('gateways.modalName'),
                 columns: [{
                     checkbox: true
                 },
@@ -101,66 +101,66 @@
                 },
                 {
                     field: 'gwName',
-                    title: '网关名称'
+                    title: i18n('gateways.table.gwName'),
                 },
                 {
                     field: 'profileName',
-                    title: 'profile名称'
+                    title: i18n('gateways.table.profileName'),
                 },
                 {
                     field: 'caller',
-                    title: '主叫号码'
+                    title: i18n('gateways.table.caller'),
                 },
                 {
                     field: 'calleePrefix',
-                    title: '被叫前缀'
+                    title: i18n('gateways.table.calleePrefix'),
                 },
                 {
                     field: 'gwAddr',
-                    title: '网关地址'
+                    title: i18n('gateways.table.gwAddr'),
                 },
                 {
                     field: 'codec',
-                    title: '外呼语音编码'
+                    title: i18n('gateways.table.codec'),
                 },
                 {
-                    field: 'gwName',
-                    title: '网关名称描述'
+                    field: 'gwDesc',
+                    title: i18n('gateways.table.gwDesc'),
                 },
                 {
                     field: 'maxConcurrency',
-                    title: '网关最大并发数'
+                    title: i18n('gateways.table.maxConcurrency'),
                 },
                 {
                     field: 'authUsername',
-                    title: '认证用户名'
+                    title: i18n('gateways.table.authUsername'),
                 },
                 {
                     field: 'authPassword',
-                    title: '认证密码'
+                    title: i18n('gateways.table.authPassword'),
                 },
                 {
                     field: 'priority',
-                    title: '使用优先级'
+                    title: i18n('gateways.table.priority'),
                 },
                 {
                     field: 'register',
-                    title: '是否认证注册',
+                    title: i18n('gateways.table.register'),
                     formatter: function(value, item, index) {
                         if (item.register == '0') {
-                            return '<span class="badge badge-primary">对接模式</span>';
+                            return '<span class="badge badge-primary">' + i18n('gateways.table.register0') + '</span>';
                         }
                         else if (item.register == '1') {
-                            return '<span class="badge badge-success">注册模式</span>';
+                            return '<span class="badge badge-success">' + i18n('gateways.table.register1') + '</span>';
                         }
                     }
                 },
                 {
-                    title: '操作',
+                    title: i18n('gateways.table.opra'),
                     align: 'center',
                     formatter: function(value, row, index) {
                         var actions = [];
-                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>' + i18n('btn.edit') + '</a> ');
                         return actions.join('');
                     }
                 }]

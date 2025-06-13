@@ -12,10 +12,10 @@
 <div class="main-content">
     <input class="config-value form-control" id="_profileType" th:value="${profileType}" type="hidden" />
     <input class="config-value form-control" id="_operaType" th:value="add" type="hidden" />
-    <div class="h4 form-header">基础配置</div>
+    <div class="h4 form-header" th:text="#{switchconf.label.baseConfigs}"></div>
     <div id="baseConfigs"></div>
 
-    <div id="showAdvancedConfig" style="margin-top:210px" class="h6 form-header">更多</div>
+    <div id="showAdvancedConfig" style="margin-top:210px" class="h6 form-header" th:text="#{switchconf.label.more}"></div>
     <div id="advancedConfigs" style="display: none"></div>
 
     <!-- 保存按钮 -->
@@ -23,7 +23,7 @@
     <div class="row" >
         <div class="btn-group-sm" id="toolbar" role="group">
             <a class="btn btn-success" onclick="addRows()">
-                <i class="fa fa-plus"></i> 增加配置项
+                <i class="fa fa-plus"></i> <span th:text="#{profileconf.label.addrows}"></span>
             </a>
         </div>
     </div>
@@ -50,7 +50,7 @@
                 // profile名称
                 baseConfigsHtml += '<div className="row">';
                 baseConfigsHtml += '<div class="col-sm-12">';
-                baseConfigsHtml += '<label class="col-sm-4 control-label">profile名称</label><div class="col-sm-8"><input class="config-value form-control" type="text" id="profileName" onchange="changeProfileName()" value="" /></div>';
+                baseConfigsHtml += '<label class="col-sm-4 control-label">' + i18n('profileconf.label.profileName') + '</label><div class="col-sm-8"><input class="config-value form-control" type="text" id="profileName" onchange="changeProfileName()" value="" /></div>';
                 baseConfigsHtml += '</div>';
                 baseConfigsHtml += '</div>';
 
@@ -95,7 +95,7 @@
     function addRows(){
         paramSize ++;
         $("#advancedConfigs").show();
-        $('#showAdvancedConfig').text("收起");
+        $('#showAdvancedConfig').text(i18n('switchconf.label.fold'));
         var advancedConfigs = '';
         advancedConfigs += '<div className="row">';
         advancedConfigs += '<div class="col-sm-12">';
@@ -109,10 +109,10 @@
     function toggleAdvancedConfig() {
         if ($("#advancedConfigs").css('display') === 'none') {
             $("#advancedConfigs").show();
-            $('#showAdvancedConfig').text("收起");
+            $('#showAdvancedConfig').text(i18n('switchconf.label.fold'));
         } else {
             $("#advancedConfigs").hide();
-            $('#showAdvancedConfig').text("更多");
+            $('#showAdvancedConfig').text(i18n('switchconf.label.more'));
         }
     }
     // 为每个高级配置的标签添加点击事件

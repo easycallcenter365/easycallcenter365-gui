@@ -10,7 +10,7 @@
             <input name="powerId" th:field="*{powerId}" type="hidden">
             <div class="col-xs-12">
                 <div class="form-group">
-                    <label class="col-sm-3 control-label is-required">分机号：</label>
+                    <label class="col-sm-3 control-label is-required" th:text="#{extpower.form.extNum}"></label>
                     <div class="col-sm-8">
                         <input name="extNum" th:field="*{extNum}" class="form-control" type="text" required readonly="true">
                     </div>
@@ -18,7 +18,7 @@
             </div>
             <div class="col-xs-12">
                 <div class="form-group">
-                    <label class="col-sm-3 control-label is-required">业务组</label>
+                    <label class="col-sm-3 control-label is-required" th:text="#{extpower.form.groupId}"></label>
                     <div class="col-sm-8">
                         <select id="groupId" class="form-control select2-multiple" multiple>
                             <option th:each="bizGroup:${bizGroups}" th:value="${bizGroup.groupId}" th:text="${bizGroup.bizGroupName}" th:selected="${bizGroup.flag}"></option>
