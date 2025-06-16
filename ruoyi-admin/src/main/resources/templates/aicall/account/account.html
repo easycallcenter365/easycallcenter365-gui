@@ -16,7 +16,9 @@
                             </li>
                             <li>
                                 <label>实现类：</label>
-                                <input type="text" name="providerClassName"/>
+                                <select name="providerClassName" id="providerClassNameSelect" class="form-control">
+                                    <!-- 选项将通过 JavaScript 动态填充 -->
+                                </select>
                             </li>
                             <li>
                                 <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
@@ -88,6 +90,29 @@
                 }]
             };
             $.table.init(options);
+        });
+
+        $(document).ready(function() {
+            // 获取实现类下拉框数据
+            $.ajax({
+                url: ctx + "/aicall/provider/all", // 接口地址
+                type: "GET",
+                success: function(response) {
+                    // 假设返回的数据是一个数组，例如：["Provider1", "Provider2", "Provider3"]
+                    var providers = response.data;
+                    var select = $("#providerClassNameSelect");
+                    select.empty(); // 清空之前的选项
+                    providers.forEach(function(provider) {
+                        select.append($("<option>", {
+                            value: provider.providerClassName,
+                            text: provider.providerClassName
+                        }));
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error("获取实现类数据失败:", error);
+                }
+            });
         });
     </script>
 </body>

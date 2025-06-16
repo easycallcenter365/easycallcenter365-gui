@@ -86,7 +86,7 @@ INSERT INTO `sys_menu` (`menu_id`,`menu_name`,`parent_id`,`order_num`,`url`,`tar
 VALUES('3040','AI外呼记录','2000','16','/aicall/callPhone','menuItem','C','0','1','aicall:callPhone:view','#','admin',NOW()) ;
 
 INSERT INTO `sys_menu` (`menu_id`,`menu_name`,`parent_id`,`order_num`,`url`,`target`,`menu_type`,`visible`,`is_refresh`,`perms`,`icon`,`create_by`,`create_time`)
-VALUES('3041','AI外呼记录查询','3030','1','#','','F','0','1','aicall:callPhone:list','#','admin',NOW()) ;
+VALUES('3041','AI外呼记录查询','3040','1','#','','F','0','1','aicall:callPhone:list','#','admin',NOW()) ;
 
 
 /*Table structure for table `cc_tts_aliyun` */
