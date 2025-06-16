@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.aicall.mapper.CcLlmAgentAccountMapper">
+    
+    <resultMap type="CcLlmAgentAccount" id="CcLlmAgentAccountResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="accountJson"    column="account_json"    />
+        <result property="providerClassName"    column="provider_class_name"    />
+    </resultMap>
+
+    <sql id="selectCcLlmAgentAccountVo">
+        select id, name, account_json, provider_class_name from cc_llm_agent_account
+    </sql>
+
+    <select id="selectCcLlmAgentAccountList" parameterType="CcLlmAgentAccount" resultMap="CcLlmAgentAccountResult">
+        <include refid="selectCcLlmAgentAccountVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="accountJson != null  and accountJson != ''"> and account_json = #{accountJson}</if>
+            <if test="providerClassName != null  and providerClassName != ''"> and provider_class_name like concat('%', #{providerClassName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectCcLlmAgentAccountById" parameterType="Integer" resultMap="CcLlmAgentAccountResult">
+        <include refid="selectCcLlmAgentAccountVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCcLlmAgentAccount" parameterType="CcLlmAgentAccount">
+        insert into cc_llm_agent_account
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="name != null">name,</if>
+            <if test="accountJson != null and accountJson != ''">account_json,</if>
+            <if test="providerClassName != null and providerClassName != ''">provider_class_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null">#{name},</if>
+            <if test="accountJson != null and accountJson != ''">#{accountJson},</if>
+            <if test="providerClassName != null and providerClassName != ''">#{providerClassName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCcLlmAgentAccount" parameterType="CcLlmAgentAccount">
+        update cc_llm_agent_account
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="accountJson != null and accountJson != ''">account_json = #{accountJson},</if>
+            <if test="providerClassName != null and providerClassName != ''">provider_class_name = #{providerClassName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCcLlmAgentAccountById" parameterType="Integer">
+        delete from cc_llm_agent_account where id = #{id}
+    </delete>
+
+    <delete id="deleteCcLlmAgentAccountByIds" parameterType="String">
+        delete from cc_llm_agent_account where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>
