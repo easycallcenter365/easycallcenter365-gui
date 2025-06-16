@@ -35,6 +35,10 @@ public class CcCallPhone implements Serializable {
     @Excel(name = "")
     private String telephone;
 
+    /**  */
+    @Excel(name = "客户姓名")
+    private String custName;
+
     /** 创建时间 */
     @Excel(name = "创建时间")
     private Long createtime;

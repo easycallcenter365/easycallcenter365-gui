@@ -216,25 +216,48 @@ public class CcCallTaskController extends BaseController
             // 使用 Apache POI 解析 Excel 文件
             Workbook workbook = new XSSFWorkbook(inputStream);
             Sheet sheet = workbook.getSheetAt(0); // 获取第一个工作表
-            List<String> phoneNumbers = new ArrayList<>();
+            Integer rowCount = sheet.getLastRowNum();
+            log.info("累计数据行数：{}", rowCount);
+            List<CcCallPhone> phoneList = new ArrayList<>();
             Map<String, Integer> phoneMap = new HashMap<>();
 
             // 遍历工作表中的每一行
             Integer rowNum = 0;
-            for (Row row : sheet) {
-                Cell cell = row.getCell(0); // 获取第一列（手机号码列）
-                rowNum ++;
-                if (cell != null) {
+            for (int i = 1; i <= rowCount; i++) {
+                String phoneNumber = "";
+                String custName = "";
+                Row row = sheet.getRow(i);
+                Cell custNameCell = row.getCell(0); // 获取第1列（客户姓名列）
+                if (custNameCell != null) {
                     // 根据单元格类型获取值
-                    String phoneNumber = "";
                     try {
-                        switch (cell.getCellType()) {
+                        switch (custNameCell.getCellType()) {
                             case STRING:
-                                phoneNumber = cell.getStringCellValue();
+                                custName = custNameCell.getStringCellValue();
+                                break;
+                            case NUMERIC:
+                                custName = String.valueOf(custNameCell.getNumericCellValue());
+                                break;
+                            default:
+                                custName = "";
+                        }
+                    } catch (Exception e) {
+                        log.error("解析数据异常{}", ExceptionUtil.getExceptionMessage(e));
+                    }
+                }
+
+                Cell phoneCell = row.getCell(1); // 获取第2列（手机号码列）
+                rowNum ++;
+                if (phoneCell != null) {
+                    // 根据单元格类型获取值
+                    try {
+                        switch (phoneCell.getCellType()) {
+                            case STRING:
+                                phoneNumber = phoneCell.getStringCellValue();
                                 break;
                             case NUMERIC:
                                 // 使用 BigDecimal 避免科学计数法并去掉多余的 .00
-                                BigDecimal numericValue = new BigDecimal(cell.getNumericCellValue());
+                                BigDecimal numericValue = new BigDecimal(phoneCell.getNumericCellValue());
                                 phoneNumber = numericValue.stripTrailingZeros().toPlainString();
                                 break;
                             default:
@@ -243,58 +266,62 @@ public class CcCallTaskController extends BaseController
                     } catch (Exception e) {
                         log.error("解析数据异常{}", ExceptionUtil.getExceptionMessage(e));
                     }
-                    log.info("解析第{}行获取到的数据为:{}", rowNum, phoneNumber);
-                    if (StringUtils.isNotEmpty(phoneNumber)) {
-                        phoneNumber = phoneNumber.replace(".00", "").replace(".0", "").replace("-", "").replace(" ", "");
-                        if (phoneNumber.matches("\\d+")) {
-                            if (null == phoneMap.get(phoneNumber)) {
-                                phoneNumbers.add(phoneNumber);
-                                phoneMap.put(phoneNumber, rowNum);
-                            } else {
-                                log.info("第{}行数据“{}”与第{}行重复，排除", rowNum, phoneNumber, phoneMap.get(phoneNumber));
-                            }
+                }
+                log.info("解析第{}行获取到的数据为,phoneNumber:{}, custName:{}", rowNum, phoneNumber, custName);
+                if (StringUtils.isNotEmpty(phoneNumber)) {
+                    phoneNumber = phoneNumber.replace(".00", "").replace(".0", "").replace("-", "").replace(" ", "");
+                    if (phoneNumber.matches("\\d+")) {
+                        if (null == phoneMap.get(phoneNumber)) {
+                            phoneList.add(buildPhone(phoneNumber, custName, batchId));
+                            phoneMap.put(phoneNumber, rowNum);
                         } else {
-                            log.info("第{}行数据“{}”不是手机号码，排除", rowNum, phoneNumber);
+                            log.info("第{}行数据“{}”与第{}行重复，排除", rowNum, phoneNumber, phoneMap.get(phoneNumber));
                         }
+                    } else {
+                        log.info("第{}行数据“{}”不是手机号码，排除", rowNum, phoneNumber);
                     }
                 }
             }
 
             // 解析后的手机号码入库
-            List<CcCallPhone> phoneList = new ArrayList<>();
-            for (String phoneNumber : phoneNumbers) {
-                CcCallPhone callPhone = new CcCallPhone();
-                callPhone.setId(IdUtils.fastSimpleUUID());
-                callPhone.setGroupId("1");
-                callPhone.setBatchId(batchId);
-                callPhone.setTelephone(phoneNumber);
-                callPhone.setCreatetime(new Date().getTime());
-                callPhone.setCallstatus(0);
-                callPhone.setCalloutTime(0L);
-                callPhone.setCallcount(0);
-                callPhone.setCallEndTime(0L);
-                callPhone.setTimeLen(0L);
-                callPhone.setValidTimeLen(0L);
-                callPhone.setUuid("");
-                callPhone.setConnectedTime(0L);
-                callPhone.setHangupCause("");
-                callPhone.setAnsweredTime(0L);
-                callPhone.setDialogue("");
-                callPhone.setWavfile("");
-                callPhone.setRecordServerUrl("");
-                callPhone.setBizJson("");
-                callPhone.setDialogueCount(0L);
-                callPhone.setAcdOpnum("");
-                callPhone.setAcdQueueTime(0L);
-                callPhone.setAcdWaitTime(0);
-                phoneList.add(callPhone);
+            if (phoneList.size() > 0) {
+                ccCallPhoneService.batchInsertCcCallPhone(phoneList);
             }
-            ccCallPhoneService.batchInsertCcCallPhone(phoneList);
 
-            return AjaxResult.success("导入成功！共解析 " + phoneNumbers.size() + " 个手机号码。");
+            return AjaxResult.success("导入成功！共解析 " + phoneList.size() + " 个手机号码。");
         } catch (Exception e) {
             e.printStackTrace();
             return AjaxResult.error("导入失败：" + e.getMessage());
         }
+    }
+
+    private CcCallPhone buildPhone(String phoneNumber, String custName, Long batchId) {
+
+        CcCallPhone callPhone = new CcCallPhone();
+        callPhone.setId(IdUtils.fastSimpleUUID());
+        callPhone.setGroupId("1");
+        callPhone.setBatchId(batchId);
+        callPhone.setTelephone(phoneNumber);
+        callPhone.setCustName(custName);
+        callPhone.setCreatetime(new Date().getTime());
+        callPhone.setCallstatus(0);
+        callPhone.setCalloutTime(0L);
+        callPhone.setCallcount(0);
+        callPhone.setCallEndTime(0L);
+        callPhone.setTimeLen(0L);
+        callPhone.setValidTimeLen(0L);
+        callPhone.setUuid("");
+        callPhone.setConnectedTime(0L);
+        callPhone.setHangupCause("");
+        callPhone.setAnsweredTime(0L);
+        callPhone.setDialogue("");
+        callPhone.setWavfile("");
+        callPhone.setRecordServerUrl("");
+        callPhone.setBizJson("");
+        callPhone.setDialogueCount(0L);
+        callPhone.setAcdOpnum("");
+        callPhone.setAcdQueueTime(0L);
+        callPhone.setAcdWaitTime(0);
+        return callPhone;
     }
 }

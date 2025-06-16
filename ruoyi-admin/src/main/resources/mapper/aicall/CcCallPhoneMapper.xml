@@ -6,9 +6,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <resultMap type="CcCallPhone" id="CcCallPhoneResult">
         <result property="id"    column="id"    />
-        <result property="groupId"    column="group_id"    />
         <result property="batchId"    column="batch_id"    />
         <result property="telephone"    column="telephone"    />
+        <result property="custName"    column="cust_name"    />
         <result property="createtime"    column="createtime"    />
         <result property="callstatus"    column="callstatus"    />
         <result property="calloutTime"    column="callout_time"    />
@@ -31,15 +31,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectCcCallPhoneVo">
-        select id, group_id, batch_id, telephone, createtime, callstatus, callout_time, callcount, call_end_time, time_len, valid_time_len, uuid, connected_time, hangup_cause, answered_time, dialogue, wavfile, record_server_url, biz_json, dialogue_count, acd_opnum, acd_queue_time, acd_wait_time from cc_call_phone
+        select id, batch_id, telephone, cust_name, createtime, callstatus, callout_time, callcount, call_end_time, time_len, valid_time_len, uuid, connected_time, hangup_cause, answered_time, dialogue, wavfile, record_server_url, biz_json, dialogue_count, acd_opnum, acd_queue_time, acd_wait_time from cc_call_phone
     </sql>
 
     <select id="selectCcCallPhoneList" parameterType="CcCallPhone" resultMap="CcCallPhoneResult">
         <include refid="selectCcCallPhoneVo"/>
         <where>  
-            <if test="groupId != null  and groupId != ''"> and group_id = #{groupId}</if>
             <if test="batchId != null "> and batch_id = #{batchId}</if>
             <if test="telephone != null  and telephone != ''"> and telephone = #{telephone}</if>
+            <if test="custName != null  and custName != ''"> and cust_name = #{custName}</if>
             <if test="callstatus != null "> and callstatus = #{callstatus}</if>
             <if test="params.calloutTimeStart != null and params.calloutTimeStart != ''"><!-- 开始时间检索 -->
                 AND callout_time &gt;= #{params.calloutTimeStart}
@@ -83,9 +83,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         insert into cc_call_phone
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
-            <if test="groupId != null">group_id,</if>
             <if test="batchId != null">batch_id,</if>
             <if test="telephone != null and telephone != ''">telephone,</if>
+            <if test="custName != null and custName != ''">cust_name,</if>
             <if test="createtime != null">createtime,</if>
             <if test="callstatus != null">callstatus,</if>
             <if test="calloutTime != null">callout_time,</if>
@@ -108,9 +108,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
-            <if test="groupId != null">#{groupId},</if>
             <if test="batchId != null">#{batchId},</if>
             <if test="telephone != null and telephone != ''">#{telephone},</if>
+            <if test="custName != null and custName != ''">#{cust_name},</if>
             <if test="createtime != null">#{createtime},</if>
             <if test="callstatus != null">#{callstatus},</if>
             <if test="calloutTime != null">#{calloutTime},</if>
@@ -136,9 +136,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateCcCallPhone" parameterType="CcCallPhone">
         update cc_call_phone
         <trim prefix="SET" suffixOverrides=",">
-            <if test="groupId != null">group_id = #{groupId},</if>
             <if test="batchId != null">batch_id = #{batchId},</if>
             <if test="telephone != null and telephone != ''">telephone = #{telephone},</if>
+            <if test="custName != null and custName != ''">cust_name = #{custName},</if>
             <if test="createtime != null">createtime = #{createtime},</if>
             <if test="callstatus != null">callstatus = #{callstatus},</if>
             <if test="calloutTime != null">callout_time = #{calloutTime},</if>
@@ -185,7 +185,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <insert id="batchInsertCcCallPhone" parameterType="java.util.List">
         INSERT INTO cc_call_phone (
-        id, group_id, batch_id, telephone, createtime, callstatus,
+        id, batch_id, telephone, cust_name, createtime, callstatus,
         callout_time, callcount, call_end_time, time_len, valid_time_len,
         uuid, connected_time, hangup_cause,
         answered_time, dialogue, wavfile, record_server_url, biz_json,
@@ -194,14 +194,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         VALUES
         <foreach collection="list" item="item" separator=",">
             (
-            #{item.id}, #{item.groupId}, #{item.batchId}, #{item.telephone},
+            #{item.id}, #{item.batchId}, #{item.telephone}, #{item.custName},
             #{item.createtime}, #{item.callstatus}, #{item.calloutTime},
             #{item.callcount}, #{item.callEndTime}, #{item.timeLen},
             #{item.validTimeLen}, #{item.uuid},
             #{item.connectedTime}, #{item.hangupCause},
             #{item.answeredTime}, #{item.dialogue}, #{item.wavfile},
             #{item.recordServerUrl}, #{item.bizJson}, #{item.dialogueCount},
-            #{acdOpnum}, #{acdQueueTime}, #{acdWaitTime}
+            #{item.acdOpnum}, #{item.acdQueueTime}, #{item.acdWaitTime}
             )
         </foreach>
     </insert>
