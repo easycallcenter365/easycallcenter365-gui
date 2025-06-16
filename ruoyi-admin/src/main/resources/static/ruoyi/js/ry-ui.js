@@ -791,8 +791,8 @@ var table = {
             alert: function(content, type) {
                 top.layer.alert(content, {
                     icon: $.modal.icon(type),
-                    title: "系统提示",
-                    btn: ['确认'],
+                    title: i18n('modal.confirm.title'),
+                    btn: [i18n('btn.ok')],
                     btnclass: ['btn btn-primary'],
                 });
             },
@@ -849,8 +849,8 @@ var table = {
             confirm: function (content, callBack) {
                 top.layer.confirm(content, {
                     icon: 3,
-                    title: "系统提示",
-                    btn: ['确认', '取消']
+                    title: i18n('modal.confirm.title'),
+                    btn: [i18n('btn.ok'), i18n('btn.cancel')]
                 }, function (index) {
                     $.modal.close(index);
                     callBack(true);
@@ -890,7 +890,7 @@ var table = {
                     shade: 0.3,
                     title: title,
                     content: url,
-                    btn: ['确定', '关闭'],
+                    btn: [i18n('btn.ok'), i18n('btn.close')],
                     // 弹层外区域关闭
                     shadeClose: true,
                     yes: callback,
@@ -983,7 +983,7 @@ var table = {
                     shade: 0.3,
                     title: title,
                     content: url,
-                    btn: ['确定', '关闭'],
+                    btn: [i18n('btn.ok'), i18n('btn.close')],
                     // 弹层外区域关闭
                     shadeClose: true,
                     yes: function(index, layero) {
@@ -1092,7 +1092,7 @@ var table = {
                 table.set();
                 var _url = $.operate.detailUrl(id);
                 var options = {
-                    title: table.options.modalName + "详细",
+                    title: table.options.modalName + i18n('btn.detail'),
                     width: width,
                     height: height,
                     url: _url,
@@ -1106,7 +1106,7 @@ var table = {
             // 详细信息，以tab页展现
             detailTab: function(id) {
                 table.set();
-                $.modal.openTab("详细" + table.options.modalName, $.operate.detailUrl(id));
+                $.modal.openTab(i18n('btn.detail') + table.options.modalName, $.operate.detailUrl(id));
             },
             // 详细访问地址
             detailUrl: function(id) {
@@ -1161,17 +1161,17 @@ var table = {
             // 添加信息
             add: function(id) {
                 table.set();
-                $.modal.open("添加" + table.options.modalName, $.operate.addUrl(id));
+                $.modal.open(i18n('btn.add') + table.options.modalName, $.operate.addUrl(id));
             },
             // 添加信息，以tab页展现
             addTab: function (id) {
                 table.set();
-                $.modal.openTab("添加" + table.options.modalName, $.operate.addUrl(id));
+                $.modal.openTab(i18n('btn.add') + table.options.modalName, $.operate.addUrl(id));
             },
             // 添加信息 全屏
             addFull: function(id) {
                 table.set();
-                $.modal.openFull("添加" + table.options.modalName, $.operate.addUrl(id));
+                $.modal.openFull(i18n('btn.add') + table.options.modalName, $.operate.addUrl(id));
             },
             // 添加访问地址
             addUrl: function(id) {
@@ -1188,15 +1188,15 @@ var table = {
                         return;
                     }
                     var url = table.options.updateUrl.replace("{id}", row[table.options.uniqueId]);
-                    $.modal.open("修改" + table.options.modalName, url);
+                    $.modal.open(i18n('btn.edit') + table.options.modalName, url);
                 } else {
-                    $.modal.open("修改" + table.options.modalName, $.operate.editUrl(id));
+                    $.modal.open(i18n('btn.edit') + table.options.modalName, $.operate.editUrl(id));
                 }
             },
             // 修改信息，以tab页展现
             editTab: function(id) {
                 table.set();
-                $.modal.openTab("修改" + table.options.modalName, $.operate.editUrl(id));
+                $.modal.openTab(i18n('btn.edit') + table.options.modalName, $.operate.editUrl(id));
             },
             // 修改信息 全屏
             editFull: function(id) {
@@ -1217,7 +1217,7 @@ var table = {
                         url = table.options.updateUrl.replace("{id}", row);
                     }
                 }
-                $.modal.openFull("修改" + table.options.modalName, url);
+                $.modal.openFull(i18n('btn.edit') + table.options.modalName, url);
             },
             // 修改访问地址
             editUrl: function(id) {

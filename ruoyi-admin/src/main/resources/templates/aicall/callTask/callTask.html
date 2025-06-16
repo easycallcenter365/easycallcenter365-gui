@@ -11,11 +11,11 @@
                 <div class="select-list">
                     <ul>
                         <li>
-                            <label>任务名称：</label>
+                            <label th:text="#{callTask.query.batchName}"></label>
                             <input type="text" name="batchName"/>
                         </li>
                         <li>
-                            <label>任务状态：</label>
+                            <label th:text="#{callTask.query.ifcall}"></label>
                             <select name="ifcall">
                                 <option value="">全部</option>
                                 <option value="1">外呼中</option>
@@ -23,26 +23,26 @@
                             </select>
                         </li>
                         <li class="select-time">
-                            <label>创建时间： </label>
+                            <label th:text="#{callTask.query.createTime}"></label>
                             <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="createTimeStart" placeholder="开始时间" name="params[createTimeStart]"/>
                             <span>-</span>
                             <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="createTimeEnd" placeholder="结束时间" name="params[createTimeEnd]"/>
                         </li>
                         <li>
-                            <label>外呼线路：</label>
+                            <label th:text="#{callTask.query.gatewayId}"></label>
                             <select name="gatewayId" id="gatewayIdSelect">
                                 <!-- 下拉框选项将通过接口动态加载 -->
                             </select>
                         </li>
                         <li>
-                            <label>音色：</label>
+                            <label th:text="#{callTask.query.voiceCode}"></label>
                             <select name="voiceCode" id="voiceCodeSelect">
                                 <!-- 音色下拉框选项将通过接口动态加载 -->
                             </select>
                         </li>
                         <li>
-                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
-                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;<span th:text="#{btn.search}"></span></a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;<span th:text="#{btn.reset}"></span></a>
                         </li>
                     </ul>
                 </div>
@@ -51,10 +51,10 @@
 
         <div class="btn-group-sm" id="toolbar" role="group">
             <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="aicall:callTask:add">
-                <i class="fa fa-plus"></i> 添加
+                <i class="fa fa-plus"></i> <span th:text="#{btn.add}"></span>
             </a>
             <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="aicall:callTask:edit">
-                <i class="fa fa-edit"></i> 修改
+                <i class="fa fa-edit"></i> <span th:text="#{btn.edit}"></span>
             </a>
 <!--            <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="aicall:callTask:remove">-->
 <!--                <i class="fa fa-remove"></i> 删除-->
@@ -113,7 +113,7 @@
             updateUrl: prefix + "/edit/{id}",
             removeUrl: prefix + "/remove",
             exportUrl: prefix + "/export",
-            modalName: "外呼任务",
+            modalName: i18n('callTask.modalName'),
             columns: [{
                 checkbox: true
             },
@@ -124,82 +124,75 @@
                 },
                 {
                     field: 'batchName',
-                    title: '任务名称'
+                    title: i18n('callTask.table.batchName')
                 },
                 {
                     field: 'ifcall',
-                    title: '外呼状态',
+                    title: i18n('callTask.table.ifcall'),
                     formatter: function(value, row, index) {
-                        return value === '1' ? '外呼中' : '停止外呼';
+                        return value === '1' ? i18n('callTask.table.ifcall1') : i18n('callTask.table.ifcall0');
                     }
                 },
                 {
                     field: 'threadNum',
-                    title: '最大并发'
+                    title: i18n('callTask.table.threadNum')
                 },
                 {
                     field: 'gatewayId',
-                    title: '线路名称',
+                    title: i18n('callTask.table.gatewayId'),
                     formatter: function(value, row, index) {
                         return gatewayMap[value] || '未知';
                     }
                 },
                 {
                     field: 'voiceCode',
-                    title: '音色',
+                    title: i18n('callTask.table.voiceCode'),
                     formatter: function(value, row, index) {
                         return voiceMap[value] || '未知';
                     }
                 },
                 {
                     field: 'createtime',
-                    title: '创建时间',
+                    title: i18n('callTask.table.createtime'),
                     formatter: function(value, row, index) {
                         return value > 0 ? formatDate(value) : '';
                     }
                 },
                 {
                     field: 'phoneCount',
-                    title: '总名单量'
+                    title: i18n('callTask.table.phoneCount')
                 },
                 {
                     field: 'noCallCount',
-                    title: '未拨打'
+                    title: i18n('callTask.table.noCallCount')
                 },
                 {
                     field: 'callCount',
-                    title: '已拨打'
+                    title: i18n('callTask.table.callCount')
                 },
                 {
                     field: 'connectCount',
-                    title: '接通量'
+                    title: i18n('callTask.table.connectCount')
                 },
                 {
                     field: 'noConnectCount',
-                    title: '未接通量'
+                    title: i18n('callTask.table.noConnectCount')
                 },
-                // {
-                //     field: 'stopTime',
-                //     title: '停止时间',
-                //     formatter: function(value, row, index) {
-                //         return value > 0 ? formatDate(value) : '';
-                //     }
-                // },
                 {
-                    title: '操作',
+                    title: i18n('callTask.table.opra'),
                     align: 'center',
                     formatter: function(value, row, index) {
                         var actions = [];
-                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.batchId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.batchId + '\')"><i class="fa fa-edit"></i>' + i18n('btn.edit') + '</a> ');
                         // actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.batchId + '\')"><i class="fa fa-remove"></i>删除</a>');
                         if (row.ifcall == '0') {
-                            actions.push('<a class="btn btn-primary btn-xs" href="javascript:void(0)" onclick="$.operate.start(\'' + row.batchId + '\')"><i class="fa fa-play"></i>启动外呼</a>');
+                            actions.push('<a class="btn btn-primary btn-xs" href="javascript:void(0)" onclick="$.operate.start(\'' + row.batchId + '\')"><i class="fa fa-play"></i>' + i18n('callTask.btn.start') + '</a>');
                         }
                         if (row.ifcall == '1') {
-                            actions.push('<a class="btn btn-warning btn-xs" href="javascript:void(0)" onclick="$.operate.pause(\'' + row.batchId + '\')"><i class="fa fa-pause"></i>暂停外呼</a>');
+                            actions.push('<a class="btn btn-warning btn-xs" href="javascript:void(0)" onclick="$.operate.pause(\'' + row.batchId + '\')"><i class="fa fa-pause"></i>' + i18n('callTask.btn.pause') + '</a>');
                         }
                         // 添加导入数据按钮
-                        actions.push('<a class="btn btn-info btn-xs" href="javascript:void(0)" onclick="$.operate.importFile(\'' + row.batchId + '\')"><i class="fa fa-upload"></i>导入数据</a>');
+                        actions.push('<a class="btn btn-info btn-xs" href="javascript:void(0)" onclick="$.operate.importFile(\'' + row.batchId + '\')"><i class="fa fa-upload"></i>' + i18n('callTask.btn.import') + '</a>');
                         return actions.join('');
                     }
                 }]

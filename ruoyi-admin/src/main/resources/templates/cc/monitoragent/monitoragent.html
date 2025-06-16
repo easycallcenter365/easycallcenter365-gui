@@ -147,15 +147,15 @@
             columns: [
                 {
                     field: 'extnum', // 列名
-                    title: '分机号' // 显示的列名
+                    title: i18n('monitor.agent.table.extnum'),
                 },
                 {
                     field: 'opnum',
-                    title: '工号'
+                    title: i18n('monitor.agent.table.opnum'),
                 },
                 {
                     field: 'loginTime',
-                    title: '上线时间',
+                    title: i18n('monitor.agent.table.loginTime'),
                     formatter: function(value, row, index, field) {
                         // 假设value是时间戳，单位是毫秒
                         var date = new Date(Number(value));
@@ -171,7 +171,7 @@
                 },
                 {
                     field: 'lastHangupTime',
-                    title: '最后挂机时间',
+                    title: i18n('monitor.agent.table.lastHangupTime'),
                     formatter: function(value, row, index, field) {
                         var lastHangupTime = value;
                         // 假设value是时间戳，单位是毫秒
@@ -189,51 +189,28 @@
                         return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
                     }
                 },
-                // {
-                //     field: 'agentStatus',
-                //     title: '分机状态',
-                //     formatter: function(value, row, index, field) {
-                //         if (value == 1) {
-                //             return '空闲'
-                //         } else if (value == 2) {
-                //             return '通话中'
-                //         } else if (value == 3) {
-                //             return '事后处理中'
-                //         } else if (value == 4) {
-                //             return '休息中'
-                //         } else if (value == 5) {
-                //             return '培训中'
-                //         } else if (value == 6) {
-                //             return '会议中'
-                //         } else if (value == 7) {
-                //             return '刚登录系统'
-                //         } else {
-                //             return ""
-                //         }
-                //     }
-                // },
                 {
                     field: 'agentStatus',
-                    title: '坐席状态',
+                    title: i18n('monitor.agent.table.agentStatus'),
                     formatter: function(value, row, index, field) {
                         if (_listenUuid[row.extnum]) {
-                            return '忙碌'
+                            return i18n('monitor.agent.table.agentStatus.busy')
                         } else {
-                            return '空闲'
+                            return i18n('monitor.agent.table.agentStatus.free')
                         }
                     }
                 },
                 {
                     field: 'direction',
-                    title: '通话类型',
+                    title: i18n('monitor.agent.table.direction'),
                     formatter: function(value, row, index, field) {
                         if (_listenUuid[row.extnum]) {
                             var lastCallRecord = _callRecord[row.extnum];
                             if (lastCallRecord && lastCallRecord.direction == 'OUTBOUND') {
-                                return '外呼'
+                                return i18n('monitor.agent.table.direction.out')
                             }
                             if (lastCallRecord && lastCallRecord.direction == 'INBOUND') {
-                                return '呼入'
+                                return i18n('monitor.agent.table.direction.in')
                             }
                         }
                         return ''
@@ -241,15 +218,15 @@
                 },
                 {
                     field: 'callType',
-                    title: '音视频类型',
+                    title: i18n('monitor.agent.table.callType'),
                     formatter: function(value, row, index, field) {
                         if (_listenUuid[row.extnum]) {
                             var lastCallRecord = _callRecord[row.extnum];
                             if (lastCallRecord && lastCallRecord.callType == 'video') {
-                                return '视频通话'
+                                return i18n('monitor.agent.table.callType.video')
                             }
                             if (lastCallRecord && lastCallRecord.callType == 'audio') {
-                                return '音频通话'
+                                return i18n('monitor.agent.table.callType.audio')
                             }
                         }
                         return ''
@@ -257,7 +234,7 @@
                 },
                 {
                     field: 'timeLen',
-                    title: '通话时长（秒）',
+                    title: i18n('monitor.agent.table.timeLen'),
                     formatter: function(value, row, index, field) {
                         if (_listenUuid[row.extnum]) {
                             var lastCallRecord = _callRecord[row.extnum];
@@ -276,13 +253,13 @@
                 },
                 {
                     field: 'operater',
-                    title: '操作',
+                    title: i18n('monitor.agent.table.operater'),
                     align: 'center',
                     formatter: function(value, row, index) {
                         var actions = [];
                         // 通话中的显示监听按钮
                         if (_listenUuid[row.extnum]) {
-                            actions.push('<a class="btn btn-success btn-xs ' + listenFlag + '" href="javascript:void(0)" onclick="listenCall(\'' + row.extnum + '\')"><i class="fa fa-edit"></i>监听</a> ');
+                            actions.push('<a class="btn btn-success btn-xs ' + listenFlag + '" href="javascript:void(0)" onclick="listenCall(\'' + row.extnum + '\')"><i class="fa fa-edit"></i><span th:text="#{monitor.agent.btn.listen}"></span></a> ');
                         }
                         return actions.join('');
                     }

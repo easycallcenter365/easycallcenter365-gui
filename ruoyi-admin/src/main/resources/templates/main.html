@@ -3,13 +3,17 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/js/jquery.i18n.properties.min.js}"></script>
+    <div id="root-path" th:text="${#servletContext.contextPath}" style="display:none;"></div>
+    <div id="lang-country" th:text="${#locale.language + '_' + #locale.country}" style="display:none;"></div>
+    <script th:src="@{/js/i18n.js}"></script>
     <!--360浏览器优先以webkit内核解析-->
     <title>我的工作台</title>
     <link rel="shortcut icon" href="favicon.ico">
     <link href="../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
     <link href="../static/css/font-awesome.min.css" th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
     <link href="../static/css/style.min.css" th:href="@{/css/style.min.css}" rel="stylesheet"/>
-
     <link rel="stylesheet" th:href="@{/phone-bar/page.css}"></link>
     <script th:src="@{/phone-bar/ccPhoneBarSocket.js}"></script>
     <script>
@@ -25,30 +29,30 @@
 
     <form>
         <!-- 首页/工作台 -->
-        <table width="1024">
+        <table width="1080">
             <tr>
                 <td width="70%">
                     <div>
                         <div class="head_dial" style="padding-left: 10px; ">
                             <dl class="dial">
                                 <dt>
-                                    <label for="ccphoneNumber"></label><input type="text" name="ccphoneNumber" id="ccphoneNumber" placeholder="请输入电话号码" class="tel_txt" />
+                                    <label for="ccphoneNumber"></label><input type="text" name="ccphoneNumber" id="ccphoneNumber" th:attr="placeholder=#{phonebar.placeholder.phonenum}" class="tel_txt" />
                                 </dt>
                                 <dd>
-                                    <ul><li id="callStatus" title="" class="status4">没有连接</li></ul>
+                                    <ul><li id="callStatus" title="" class="status4"><span th:text="#{phonebar.ws.state.noconnected}"></span></li></ul>
                                     <span id="showCallLen" style="display:none"><b>00:00</b></span>
                                 </dd>
                             </dl>
 
                             <ul class="dial_btn">
-                                <li><a href="#" id="setFree" class="xz_btn off"></a><span>置闲</span></li>
-                                <li><a href="#" id="setBusy" class="sm_btn off"></a><span>忙碌</span></li>
-                                <li><a href="#" id="callBtn" class="wh_btn"></a><span>外呼</span></li>
-                                <li><a href="#" id="transferBtn" class="zjie_btn"></a><span>转接</span></li>
-                                <li><a href="#" id="conferenceBtn" class="hy_btn"></a><span>会议</span></li>
-                                <li><a href="#" id="hangUpBtn" class="gj_btn"></a><span>挂机</span></li>
-                                <li><a href="#" id="resetStatus" class="qz_btn"></a><span>强置</span></li>
-                                <li><a href="#" id="onLineBtn" class="sx_btn on"></a><span>签入</span></li>
+                                <li><a href="#" id="setFree" class="xz_btn off"></a><span th:text="#{phonebar.btn.free}"></span></li>
+                                <li><a href="#" id="setBusy" class="sm_btn off"></a><span th:text="#{phonebar.btn.busy}"></span></li>
+                                <li><a href="#" id="callBtn" class="wh_btn"></a><span th:text="#{phonebar.btn.call}"></span></li>
+                                <li><a href="#" id="transferBtn" class="zjie_btn"></a><span th:text="#{phonebar.btn.transfer}"></span></li>
+                                <li><a href="#" id="conferenceBtn" class="hy_btn"></a><span th:text="#{phonebar.btn.conference}"></span></li>
+                                <li><a href="#" id="hangUpBtn" class="gj_btn"></a><span th:text="#{phonebar.btn.hangUp}"></span></li>
+                                <li><a href="#" id="resetStatus" class="qz_btn"></a><span th:text="#{phonebar.btn.reset}"></span></li>
+                                <li><a href="#" id="onLineBtn" class="sx_btn on"></a><span th:text="#{phonebar.btn.onLine}"></span></li>
                             </ul>
                         </div>
                     </div>
@@ -56,27 +60,27 @@
                 <td width="30%">
                     <div>
                         <div  style="padding-left: 10px; ">
-                            &nbsp; &nbsp;  外呼设置：
-                            <label for="videoCallBtn"> <input type="radio" value="video" name="callType" id="videoCallBtn" />视频外呼</label>  &nbsp;&nbsp;
-                            <label for="audioCallBtn"> <input type="radio" value="audio"  name="callType" checked="checked" id="audioCallBtn"  />语音外呼</label>  <br />
+                            &nbsp; &nbsp;  <span th:text="#{phonebar.label.callSet}"></span>：
+                            <label for="videoCallBtn"> <input type="radio" value="video" name="callType" id="videoCallBtn" th:text="#{phonebar.video.label.video}"/></label>  &nbsp;&nbsp;
+                            <label for="audioCallBtn"> <input type="radio" value="audio"  name="callType" checked="checked" id="audioCallBtn"  th:text="#{phonebar.video.label.audio}"/></label>  <br />
 
-                            &nbsp; &nbsp; 视频清晰度:
+                            &nbsp; &nbsp; <span th:text="#{phonebar.label.videoSet}"></span>:
                             <label for="videoLevelSelect"></label><select id="videoLevelSelect">
                         </select>
-                            <input type="button" id="reInviteVideoBtn" title="发送视频邀请，可把音频通话转换为视频通话。"
-                                   onclick="_phoneBar.reInviteVideoCall();"       value="视频邀请" disabled="disabled" >
+                            <input type="button" id="reInviteVideoBtn" th:title="#{phonebar.video.title.invite}"
+                                   onclick="_phoneBar.reInviteVideoCall();"       th:value="#{phonebar.video.input.invite}" disabled="disabled" >
 
                             &nbsp;&nbsp;&nbsp;&nbsp;
                             <label for="videoListSelect"></label>
                             <select id="videoListSelect">
-                                <option value="">请选择视频</option>
-                                <option value="/usr/local/freeswitchvideo/share/freeswitch/sounds/bank.mp4">客服实例视频</option>
-                                <option value="/usr/local/freeswitchvideo/share/freeswitch/sounds/conference.mp4">多方会议视频</option>
-                                <option value="/usr/local/freeswitchvideo/share/freeswitch/sounds/15-seconds.mp4">15-seconds-demo</option>
+                                <option value="" th:text="#{phonebar.video.option.empty}"></option>
+                                <option value="/usr/local/freeswitchvideo/share/freeswitch/sounds/bank.mp4" th:text="#{phonebar.video.option.bank}"></option>
+                                <option value="/usr/local/freeswitchvideo/share/freeswitch/sounds/conference.mp4" th:text="#{phonebar.video.option.conference}"></option>
+                                <option value="/usr/local/freeswitchvideo/share/freeswitch/sounds/15-seconds.mp4" th:text="#{phonebar.video.option.demo}"></option>
 
                             </select>
-                            <input type="button" id="sendVideoFileBtn" title="推送视频给对方，以便结束当前通话。"
-                                   onclick="_phoneBar.sendVideoFile($('#videoListSelect').val());"   value="推送视频" disabled="disabled" >
+                            <input type="button" id="sendVideoFileBtn" th:title="#{phonebar.video.title.push}"
+                                   onclick="_phoneBar.sendVideoFile($('#videoListSelect').val());"   th:value="#{phonebar.video.input.push}" disabled="disabled" >
 
                         </div>
                     </div>

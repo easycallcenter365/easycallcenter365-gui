@@ -8,16 +8,16 @@
     <div class="row">
         <div class="btn-group-sm" id="toolbar" role="group">
             <a class="btn btn-success" onclick="add()" shiro:hasPermission="aicall:faq:add">
-                <i class="fa fa-plus"></i> 添加
+                <i class="fa fa-plus"></i> <span th:text="#{btn.add}"></span>
             </a>
             <a class="btn btn-warning" onclick="exportFaq()" shiro:hasPermission="aicall:faq:export">
-                <i class="fa fa-download"></i> 导出
+                <i class="fa fa-download"></i> <span th:text="#{btn.export}"></span>
             </a>
             <a class="btn btn-info" onclick="importFaq()" shiro:hasPermission="aicall:faq:import">
-                <i class="fa fa-upload"></i> 导入
+                <i class="fa fa-upload"></i> <span th:text="#{btn.import}"></span>
             </a>
             <a class="btn btn-info" onclick="batchSaveFaqs()" shiro:hasPermission="aicall:faq:add">
-                <i class="fa fa-save"></i> 保存
+                <i class="fa fa-save"></i> <span th:text="#{btn.save}"></span>
             </a>
 
         </div>
@@ -64,7 +64,7 @@
 
             var $deleteBtn = $("<a>").addClass("btn btn-danger btn-xs")
                 .attr("onclick", "remove(" + index + ")")
-                .html('<i class="fa fa-remove"></i> 删除');
+                .html('<i class="fa fa-remove"></i> ' + i18n('btn.del') + '');
 
             $actions.append($deleteBtn);
             $faqItem.append($question).append($answer).append($actions);

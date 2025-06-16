@@ -147,45 +147,45 @@
                     <div class="select-list">
                         <ul>
                             <li>
-                                <label>通话uuid：</label>
+                                <label th:text="#{inboundcdr.query.uuid}"></label>
                                 <input type="text" name="uuid"/>
                             </li>
                             <li>
-                                <label>主叫号码：</label>
+                                <label th:text="#{inboundcdr.query.caller}"></label>
                                 <input type="text" name="caller"/>
                             </li>
                             <li>
-                                <label>分机号：</label>
+                                <label th:text="#{inboundcdr.query.extnum}"></label>
                                 <input type="text" name="extnum"/>
                             </li>
                             <li>
-                                <label style="width: 105px">通话时长（分）：</label>
-                                <input type="number" id="timeLenStart" style="width: 150px" placeholder="通话时长起（分钟）" name="params[timeLenStart]"/>
+                                <label style="width: 105px" th:text="#{inboundcdr.query.timeLen}"></label>
+                                <input type="number" id="timeLenStart" style="width: 150px" th:placeholder="#{inboundcdr.query.placeholder.timeLenStart}" name="params[timeLenStart]"/>
                                 <span>-</span>
-                                <input type="number" id="timeLenEnd" style="width: 150px" placeholder="通话时长止（分钟）" name="params[timeLenEnd]"/>
+                                <input type="number" id="timeLenEnd" style="width: 150px" th:placeholder="#{inboundcdr.query.placeholder.timeLenEnd}" name="params[timeLenEnd]"/>
 
                             </li>
                             <li class="select-time">
-                                <label>呼入时间： </label>
-                                <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="inboundTimeStart" placeholder="开始时间" name="params[inboundTimeStart]"/>
+                                <label th:text="#{inboundcdr.query.inboundTime}"> </label>
+                                <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="inboundTimeStart" th:placeholder="#{inboundcdr.query.placeholder.startTime}" name="params[inboundTimeStart]"/>
                                 <span>-</span>
-                                <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="inboundTimeEnd" placeholder="结束时间" name="params[inboundTimeEnd]"/>
+                                <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="inboundTimeEnd" th:placeholder="#{inboundcdr.query.placeholder.endTime}" name="params[inboundTimeEnd]"/>
                             </li>
                             <li class="select-time">
-                                <label>接听时间： </label>
-                                <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="answeredTimeStart" placeholder="开始时间" name="params[answeredTimeStart]"/>
+                                <label th:text="#{inboundcdr.query.answeredTime}"> </label>
+                                <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="answeredTimeStart" th:placeholder="#{inboundcdr.query.placeholder.startTime}" name="params[answeredTimeStart]"/>
                                 <span>-</span>
-                                <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="answeredTimeEnd" placeholder="结束时间" name="params[answeredTimeEnd]"/>
+                                <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="answeredTimeEnd" th:placeholder="#{inboundcdr.query.placeholder.endTime}" name="params[answeredTimeEnd]"/>
                             </li>
                             <li class="select-time">
-                                <label>挂机时间： </label>
-                                <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="hangupTimeStart" placeholder="开始时间" name="params[hangupTimeStart]"/>
+                                <label th:text="#{inboundcdr.query.hangupTime}"> </label>
+                                <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="hangupTimeStart" th:placeholder="#{inboundcdr.query.placeholder.startTime}" name="params[hangupTimeStart]"/>
                                 <span>-</span>
-                                <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="hangupTimeEnd" placeholder="结束时间" name="params[hangupTimeEnd]"/>
+                                <input type="text" style="width:150px" class="time-input" data-type="datetime" data-format="yyyy-MM-dd HH:mm:ss" id="hangupTimeEnd" th:placeholder="#{inboundcdr.query.placeholder.endTime}" name="params[hangupTimeEnd]"/>
                             </li>
                             <li>
-                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
-                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;<span th:text="#{btn.search}"></span></a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;<span th:text="#{btn.reset}"></span></a>
                             </li>
                         </ul>
                     </div>
@@ -235,7 +235,7 @@
                 updateUrl: prefix + "/edit/{id}",
                 removeUrl: prefix + "/remove",
                 exportUrl: prefix + "/export",
-                modalName: "呼入记录",
+                modalName: i18n('inboundcdr.modalName'),
                 columns: [{
                     checkbox: true
                 },
@@ -246,32 +246,32 @@
                 },
                 {
                     field: 'uuid',
-                    title: '通话uuid',
+                    title: i18n('inboundcdr.table.uuid'),
                     width: 120
                 },
                 {
                     field: 'caller',
-                    title: '主叫号码'
+                    title: i18n('inboundcdr.table.caller'),
                 },
                 {
                     field: 'wavFile',
-                    title: '音视频类型',
+                    title: i18n('inboundcdr.table.wavFile'),
                     formatter: function(value, row, index, field) {
                         // 获取文件后缀
                         const extension = value.split('.').pop().toLowerCase();
                         // 判断文件类型
                         if (['wav', 'mp3', 'aac'].includes(extension)) {
-                            return `音频`;
+                            return i18n('outboundcdr.table.audio');
                         } else if (['mp4', 'avi', 'mov'].includes(extension)) {
-                            return `视频`;
+                            return i18n('outboundcdr.table.video');
                         } else {
-                            return `未知`;
+                            return i18n('outboundcdr.table.none');
                         }
                     }
                 },
                 {
                     field: 'inboundTime',
-                    title: '呼入时间',
+                    title: i18n('inboundcdr.table.inboundTime'),
                     width: 120,
                     formatter: function(value, row, index, field) {
                         // 假设value是时间戳，单位是毫秒
@@ -288,7 +288,7 @@
                 },
                 {
                     field: 'answeredTime',
-                    title: '接听时间',
+                    title: i18n('inboundcdr.table.answeredTime'),
                     width: 120,
                     formatter: function(value, row, index, field) {
                         // 假设value是时间戳，单位是毫秒
@@ -305,15 +305,15 @@
                 },
                 {
                     field: 'extnum',
-                    title: '分机号'
+                    title: i18n('inboundcdr.table.extnum'),
                 },
                 {
                     field: 'opnum',
-                    title: '工号'
+                    title: i18n('inboundcdr.table.opnum'),
                 },
                 {
                     field: 'hangupTime',
-                    title: '挂机时间',
+                    title: i18n('inboundcdr.table.hangupTime'),
                     width: 120,
                     formatter: function(value, row, index, field) {
                         // 假设value是时间戳，单位是毫秒
@@ -330,7 +330,7 @@
                 },
                 {
                     field: 'answeredTimeLen',
-                    title: '服务时长',
+                    title: i18n('inboundcdr.table.answeredTimeLen'),
                     formatter: function(value, row, index, field) {
                         // 计算分钟数，向下取整
                         var answeredTimeLen = Math.ceil(value / 1000);
@@ -347,7 +347,7 @@
                 },
                 {
                     field: 'timeLen',
-                    title: '通话总时长',
+                    title: i18n('inboundcdr.table.timeLen'),
                     formatter: function(value, row, index, field) {
                         // 计算分钟数，向下取整
                         var timeLen = Math.ceil(value / 1000);
@@ -363,14 +363,14 @@
                     }
                 },
                 {
-                    title: '操作',
+                    title: i18n('inboundcdr.table.opra'),
                     align: 'center',
                     formatter: function(value, row, index) {
                         var actions = [];
-                        actions.push('<a class="btn btn-success btn-xs ' + linstenFlag + '" href="javascript:void(0)" onclick="openModal(\'' + row.wavFileUrl + '\')"><i class="fa fa-volume-up"></i>听录音</a> ');
-                        actions.push('<a class="btn btn-success btn-xs ' + downloadFlag + '" href="javascript:void(0)" onclick="checkFileExistence(\'' + row.wavFileUrl + '\')"><i class="fa fa-download"></i>下载录音</a>');
+                        actions.push('<a class="btn btn-success btn-xs ' + linstenFlag + '" href="javascript:void(0)" onclick="openModal(\'' + row.wavFileUrl + '\')"><i class="fa fa-volume-up"></i>' + i18n('btn.record.linsten') + '</a> ');
+                        actions.push('<a class="btn btn-success btn-xs ' + downloadFlag + '" href="javascript:void(0)" onclick="checkFileExistence(\'' + row.wavFileUrl + '\')"><i class="fa fa-download"></i>' + i18n('btn.record.download') + '</a>');
                         if (row.chatContent) {
-                            actions.push('<a class="btn btn-info btn-xs" href="javascript:void(0)" onclick="openDialog(\'' + escape(JSON.stringify(row.chatContent)) + '\')"><i class="fa fa-comment"></i>查看对话</a>');
+                            actions.push('<a class="btn btn-info btn-xs" href="javascript:void(0)" onclick="openDialog(\'' + escape(JSON.stringify(row.chatContent)) + '\')"><i class="fa fa-comment"></i>' + i18n('btn.chat.show') + '</a>');
                         }
                         return actions.join('');
                     }

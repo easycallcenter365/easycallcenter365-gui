@@ -4,7 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="renderer" content="webkit">
-    <title>呼叫管理系统</title>
+	<script th:src="@{/js/jquery.min.js}"></script>
+	<script th:src="@{/js/jquery.i18n.properties.min.js}"></script>
+	<div id="root-path" th:text="${#servletContext.contextPath}" style="display:none;"></div>
+	<div id="lang-country" th:text="${#locale.language + '_' + #locale.country}" style="display:none;"></div>
+	<script th:src="@{/js/i18n.js}"></script>
+	<title>呼叫管理系统</title>
     <!-- 避免IE使用兼容模式 -->
  	<meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link th:href="@{favicon.ico}" rel="shortcut icon"/>
@@ -44,21 +49,21 @@
             <ul class="nav" id="side-menu">
             	<li>
             		<div class="user-panel">
-            			<a class="menuItem noactive" title="个人中心" th:href="@{/system/user/profile}">
-            				<div class="hide" th:text="个人中心"></div>
+            			<a class="menuItem noactive" th:title="#{top.menu.personCenter}" th:href="@{/system/user/profile}">
+            				<div class="hide" th:text="#{top.menu.personCenter}"></div>
 					        <div class="pull-left image">
 		                    	<img th:src="(${#strings.isEmpty(user.avatar)}) ? @{/img/profile.png} : @{${user.avatar}}" th:onerror="this.src='img/profile.png'" class="img-circle" alt="User Image">
 					        </div>
 				        </a>
 				        <div class="pull-left info">
 				          <p>[[${user.loginName}]]</p>
-				          <a href="javascript:;"><i class="fa fa-circle text-success"></i> 在线</a>
-				          <a th:href="@{logout}" style="padding-left:5px;"><i class="fa fa-sign-out text-danger"></i> 注销</a>
+				          <a href="javascript:;" ><i class="fa fa-circle text-success"></i><span th:text="#{top.btn.online}"/></a>
+				          <a th:href="@{logout}" style="padding-left:5px;"><i class="fa fa-sign-out text-danger"></i><span th:text="#{top.btn.logout}"/></a>
 				        </div>
 				    </div>
             	</li>
                 <li>
-                    <a class="menuItem" th:href="@{/system/main}"><i class="fa fa-home"></i> <span class="nav-label">我的工作台</span> </a>
+                    <a class="menuItem" th:href="@{/system/main}"><i class="fa fa-home"></i> <span class="nav-label"  th:text="#{_menu.home}"></span> </a>
                 </li>
                 <li th:each="menu : ${menus}">
                 	<a th:class="@{${!#strings.isEmpty(menu.url) && menu.url != '#'} ? ${menu.target}}" th:href="@{${#strings.isEmpty(menu.url)} ? |#| : ${menu.url}}" th:data-refresh="${menu.isRefresh == '0'}">
@@ -207,9 +212,9 @@
                     </a>
                 </div>
                 <ul class="nav navbar-top-links navbar-right welcome-message">
-                    <li><a data-toggle="tooltip" data-trigger="hover" data-placement="bottom" title="开发文档" href="http://doc.ruoyi.vip/ruoyi" target="_blank"><i class="fa fa-question-circle"></i> 文档</a></li>
-                    <li><a data-toggle="tooltip" data-trigger="hover" data-placement="bottom" title="锁定屏幕" href="javascript:;" id="lockScreen"><i class="fa fa-lock"></i> 锁屏</a></li>
-	                <li><a data-toggle="tooltip" data-trigger="hover" data-placement="bottom" title="全屏显示" href="javascript:;" id="fullScreen"><i class="fa fa-arrows-alt"></i> 全屏</a></li>
+<!--                    <li><a data-toggle="tooltip" data-trigger="hover" data-placement="bottom" title="开发文档" href="http://doc.ruoyi.vip/ruoyi" target="_blank"><i class="fa fa-question-circle"></i> 文档</a></li>-->
+<!--                    <li><a data-toggle="tooltip" data-trigger="hover" data-placement="bottom" title="锁定屏幕" href="javascript:;" id="lockScreen"><i class="fa fa-lock"></i> 锁屏</a></li>-->
+					<li><a data-toggle="tooltip" data-trigger="hover" data-placement="bottom" th:text="#{top.fullScreen.text}" href="javascript:;" id="fullScreen"><i class="fa fa-arrows-alt"></i><span th:title="#{top.fullScreen.title}" /></a></li>
                     <li class="dropdown user-menu">
 						<a href="javascript:void(0)" class="dropdown-toggle" data-hover="dropdown">
 							<img th:src="(${#strings.isEmpty(user.avatar)}) ? @{/img/profile.png} : @{${user.avatar}}" th:onerror="this.src='img/profile.png'" class="user-image">
@@ -218,24 +223,24 @@
 						<ul class="dropdown-menu">
 							<li class="mt5">
 								<a th:href="@{/system/user/profile}" class="menuItem noactive">
-								<i class="fa fa-user"></i> 个人中心</a>
+								<i class="fa fa-user"></i><span th:text="#{top.menu.personCenter}" /></a>
 							</li>
 							<li>
-								<a onclick="resetPwd()">
-								<i class="fa fa-key"></i> 修改密码</a>
+								<a onclick="resetPwd()" >
+								<i class="fa fa-key"></i><span th:text="#{top.menu.resetPass}"/></a>
 							</li>
 							<li>
-								<a onclick="switchSkin()">
-								<i class="fa fa-dashboard"></i> 切换主题</a>
+								<a onclick="switchSkin()" >
+								<i class="fa fa-dashboard"></i><span th:text="#{top.menu.switchSkin}"/></a>
 							</li>
 							<li>
-								<a onclick="toggleMenu()">
-								<i class="fa fa-toggle-off"></i> 横向菜单</a>
+								<a onclick="toggleMenu()" >
+								<i class="fa fa-toggle-off"></i><span th:text="#{top.menu.toggleMenu}"/></a>
 							</li>
 							<li class="divider"></li>
 							<li>
-								<a th:href="@{logout}">
-								<i class="fa fa-sign-out"></i> 退出登录</a>
+								<a th:href="@{logout}" >
+								<i class="fa fa-sign-out"></i><span th:text="#{top.menu.logout}"></span></a>
 							</li>
 						</ul>
 					</li>
@@ -248,13 +253,13 @@
             </button>
             <nav class="page-tabs menuTabs">
                 <div class="page-tabs-content">
-                    <a href="javascript:;" class="active menuTab" th:data-id="@{/system/main}">我的工作台</a>
+                    <a href="javascript:;" class="active menuTab" th:data-id="@{/system/main}"  th:text="#{_menu.home}"></a>
                 </div>
             </nav>
             <button class="roll-nav roll-right tabRight">
                 <i class="fa fa-forward"></i>
             </button>
-            <a href="javascript:void(0);" class="roll-nav roll-right tabReload"><i class="fa fa-refresh"></i> 刷新</a>
+            <a href="javascript:void(0);" class="roll-nav roll-right tabReload"><i class="fa fa-refresh"></i><span th:text="#{btn.refresh}" ></span></a>
         </div>
 
         <a id="ax_close_max" class="ax_close_max" href="javascript:;" title="关闭全屏"> <i class="fa fa-times-circle-o"></i> </a>
@@ -310,7 +315,7 @@ if($.common.isNotEmpty(skin)){
 /* 用户管理-重置密码 */
 function resetPwd() {
     var url = ctx + 'system/user/profile/resetPwd';
-    $.modal.open("重置密码", url, '770', '380');
+    $.modal.open(i18n('top.menu.resetPass'), url, '770', '380');
 }
 
 /* 切换主题 */
@@ -318,7 +323,7 @@ function switchSkin() {
     layer.open({
 		type : 2,
 		shadeClose : true,
-		title : "切换主题",
+		title : i18n('top.menu.switchSkin'),
 		area : ["530px", "386px"],
 		content : [ctx + "system/switchSkin", 'no']
 	})
@@ -326,7 +331,7 @@ function switchSkin() {
 
 /* 切换菜单 */
 function toggleMenu() {
-	$.modal.confirm("确认要切换成横向菜单吗？", function() {
+	$.modal.confirm(i18n('top.confirm.toggleMenu'), function() {
 		$.get(ctx + 'system/menuStyle/topnav', function(result) {
             window.location.reload();
 	    });
@@ -365,10 +370,10 @@ $(function() {
 	
 	/* 初始密码提示 */
 	if([[${isDefaultModifyPwd}]]) {
-		layer.confirm("您的密码还是初始密码，请修改密码！", {
+		layer.confirm(i18n('tips.defaultPass'), {
 			icon: 0,
-			title: "安全提示",
-			btn: ['确认'	, '取消'],
+			title: i18n('tips.security.title'),
+			btn: [i18n('btn.ok')	, i18n('btn.cancel')],
 			offset: ['30%']
 		}, function (index) {
 			resetPwd();
@@ -378,10 +383,10 @@ $(function() {
 	
 	/* 过期密码提示 */
 	if([[${isPasswordExpired}]]) {
-		layer.confirm("您的密码已过期，请尽快修改密码！", {
+		layer.confirm(i18n('tips.defaultPass'), {
 			icon: 0,
-			title: "安全提示",
-			btn: ['确认'	, '取消'],
+			title: i18n('tips.security.title'),
+			btn: [i18n('btn.ok')	, i18n('btn.cancel')],
 			offset: ['30%']
 		}, function (index) {
 			resetPwd();
