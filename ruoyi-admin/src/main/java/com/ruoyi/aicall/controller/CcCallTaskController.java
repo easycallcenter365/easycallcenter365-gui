@@ -11,7 +11,7 @@ import com.ruoyi.aicall.service.ICcCallPhoneService;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.ExceptionUtil;
 import com.ruoyi.common.utils.StringUtils;
-import com.ruoyi.common.utils.uuid.IdUtils;
+import com.ruoyi.common.utils.uuid.UuidGenerator;
 import com.ruoyi.framework.web.domain.server.Sys;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
@@ -298,7 +298,7 @@ public class CcCallTaskController extends BaseController
     private CcCallPhone buildPhone(String phoneNumber, String custName, Long batchId) {
 
         CcCallPhone callPhone = new CcCallPhone();
-        callPhone.setId(IdUtils.fastSimpleUUID());
+        callPhone.setId(UuidGenerator.GetOneUuid());
         callPhone.setGroupId("1");
         callPhone.setBatchId(batchId);
         callPhone.setTelephone(phoneNumber);

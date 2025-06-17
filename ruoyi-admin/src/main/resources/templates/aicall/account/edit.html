@@ -9,7 +9,7 @@
             <input name="id" th:field="*{id}" type="hidden">
             <div class="col-xs-12">
                 <div class="form-group">
-                    <label class="col-sm-3 control-label is-required" >名称：</label>
+                    <label class="col-sm-3 control-label is-required" th:text="#{llmAcount.form.name}"></label>
                     <div class="col-sm-8">
                         <input name="name" th:field="*{name}" class="form-control" required type="text">
                     </div>
@@ -17,7 +17,7 @@
             </div>
             <div class="col-xs-12">
                 <div class="form-group">
-                    <label class="col-sm-3 control-label is-required">实现类：</label>
+                    <label class="col-sm-3 control-label is-required" th:text="#{llmAcount.form.providerClassName}"></label>
                     <div class="col-sm-8">
                         <select name="providerClassName" th:field="*{providerClassName}" class="form-control" required id="providerClassNameSelect">
                             <!-- 选项将通过 JavaScript 动态填充 -->
@@ -76,19 +76,19 @@
                 // 添加字段：apiKey、modelName、serverUrl
                 container.append(`
             <div class="form-group">
-                <label class="col-sm-3 control-label">apiKey：</label>
+                <label class="col-sm-3 control-label">${i18n("llmAcount.form.apiKey")}</label>
                 <div class="col-sm-8">
                     <input name="apiKey" value="${_accountJson.apiKey || ''}" class="form-control" type="text" required>
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label">modelName：</label>
+                <label class="col-sm-3 control-label">${i18n("llmAcount.form.modelName")}</label>
                 <div class="col-sm-8">
                     <input name="modelName" value="${_accountJson.modelName || ''}" class="form-control" type="text" required>
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label">serverUrl：</label>
+                <label class="col-sm-3 control-label">${i18n("llmAcount.form.serverUrl")}</label>
                 <div class="col-sm-8">
                     <input name="serverUrl" value="${_accountJson.serverUrl || ''}" class="form-control" type="text" required>
                 </div>
@@ -98,37 +98,37 @@
                 // 添加多行文本字段
                 container.append(`
             <div class="form-group">
-                <label class="col-sm-3 control-label">llmTips：</label>
+                <label class="col-sm-3 control-label">${i18n("llmAcount.form.llmTips")}</label>
                 <div class="col-sm-8">
                     <textarea name="llmTips" class="form-control" rows="3">${_accountJson.llmTips || ''}</textarea>
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label">faqContext：</label>
+                <label class="col-sm-3 control-label">${i18n("llmAcount.form.faqContext")}</label>
                 <div class="col-sm-8">
                     <textarea name="faqContext" class="form-control" rows="3">${_accountJson.faqContext || ''}</textarea>
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label">transferToAgentTips：</label>
+                <label class="col-sm-3 control-label">${i18n("llmAcount.form.transferToAgentTips")}</label>
                 <div class="col-sm-8">
                     <textarea name="transferToAgentTips" class="form-control" rows="3">${_accountJson.transferToAgentTips || ''}</textarea>
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label">hangupTips：</label>
+                <label class="col-sm-3 control-label">${i18n("llmAcount.form.hangupTips")}</label>
                 <div class="col-sm-8">
                     <textarea name="hangupTips" class="form-control" rows="3">${_accountJson.hangupTips || ''}</textarea>
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label">customerNoVoiceTips：</label>
+                <label class="col-sm-3 control-label">${i18n("llmAcount.form.customerNoVoiceTips")}</label>
                 <div class="col-sm-8">
                     <textarea name="customerNoVoiceTips" class="form-control" rows="3">${_accountJson.customerNoVoiceTips || ''}</textarea>
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label">openingRemarks：</label>
+                <label class="col-sm-3 control-label">${i18n("llmAcount.form.openingRemarks")}</label>
                 <div class="col-sm-8">
                     <textarea name="openingRemarks" class="form-control" rows="3">${_accountJson.openingRemarks || ''}</textarea>
                 </div>
@@ -138,13 +138,13 @@
                 // 添加字段：serverUrl、botId
                 container.append(`
             <div class="form-group">
-                <label class="col-sm-3 control-label">serverUrl：</label>
+                <label class="col-sm-3 control-label">${i18n("llmAcount.form.serverUrl")}</label>
                 <div class="col-sm-8">
                     <input name="serverUrl" value="${_accountJson.serverUrl || ''}" class="form-control" type="text" required>
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label">botId：</label>
+                <label class="col-sm-3 control-label">${i18n("llmAcount.form.botId")}</label>
                 <div class="col-sm-8">
                     <input name="botId" value="${_accountJson.botId || ''}" class="form-control" type="text" required>
                 </div>
@@ -154,7 +154,7 @@
                 // 添加 tokenType 下拉框
                 container.append(`
             <div class="form-group">
-                <label class="col-sm-3 control-label">tokenType：</label>
+                <label class="col-sm-3 control-label">${i18n("llmAcount.form.tokenType")}</label>
                 <div class="col-sm-8">
                     <select name="tokenType" value="${_accountJson.tokenType || ''}" class="form-control" required id="tokenTypeSelect">
                         <option value="oauth">oauth</option>
@@ -168,25 +168,25 @@
                 container.append(`
             <div id="tokenTypeFields">
                 <div class="form-group oauthFields" style="display:none;">
-                    <label class="col-sm-3 control-label">oauthClientId：</label>
+                    <label class="col-sm-3 control-label">${i18n("llmAcount.form.oauthClientId")}</label>
                     <div class="col-sm-8">
                         <input name="oauthClientId" value="${_accountJson.oauthClientId || ''}" class="form-control" type="text" required>
                     </div>
                 </div>
                 <div class="form-group oauthFields" style="display:none;">
-                    <label class="col-sm-3 control-label">oauthPrivateKey：</label>
+                    <label class="col-sm-3 control-label">${i18n("llmAcount.form.oauthPrivateKey")}</label>
                     <div class="col-sm-8">
                         <input name="oauthPrivateKey" value="${_accountJson.oauthPrivateKey || ''}" class="form-control" type="text" required>
                     </div>
                 </div>
                 <div class="form-group oauthFields" style="display:none;">
-                    <label class="col-sm-3 control-label">oauthPublicKeyId：</label>
+                    <label class="col-sm-3 control-label">${i18n("llmAcount.form.oauthPublicKeyId")}</label>
                     <div class="col-sm-8">
                         <input name="oauthPublicKeyId" value="${_accountJson.oauthPublicKeyId || ''}" class="form-control" type="text" required>
                     </div>
                 </div>
                 <div class="form-group patFields" style="display:none;">
-                    <label class="col-sm-3 control-label">patToken：</label>
+                    <label class="col-sm-3 control-label">${i18n("llmAcount.form.patToken")}</label>
                     <div class="col-sm-8">
                         <textarea name="patToken" class="form-control" rows="3" required>${_accountJson.patToken || ''}</textarea>
                     </div>
@@ -197,25 +197,25 @@
                 // 添加多行文本字段
                 container.append(`
             <div class="form-group">
-                <label class="col-sm-3 control-label">transferToAgentTips：</label>
+                <label class="col-sm-3 control-label">${i18n("llmAcount.form.transferToAgentTips")}</label>
                 <div class="col-sm-8">
                     <textarea name="transferToAgentTips" class="form-control" rows="3">${_accountJson.transferToAgentTips || ''}</textarea>
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label">hangupTips：</label>
+                <label class="col-sm-3 control-label">${i18n("llmAcount.form.hangupTips")}</label>
                 <div class="col-sm-8">
                     <textarea name="hangupTips" class="form-control" rows="3">${_accountJson.hangupTips || ''}</textarea>
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label">customerNoVoiceTips：</label>
+                <label class="col-sm-3 control-label">${i18n("llmAcount.form.customerNoVoiceTips")}</label>
                 <div class="col-sm-8">
                     <textarea name="customerNoVoiceTips" class="form-control" rows="3">${_accountJson.customerNoVoiceTips || ''}</textarea>
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label">openingRemarks：</label>
+                <label class="col-sm-3 control-label">${i18n("llmAcount.form.openingRemarks")}</label>
                 <div class="col-sm-8">
                     <textarea name="openingRemarks" class="form-control" rows="3">${_accountJson.openingRemarks || ''}</textarea>
                 </div>

@@ -188,4 +188,8 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
         ZonedDateTime zdt = localDateTime.atZone(ZoneId.systemDefault());
         return Date.from(zdt.toInstant());
     }
+
+    public static String format(Date date, String dateFormat) {
+        return DateFormatUtils.format(date, dateFormat);
+    }
 }
