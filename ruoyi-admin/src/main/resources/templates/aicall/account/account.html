@@ -11,7 +11,7 @@
                     <div class="select-list">
                         <ul>
                             <li>
-                                <label>机器人名称：</label>
+                                <label>名称：</label>
                                 <input type="text" name="name"/>
                             </li>
                             <li>
@@ -95,13 +95,14 @@
         $(document).ready(function() {
             // 获取实现类下拉框数据
             $.ajax({
-                url: ctx + "/aicall/provider/all", // 接口地址
+                url: ctx + "aicall/provider/all", // 接口地址
                 type: "GET",
                 success: function(response) {
                     // 假设返回的数据是一个数组，例如：["Provider1", "Provider2", "Provider3"]
                     var providers = response.data;
                     var select = $("#providerClassNameSelect");
                     select.empty(); // 清空之前的选项
+                    select.append('<option value="">' + i18n('options.all') + '</option>');
                     providers.forEach(function(provider) {
                         select.append($("<option>", {
                             value: provider.providerClassName,

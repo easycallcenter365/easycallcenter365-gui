@@ -1,6 +1,8 @@
 package com.ruoyi.aicall.controller;
 
 import java.util.List;
+
+import com.ruoyi.aicall.domain.CcLlmAgentProvider;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -124,4 +126,14 @@ public class CcLlmAgentAccountController extends BaseController
     {
         return toAjax(ccLlmAgentAccountService.deleteCcLlmAgentAccountByIds(ids));
     }
+
+
+    @GetMapping("/all")
+    @ResponseBody
+    public AjaxResult all()
+    {
+        List<CcLlmAgentAccount> list = ccLlmAgentAccountService.selectCcLlmAgentAccountList(new CcLlmAgentAccount());
+        return AjaxResult.success(list);
+    }
+
 }

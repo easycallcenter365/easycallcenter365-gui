@@ -9,17 +9,9 @@
             <input name="id" th:field="*{id}" type="hidden">
             <div class="col-xs-12">
                 <div class="form-group">
-                    <label class="col-sm-3 control-label">机器人名称：</label>
+                    <label class="col-sm-3 control-label is-required" >名称：</label>
                     <div class="col-sm-8">
-                        <input name="name" th:field="*{name}" class="form-control" type="text">
-                    </div>
-                </div>
-            </div>
-            <div class="col-xs-12">
-                <div class="form-group">
-                    <label class="col-sm-3 control-label is-required">机器人配置信息：</label>
-                    <div class="col-sm-8">
-                        <textarea name="accountJson" class="form-control" required>[[*{accountJson}]]</textarea>
+                        <input name="name" th:field="*{name}" class="form-control" required type="text">
                     </div>
                 </div>
             </div>
@@ -27,24 +19,257 @@
                 <div class="form-group">
                     <label class="col-sm-3 control-label is-required">实现类：</label>
                     <div class="col-sm-8">
-                        <input name="providerClassName" th:field="*{providerClassName}" class="form-control" type="text" required>
+                        <select name="providerClassName" th:field="*{providerClassName}" class="form-control" required id="providerClassNameSelect">
+                            <!-- 选项将通过 JavaScript 动态填充 -->
+                        </select>
                     </div>
                 </div>
             </div>
+            <div class="col-xs-12" id="dynamicFieldsContainer">
+                <!-- 动态字段将在这里显示 -->
+            </div>
+
         </form>
     </div>
     <th:block th:include="include :: footer" />
     <script th:inline="javascript">
-        var prefix = ctx + "aicall/account";
+        var prefix = ctx + "aicall/account"
+        var _accountJson = JSON.parse([[${ccLlmAgentAccount.accountJson}]]);
+        var _providerClassName = [[${ccLlmAgentAccount.providerClassName}]];
+        $(document).ready(function() {
+            // 获取实现类下拉框数据
+            $.ajax({
+                url: ctx + "aicall/provider/all", // 接口地址
+                type: "GET",
+                success: function(response) {
+                    // 假设返回的数据是一个数组，例如：[{providerClassName: "Provider1"}, {providerClassName: "Provider2"}]
+                    var providers = response.data;
+                    var select = $("#providerClassNameSelect");
+                    select.empty(); // 清空之前的选项
+                    providers.forEach(function(provider) {
+                        select.append($("<option>", {
+                            value: provider.providerClassName,
+                            text: provider.providerClassName
+                        }));
+                    });
+                    select.val(_providerClassName);
+                    // 初始化动态字段
+                    updateDynamicFields(select.val());
+                },
+                error: function(xhr, status, error) {
+                    console.error("获取实现类数据失败:", error);
+                }
+            });
+
+            // 监听下拉框变化
+            $("#providerClassNameSelect").change(function() {
+                updateDynamicFields($(this).val());
+            });
+        });
+
+        // 根据选择的实现类动态更新表单字段
+        function updateDynamicFields(providerClassName) {
+            var container = $("#dynamicFieldsContainer");
+            container.empty(); // 清空之前的动态字段
+
+            if (["DeepSeekChat", "ChatGpt4o"].includes(providerClassName)) {
+                // 添加字段：apiKey、modelName、serverUrl
+                container.append(`
+            <div class="form-group">
+                <label class="col-sm-3 control-label">apiKey：</label>
+                <div class="col-sm-8">
+                    <input name="apiKey" value="${_accountJson.apiKey || ''}" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">modelName：</label>
+                <div class="col-sm-8">
+                    <input name="modelName" value="${_accountJson.modelName || ''}" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">serverUrl：</label>
+                <div class="col-sm-8">
+                    <input name="serverUrl" value="${_accountJson.serverUrl || ''}" class="form-control" type="text" required>
+                </div>
+            </div>
+        `);
+
+                // 添加多行文本字段
+                container.append(`
+            <div class="form-group">
+                <label class="col-sm-3 control-label">llmTips：</label>
+                <div class="col-sm-8">
+                    <textarea name="llmTips" class="form-control" rows="3">${_accountJson.llmTips || ''}</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">faqContext：</label>
+                <div class="col-sm-8">
+                    <textarea name="faqContext" class="form-control" rows="3">${_accountJson.faqContext || ''}</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">transferToAgentTips：</label>
+                <div class="col-sm-8">
+                    <textarea name="transferToAgentTips" class="form-control" rows="3">${_accountJson.transferToAgentTips || ''}</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">hangupTips：</label>
+                <div class="col-sm-8">
+                    <textarea name="hangupTips" class="form-control" rows="3">${_accountJson.hangupTips || ''}</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">customerNoVoiceTips：</label>
+                <div class="col-sm-8">
+                    <textarea name="customerNoVoiceTips" class="form-control" rows="3">${_accountJson.customerNoVoiceTips || ''}</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">openingRemarks：</label>
+                <div class="col-sm-8">
+                    <textarea name="openingRemarks" class="form-control" rows="3">${_accountJson.openingRemarks || ''}</textarea>
+                </div>
+            </div>
+        `);
+            } else if (["Coze", "MaxKB", "Dify"].includes(providerClassName)) {
+                // 添加字段：serverUrl、botId
+                container.append(`
+            <div class="form-group">
+                <label class="col-sm-3 control-label">serverUrl：</label>
+                <div class="col-sm-8">
+                    <input name="serverUrl" value="${_accountJson.serverUrl || ''}" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">botId：</label>
+                <div class="col-sm-8">
+                    <input name="botId" value="${_accountJson.botId || ''}" class="form-control" type="text" required>
+                </div>
+            </div>
+        `);
+
+                // 添加 tokenType 下拉框
+                container.append(`
+            <div class="form-group">
+                <label class="col-sm-3 control-label">tokenType：</label>
+                <div class="col-sm-8">
+                    <select name="tokenType" value="${_accountJson.tokenType || ''}" class="form-control" required id="tokenTypeSelect">
+                        <option value="oauth">oauth</option>
+                        <option value="pat">pat</option>
+                    </select>
+                </div>
+            </div>
+        `);
+
+                // 根据 tokenType 的选择动态显示输入框
+                container.append(`
+            <div id="tokenTypeFields">
+                <div class="form-group oauthFields" style="display:none;">
+                    <label class="col-sm-3 control-label">oauthClientId：</label>
+                    <div class="col-sm-8">
+                        <input name="oauthClientId" value="${_accountJson.oauthClientId || ''}" class="form-control" type="text" required>
+                    </div>
+                </div>
+                <div class="form-group oauthFields" style="display:none;">
+                    <label class="col-sm-3 control-label">oauthPrivateKey：</label>
+                    <div class="col-sm-8">
+                        <input name="oauthPrivateKey" value="${_accountJson.oauthPrivateKey || ''}" class="form-control" type="text" required>
+                    </div>
+                </div>
+                <div class="form-group oauthFields" style="display:none;">
+                    <label class="col-sm-3 control-label">oauthPublicKeyId：</label>
+                    <div class="col-sm-8">
+                        <input name="oauthPublicKeyId" value="${_accountJson.oauthPublicKeyId || ''}" class="form-control" type="text" required>
+                    </div>
+                </div>
+                <div class="form-group patFields" style="display:none;">
+                    <label class="col-sm-3 control-label">patToken：</label>
+                    <div class="col-sm-8">
+                        <textarea name="patToken" class="form-control" rows="3" required>${_accountJson.patToken || ''}</textarea>
+                    </div>
+                </div>
+            </div>
+        `);
+
+                // 添加多行文本字段
+                container.append(`
+            <div class="form-group">
+                <label class="col-sm-3 control-label">transferToAgentTips：</label>
+                <div class="col-sm-8">
+                    <textarea name="transferToAgentTips" class="form-control" rows="3">${_accountJson.transferToAgentTips || ''}</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">hangupTips：</label>
+                <div class="col-sm-8">
+                    <textarea name="hangupTips" class="form-control" rows="3">${_accountJson.hangupTips || ''}</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">customerNoVoiceTips：</label>
+                <div class="col-sm-8">
+                    <textarea name="customerNoVoiceTips" class="form-control" rows="3">${_accountJson.customerNoVoiceTips || ''}</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">openingRemarks：</label>
+                <div class="col-sm-8">
+                    <textarea name="openingRemarks" class="form-control" rows="3">${_accountJson.openingRemarks || ''}</textarea>
+                </div>
+            </div>
+        `);
+
+                // 监听 tokenType 下拉框变化
+                $("#tokenTypeSelect").change(function() {
+                    var selectedTokenType = $(this).val();
+                    updateTokenTypeSelect(selectedTokenType);
+                });
+
+                $("#tokenTypeSelect").val(_accountJson.tokenType);
+                var selectedTokenType = $("#tokenTypeSelect").val();
+                updateTokenTypeSelect(selectedTokenType);
+            }
+        }
+
+        function updateTokenTypeSelect(selectedTokenType){
+            console.log(selectedTokenType)
+            if (selectedTokenType === "oauth") {
+                console.log("111111111111111111111")
+                $(".oauthFields").show();
+                $(".patFields").hide();
+            } else if (selectedTokenType === "pat") {
+                console.log("2222222222222222222222")
+                $(".patFields").show();
+                $(".oauthFields").hide();
+            }
+        }
+
         $("#form-account-edit").validate({
             focusCleanup: true
         });
 
         function submitHandler() {
-            if ($.validate.form()) {
-                $.operate.save(prefix + "/edit", $('#form-account-edit').serialize());
+            if ($("#form-account-edit").valid()) {
+                // 收集动态字段
+                var dynamicFields = {};
+                $("#dynamicFieldsContainer").find("input, textarea, select").each(function() {
+                    var fieldName = $(this).attr("name");
+                    var fieldValue = $(this).val();
+                    if (fieldValue === undefined || fieldValue === null) {
+                        fieldValue = ""; // 如果未填写值，则传递空字符串
+                    }
+                    dynamicFields[fieldName] = fieldValue;
+                });
+                // 将 JSON 字符串添加到表单数据中
+                var formData = $('#form-account-edit').serializeArray();
+                formData.push({"name": "accountJson", "value": JSON.stringify(dynamicFields)})
+                $.operate.save(prefix + "/edit", formData);
             }
         }
+
     </script>
 </body>
 </html>

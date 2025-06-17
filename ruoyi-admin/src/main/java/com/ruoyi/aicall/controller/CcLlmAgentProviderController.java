@@ -127,7 +127,7 @@ public class CcLlmAgentProviderController extends BaseController
         return toAjax(ccLlmAgentProviderService.deleteCcLlmAgentProviderByIds(ids));
     }
 
-    @PostMapping("/all")
+    @GetMapping("/all")
     @ResponseBody
     public AjaxResult all()
     {

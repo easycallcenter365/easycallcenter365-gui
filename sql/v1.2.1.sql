@@ -1,6 +1,6 @@
 -- 大模型底座菜单
 INSERT INTO `sys_menu` (`menu_id`,`menu_name`,`menu_code`,`parent_id`,`order_num`,`url`,`target`,`menu_type`,`visible`,`is_refresh`,`perms`,`icon`,`create_by`,`create_time`)
-VALUES('3050','大模型配置','llmAccount','2000','16','/aicall/account','menuItem','C','0','1','aicall:account:view','#','admin',NOW()) ;
+VALUES('3050','大模型配置','llmAccount','3000','80','/aicall/account','menuItem','C','0','1','aicall:account:view','#','admin',NOW()) ;
 
 INSERT INTO `sys_menu` (`menu_id`,`menu_name`,`menu_code`,`parent_id`,`order_num`,`url`,`target`,`menu_type`,`visible`,`is_refresh`,`perms`,`icon`,`create_by`,`create_time`)
 VALUES('3051','大模型配置查询','llmAccountQuery','3050','1','#','','F','0','1','aicall:account:list','#','admin',NOW()) ;

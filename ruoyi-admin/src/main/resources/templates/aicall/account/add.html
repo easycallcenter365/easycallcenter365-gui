@@ -8,9 +8,9 @@
     <form class="form-horizontal m" id="form-account-add">
         <div class="col-xs-12">
             <div class="form-group">
-                <label class="col-sm-3 control-label">机器人名称：</label>
+                <label class="col-sm-3 control-label is-required">名称：</label>
                 <div class="col-sm-8">
-                    <input name="name" class="form-control" type="text">
+                    <input name="name" class="form-control" required type="text">
                 </div>
             </div>
         </div>
@@ -36,7 +36,7 @@
     $(document).ready(function() {
         // 获取实现类下拉框数据
         $.ajax({
-            url: ctx + "/aicall/provider/all", // 接口地址
+            url: ctx + "aicall/provider/all", // 接口地址
             type: "GET",
             success: function(response) {
                 // 假设返回的数据是一个数组，例如：[{providerClassName: "Provider1"}, {providerClassName: "Provider2"}]
@@ -163,7 +163,7 @@
 
             // 根据 tokenType 的选择动态显示输入框
             container.append(`
-                <div id="tokenTypeFields" style="display:none;">
+                <div id="tokenTypeFields">
                     <div class="form-group oauthFields" style="display:none;">
                         <label class="col-sm-3 control-label">oauthClientId：</label>
                         <div class="col-sm-8">
@@ -222,14 +222,25 @@
             // 监听 tokenType 下拉框变化
             $("#tokenTypeSelect").change(function() {
                 var selectedTokenType = $(this).val();
-                if (selectedTokenType === "oauth") {
-                    $(".oauthFields").show();
-                    $(".patFields").hide();
-                } else if (selectedTokenType === "pat") {
-                    $(".patFields").show();
-                    $(".oauthFields").hide();
-                }
+                updateTokenTypeSelect(selectedTokenType);
             });
+
+            var selectedTokenType = $("#tokenTypeSelect").val();
+            updateTokenTypeSelect(selectedTokenType);
+
+        }
+    }
+
+    function updateTokenTypeSelect(selectedTokenType){
+        console.log(selectedTokenType)
+        if (selectedTokenType === "oauth") {
+            console.log("111111111111111111111")
+            $(".oauthFields").show();
+            $(".patFields").hide();
+        } else if (selectedTokenType === "pat") {
+            console.log("2222222222222222222222")
+            $(".patFields").show();
+            $(".oauthFields").hide();
         }
     }
 
@@ -241,7 +252,7 @@
         if ($("#form-account-add").valid()) {
             // 收集动态字段
             var dynamicFields = {};
-            $("#dynamicFieldsContainer").find("input, textarea").each(function() {
+            $("#dynamicFieldsContainer").find("input, textarea, select").each(function() {
                 var fieldName = $(this).attr("name");
                 var fieldValue = $(this).val();
                 if (fieldValue === undefined || fieldValue === null) {
@@ -252,9 +263,7 @@
             // 将 JSON 字符串添加到表单数据中
             var formData = $('#form-account-add').serializeArray();
             formData.push({"name": "accountJson", "value": JSON.stringify(dynamicFields)})
-            if ($.validate.form()) {
-                $.operate.saveTab(prefix + "/add", formData);
-            }
+            $.operate.save(prefix + "/add", formData);
         }
     }
 

@@ -18,10 +18,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="gatewayId"    column="gateway_id"    />
         <result property="voiceCode"    column="voice_code"    />
         <result property="voiceSource"    column="voice_source"    />
+        <result property="llmAccountId"    column="llm_account_id"    />
     </resultMap>
 
     <sql id="selectCcCallTaskVo">
-        select batch_id, group_id, batch_name, ifcall, rate, thread_num, createtime, executing, stop_time, userid, gateway_id, voice_code, voice_source from cc_call_task
+        select batch_id, group_id, batch_name, llm_account_id, ifcall, rate, thread_num, createtime, executing, stop_time, userid, gateway_id, voice_code, voice_source from cc_call_task
     </sql>
 
     <select id="selectCcCallTaskList" parameterType="CcCallTask" resultMap="CcCallTaskResult">
@@ -39,6 +40,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="gatewayId != null "> and gateway_id = #{gatewayId}</if>
             <if test="voiceCode != null and voiceCode != ''"> and voice_code = #{voiceCode}</if>
             <if test="voiceSource != null and voiceSource != ''"> and voice_source = #{voiceSource}</if>
+            <if test="llmAccountId != null"> and llm_account_id = #{llmAccountId}</if>
             <if test="params.createTimeStart != null and params.createTimeStart != ''"><!-- 开始时间检索 -->
                 AND createtime &gt;= #{params.createTimeStart}
             </if>
@@ -68,6 +70,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="gatewayId != null">gateway_id,</if>
             <if test="voiceCode != null and voiceCode != ''">voice_code,</if>
             <if test="voiceSource != null and voiceSource != ''">voice_source,</if>
+            <if test="llmAccountId != null">llm_account_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="groupId != null and groupId != ''">#{groupId},</if>
@@ -82,6 +85,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="gatewayId != null">#{gatewayId},</if>
             <if test="voiceCode != null and voiceCode != ''">#{voiceCode},</if>
             <if test="voiceSource != null and voiceSource != ''">#{voiceSource},</if>
+            <if test="llmAccountId != null">#{llmAccountId},</if>
          </trim>
     </insert>
 
@@ -100,6 +104,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="gatewayId != null">gateway_id = #{gatewayId},</if>
             <if test="voiceCode != null and voiceCode != ''">voice_code = #{voiceCode},</if>
             <if test="voiceSource != null and voiceSource != ''">voice_source = #{voiceSource},</if>
+            <if test="llmAccountId != null">llm_account_id = #{llmAccountId},</if>
         </trim>
         where batch_id = #{batchId}
     </update>

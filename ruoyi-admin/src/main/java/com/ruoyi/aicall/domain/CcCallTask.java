@@ -79,6 +79,10 @@ public class CcCallTask implements Serializable {
     @Excel(name = "音源")
     private String voiceSource;
 
+    /** 大模型底座账号的Id */
+    @Excel(name = "大模型底座账号的Id")
+    private Integer llmAccountId;
+
     /** 请求参数 */
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private Map<String, Object> params;

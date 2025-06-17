@@ -35,6 +35,17 @@
             </div>
             <div class="col-xs-12">
                 <div class="form-group">
+                    <label class="col-sm-3 control-label is-required" th:text="#{callTask.form.llmAccountId}"></label>
+                    <div class="col-sm-8">
+                        <select name="llmAccountId" class="form-control" required>
+                            <option value="" th:text="#{callTask.form.llmAccountId.empty}"></option>
+                            <!-- 大模型底座选项将通过接口动态加载 -->
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="form-group">
                     <label class="col-sm-3 control-label" th:text="#{callTask.form.voiceCode}"></label>
                     <div class="col-sm-8">
                         <select name="voiceCode" class="form-control">
@@ -73,6 +84,18 @@
                     voiceSelect.append('<option value="">' + i18n('callTask.form.voiceCode.empty') + '</option>');
                     rsp.data.forEach(function(voice) {
                         voiceSelect.append($("<option>").attr("value", voice.voiceCode).text(voice.voiceName));
+                    });
+                }
+            });
+            // 加载大模型底座下拉框数据
+            $.ajax({
+                url: ctx + "aicall/account/all",
+                success: function(rsp) {
+                    var llmAccountSelect = $('select[name="llmAccountId"]');
+                    llmAccountSelect.empty();
+                    llmAccountSelect.append('<option value="">' + i18n('callTask.form.llmAccountId.empty') + '</option>');
+                    rsp.data.forEach(function(llmAccount) {
+                        llmAccountSelect.append($("<option>").attr("value", llmAccount.id).text(llmAccount.name));
                     });
                 }
             });
