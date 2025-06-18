@@ -21,6 +21,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +34,16 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.io.File;
 
 /**
  * 外呼任务Controller
@@ -207,6 +218,29 @@ public class CcCallTaskController extends BaseController
         return toAjax(1);
     }
 
+    // 提供模板文件下载接口
+    @GetMapping("/downloadTemplate")
+    public ResponseEntity<Resource> downloadTemplate() {
+        // 模板文件路径
+        String filePath = "static/templates/CallListTemplate.xlsx"; // 静态资源路径
+        ClassPathResource resource = new ClassPathResource(filePath);
+
+        // 检查文件是否存在
+        if (!resource.exists()) {
+            throw new RuntimeException("模板文件不存在！");
+        }
+
+        // 设置响应头
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=CallListTemplate.xlsx");
+
+        // 返回文件
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
+    }
+
     /**
      * 导入外呼任务数据
      */
@@ -227,59 +261,50 @@ public class CcCallTaskController extends BaseController
             log.info("累计数据行数：{}", rowCount);
             List<CcCallPhone> phoneList = new ArrayList<>();
             Map<String, Integer> phoneMap = new HashMap<>();
-
+            // 首行
+            Row row0 = sheet.getRow(0);
+            Integer idxCustName = -1;
+            Integer idxPhoneNum = -1;
+            Integer idxTtsText = -1;
+            for (int i = 0; i < row0.getPhysicalNumberOfCells(); i++) {
+                Cell cell = row0.getCell(i);
+                if (null != cell) {
+                    String value = getCellValue(cell);
+                    if (StringUtils.isNotEmpty(value)) {
+                        if ("客户姓名".equals(value)) {
+                            idxCustName = i;
+                        } else if ("手机号码".equals(value)) {
+                            idxPhoneNum = i;
+                        } else if ("通知内容".equals(value)) {
+                            idxTtsText = i;
+                        }
+                    }
+                }
+            }
             // 遍历工作表中的每一行
             Integer rowNum = 0;
             for (int i = 1; i <= rowCount; i++) {
-                String phoneNumber = "";
-                String custName = "";
                 Row row = sheet.getRow(i);
-                Cell custNameCell = row.getCell(0); // 获取第1列（客户姓名列）
-                if (custNameCell != null) {
-                    // 根据单元格类型获取值
-                    try {
-                        switch (custNameCell.getCellType()) {
-                            case STRING:
-                                custName = custNameCell.getStringCellValue();
-                                break;
-                            case NUMERIC:
-                                custName = String.valueOf(custNameCell.getNumericCellValue());
-                                break;
-                            default:
-                                custName = "";
-                        }
-                    } catch (Exception e) {
-                        log.error("解析数据异常{}", ExceptionUtil.getExceptionMessage(e));
-                    }
-                }
-
-                Cell phoneCell = row.getCell(1); // 获取第2列（手机号码列）
                 rowNum ++;
-                if (phoneCell != null) {
-                    // 根据单元格类型获取值
-                    try {
-                        switch (phoneCell.getCellType()) {
-                            case STRING:
-                                phoneNumber = phoneCell.getStringCellValue();
-                                break;
-                            case NUMERIC:
-                                // 使用 BigDecimal 避免科学计数法并去掉多余的 .00
-                                BigDecimal numericValue = new BigDecimal(phoneCell.getNumericCellValue());
-                                phoneNumber = numericValue.stripTrailingZeros().toPlainString();
-                                break;
-                            default:
-                                phoneNumber = "";
-                        }
-                    } catch (Exception e) {
-                        log.error("解析数据异常{}", ExceptionUtil.getExceptionMessage(e));
-                    }
+                String phoneNumber = getCellValue(row.getCell(idxPhoneNum)); // 手机号码列
+                String custName = "";
+                if (idxCustName >= 0) {
+                    custName = getCellValue(row.getCell(idxCustName)); // 客户姓名列
+                }
+                String ttsText = "";
+                if (idxTtsText >= 0) {
+                    ttsText = getCellValue(row.getCell(idxTtsText)); // 通知内容列
                 }
                 log.info("解析第{}行获取到的数据为,phoneNumber:{}, custName:{}", rowNum, phoneNumber, custName);
                 if (StringUtils.isNotEmpty(phoneNumber)) {
                     phoneNumber = phoneNumber.replace(".00", "").replace(".0", "").replace("-", "").replace(" ", "");
                     if (phoneNumber.matches("\\d+")) {
                         if (null == phoneMap.get(phoneNumber)) {
-                            phoneList.add(buildPhone(phoneNumber, custName, batchId));
+                            CcCallPhone callPhone = buildPhone(ccCallTask);
+                            callPhone.setTelephone(phoneNumber);
+                            callPhone.setCustName(custName);
+                            callPhone.setTtsText(ttsText);
+                            phoneList.add(callPhone);
                             phoneMap.put(phoneNumber, rowNum);
                         } else {
                             log.info("第{}行数据“{}”与第{}行重复，排除", rowNum, phoneNumber, phoneMap.get(phoneNumber));
@@ -302,14 +327,36 @@ public class CcCallTaskController extends BaseController
         }
     }
 
-    private CcCallPhone buildPhone(String phoneNumber, String custName, Long batchId) {
+    private String getCellValue(Cell cell) {
+        String cellValue = "";
+        if (cell != null) {
+            // 根据单元格类型获取值
+            try {
+                switch (cell.getCellType()) {
+                    case STRING:
+                        cellValue = cell.getStringCellValue();
+                        break;
+                    case NUMERIC:
+                        // 使用 BigDecimal 避免科学计数法并去掉多余的 .00
+                        BigDecimal numericValue = new BigDecimal(cell.getNumericCellValue());
+                        cellValue = numericValue.stripTrailingZeros().toPlainString();
+                        break;
+                    default:
+                        cellValue = "";
+                }
+            } catch (Exception e) {
+                log.error("解析数据异常{}", ExceptionUtil.getExceptionMessage(e));
+            }
+        }
+        return cellValue;
+    }
+
+    private CcCallPhone buildPhone(CcCallTask ccCallTask) {
 
         CcCallPhone callPhone = new CcCallPhone();
         callPhone.setId(UuidGenerator.GetOneUuid());
         callPhone.setGroupId("1");
-        callPhone.setBatchId(batchId);
-        callPhone.setTelephone(phoneNumber);
-        callPhone.setCustName(custName);
+        callPhone.setBatchId(ccCallTask.getBatchId());
         callPhone.setCreatetime(new Date().getTime());
         callPhone.setCallstatus(0);
         callPhone.setCalloutTime(0L);
