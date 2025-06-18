@@ -6,6 +6,8 @@ import com.ruoyi.cc.domain.CcParams;
 import com.ruoyi.cc.mapper.CcParamsMapper;
 import com.ruoyi.cc.service.ICcParamsService;
 import com.ruoyi.common.utils.CommonUtils;
+import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.http.HttpUtils;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -135,5 +137,22 @@ public class CcParamsServiceImpl implements ICcParamsService
             return list.get(0).getParamValue();
         }
         return defaultValue;
+    }
+
+    @Override
+    public void updateParamsValue(String paramCode, String paramValue) {
+        ccParamsMapper.updateParamsValue(paramCode, paramValue);
+    }
+
+    @Override
+    public String reloadParams() {
+        // Access the 'reloadParams' webapi interface to make the parameters take effect;
+        String serverPort = getParamValueByCode("call-center-server-port", "");
+        if(!StringUtils.isEmpty(serverPort)){
+            String reloadParamsUrl = String.format("http://127.0.0.1:%s/call-center/reloadParams", serverPort);
+            String response = HttpUtils.sendGet(reloadParamsUrl);
+            return response;
+        }
+        return "";
     }
 }

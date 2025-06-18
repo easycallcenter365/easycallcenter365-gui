@@ -332,7 +332,24 @@ public class FsConfController extends BaseController {
     public AjaxResult setAliTtsConf(@RequestBody JSONArray params) {
         String asrFileName = "/autoload_configs/aliyun_tts.conf.xml";
         String moduleName = "mod_aliyun_tts";
-        return saveAndReloadAsrModule(asrFileName, moduleName, params);
+        AjaxResult result = saveAndReloadAsrModule(asrFileName, moduleName, params);
+        if (result.isSuccess()) {
+            String paramCode = "aliyun-tts-account-json";
+            JSONObject paramValues = new JSONObject();
+            for (int j = 0; j < params.size(); j++) {
+                JSONObject param = params.getJSONObject(j);
+                String attrName = param.getString("name");
+                String attValue = param.getString("value");
+                paramValues.put(attrName, attValue);
+            }
+            ccParamsService.updateParamsValue(paramCode, JSONObject.toJSONString(paramValues));
+
+            String reloadRsp = ccParamsService.reloadParams();
+            if(!reloadRsp.equalsIgnoreCase("success")){
+                return error("参数修改成功, 但是刷新失败, 请手动重启 call-center!");
+            }
+        }
+        return result;
     }
 
     private AjaxResult checkSoftVersion(){

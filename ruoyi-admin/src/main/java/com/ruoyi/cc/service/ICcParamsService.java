@@ -66,4 +66,17 @@ public interface ICcParamsService
      * @return
      */
     String getParamValueByCode(String paramCode, String defaultValue);
+
+    /**
+     * 更新参数值
+     * @param paramCode
+     * @param paramValue
+     */
+    void updateParamsValue(String paramCode, String paramValue);
+
+    /**
+     *
+     * @return
+     */
+    String reloadParams();
 }

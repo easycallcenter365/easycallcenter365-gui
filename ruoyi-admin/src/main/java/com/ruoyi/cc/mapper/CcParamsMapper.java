@@ -59,4 +59,11 @@ public interface CcParamsMapper
      * @return 结果
      */
     public int deleteCcParamsByIds(String[] ids);
+
+    /**
+     * 
+     * @param paramCode
+     * @param paramValue
+     */
+    void updateParamsValue(String paramCode, String paramValue);
 }

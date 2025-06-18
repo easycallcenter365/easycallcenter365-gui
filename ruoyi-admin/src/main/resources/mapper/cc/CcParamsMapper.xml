@@ -70,4 +70,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </delete>
 
+    <update id="updateParamsValue" parameterType="String">
+        update cc_params set param_value = #{paramValue} where param_code = #{paramCode}
+    </update>
+
 </mapper>

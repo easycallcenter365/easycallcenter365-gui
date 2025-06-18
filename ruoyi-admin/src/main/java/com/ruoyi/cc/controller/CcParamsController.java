@@ -115,17 +115,10 @@ public class CcParamsController extends BaseController
     {
         AjaxResult result = toAjax(ccParamsService.updateCcParams(ccParams));
 
-        // Access the 'reloadParams' webapi interface to make the parameters take effect;
-        String serverPort = ccParamsService.getParamValueByCode(
-                "call-center-server-port", "");
-        if(!StringUtils.isEmpty(serverPort)){
-            String reloadParamsUrl = String.format("http://127.0.0.1:%s/call-center/reloadParams", serverPort);
-            String response = HttpUtils.sendGet(reloadParamsUrl);
-            if(!response.equalsIgnoreCase("success")){
-               return error("参数修改成功, 但是刷新失败, 请手动重启 call-center!");
-            }
+        String reloadRsp = ccParamsService.reloadParams();
+        if(!reloadRsp.equalsIgnoreCase("success")){
+            return error("参数修改成功, 但是刷新失败, 请手动重启 call-center!");
         }
-
         return result;
     }
 
