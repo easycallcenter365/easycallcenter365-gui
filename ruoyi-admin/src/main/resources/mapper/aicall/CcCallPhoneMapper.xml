@@ -28,10 +28,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="acdOpnum"    column="acd_opnum"    />
         <result property="acdQueueTime"    column="dialogue_count"    />
         <result property="acdWaitTime"    column="dialogue_count"    />
+        <result property="ttsText"    column="tts_text"    />
     </resultMap>
 
     <sql id="selectCcCallPhoneVo">
-        select id, batch_id, telephone, cust_name, createtime, callstatus, callout_time, callcount, call_end_time, time_len, valid_time_len, uuid, connected_time, hangup_cause, answered_time, dialogue, wavfile, record_server_url, biz_json, dialogue_count, acd_opnum, acd_queue_time, acd_wait_time from cc_call_phone
+        select id, batch_id, telephone, cust_name, createtime, callstatus, callout_time, callcount, call_end_time, time_len, valid_time_len, uuid, connected_time, hangup_cause, answered_time, dialogue, wavfile, record_server_url, biz_json, dialogue_count, acd_opnum, acd_queue_time, acd_wait_time, tts_text from cc_call_phone
     </sql>
 
     <select id="selectCcCallPhoneList" parameterType="CcCallPhone" resultMap="CcCallPhoneResult">
@@ -105,6 +106,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="acdOpnum != null and acdOpnum != ''">acd_opnum,</if>
             <if test="acdQueueTime != null">acd_queue_time,</if>
             <if test="acdWaitTime != null">acd_wait_time,</if>
+            <if test="ttsText != null">tts_text,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -130,6 +132,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="acdOpnum != null and acdOpnum != ''">#{acdOpnum},</if>
             <if test="acdQueueTime != null">#{acdQueueTime},</if>
             <if test="acdWaitTime != null">#{acdWaitTime},</if>
+            <if test="ttsText != null">#{ttsText},</if>
          </trim>
     </insert>
 
@@ -158,6 +161,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="acdOpnum != null and acdOpnum != ''">acd_opnum = #{acdOpnum},</if>
             <if test="acdQueueTime != null">acd_queue_time = #{acdQueueTime},</if>
             <if test="acdWaitTime != null">acd_wait_time = #{acdWaitTime},</if>
+            <if test="ttsText != null">tts_text = #{ttsText},</if>
         </trim>
         where id = #{id}
     </update>
@@ -189,7 +193,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         callout_time, callcount, call_end_time, time_len, valid_time_len,
         uuid, connected_time, hangup_cause,
         answered_time, dialogue, wavfile, record_server_url, biz_json,
-        dialogue_count,acd_opnum,acd_queue_time,acd_wait_time
+        dialogue_count,acd_opnum,acd_queue_time,acd_wait_time, tts_text
         )
         VALUES
         <foreach collection="list" item="item" separator=",">
@@ -201,7 +205,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{item.connectedTime}, #{item.hangupCause},
             #{item.answeredTime}, #{item.dialogue}, #{item.wavfile},
             #{item.recordServerUrl}, #{item.bizJson}, #{item.dialogueCount},
-            #{item.acdOpnum}, #{item.acdQueueTime}, #{item.acdWaitTime}
+            #{item.acdOpnum}, #{item.acdQueueTime}, #{item.acdWaitTime}, #{item.ttsText}
             )
         </foreach>
     </insert>

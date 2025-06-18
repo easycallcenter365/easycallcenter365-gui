@@ -71,10 +71,6 @@ public class CcCallPhone implements Serializable {
     @Excel(name = "通话唯一标志")
     private String uuid;
 
-//    /** 机器人接听端的通话唯一标识; */
-//    @Excel(name = "机器人接听端的通话唯一标识;")
-//    private String uuidRobot;
-
     /** 通话接通时间 */
     @Excel(name = "通话接通时间")
     private Long connectedTime;
@@ -82,10 +78,6 @@ public class CcCallPhone implements Serializable {
     /** 挂机原因 */
     @Excel(name = "挂机原因")
     private String hangupCause;
-
-//    /** 加入转人工排队的时间; */
-//    @Excel(name = "加入转人工排队的时间;")
-//    private Long queueTime;
 
     /** 电话应答时间 */
     @Excel(name = "电话应答时间")
@@ -107,45 +99,9 @@ public class CcCallPhone implements Serializable {
     @Excel(name = "业务json数据")
     private String bizJson;
 
-//    /** 振铃文件是否写入了磁盘; 0 否 1是 */
-//    @Excel(name = "振铃文件是否写入了磁盘; 0 否 1是")
-//    private Integer ringingFileFlag;
-//
-//    /** 振铃文件路径; */
-//    @Excel(name = "振铃文件路径;")
-//    private String ringingWavFile;
-//
-//    /** 振铃文件是否已经送asr识别; 0 否 1 是 */
-//    @Excel(name = "振铃文件是否已经送asr识别; 0 否 1 是")
-//    private Integer ringingFileProcessed;
-//
-//    /** asr引擎;  0 没有获取到asr通道;  1 阿里; 2 思必驰 3 百度 */
-//    @Excel(name = "asr引擎;  0 没有获取到asr通道;  1 阿里; 2 思必驰 3 百度")
-//    private Long asrProduct;
-//
-//    /** 1客户主动挂断; 2机器人主动挂断; */
-//    @Excel(name = "1客户主动挂断; 2机器人主动挂断;")
-//    private Long whoHangup;
-
     /** 交互轮次（一问一答算一轮交互） */
     @Excel(name = "交互轮次", readConverterExp = "一=问一答算一轮交互")
     private Long dialogueCount;
-
-//    /** 使用哪条线路外呼 */
-//    @Excel(name = "使用哪条线路外呼")
-//    private Long gatewayId;
-//
-//    /** 音色 */
-//    @Excel(name = "音色")
-//    private String voiceCode;
-//
-//    /** 音源 */
-//    @Excel(name = "音源")
-//    private String voiceSource;
-//
-//    /** 话术录音文件根路径 */
-//    @Excel(name = "话术录音文件根路径")
-//    private String recordPath;
 
 
     /** 人工坐席工号 */
@@ -159,6 +115,10 @@ public class CcCallPhone implements Serializable {
     /** 人工排队等待时长,秒 */
     @Excel(name = "人工排队等待时长,秒", readConverterExp = "人工排队等待时长,秒")
     private Integer acdWaitTime;
+
+    /** tts text for voice call notification. */
+    @Excel(name = "tts text for voice call notification.", readConverterExp = "tts text for voice call notification.")
+    private String ttsText;
 
     /** 请求参数 */
     @JsonInclude(JsonInclude.Include.NON_EMPTY)

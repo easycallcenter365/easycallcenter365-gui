@@ -37,7 +37,7 @@ public class CcCallTask implements Serializable {
 
     /** 外呼速率 */
     @Excel(name = "外呼速率")
-    private Long rate;
+    private Double rate;
 
     /** 当前任务最大可用外线数 */
     @Excel(name = "当前任务最大可用外线数")
@@ -59,13 +59,9 @@ public class CcCallTask implements Serializable {
     @Excel(name = "任务创建者用户id")
     private String userid;
 
-//    /** 号码缓存池大小; 标记为删除，代码已经不在引用该字段。 */
-//    @Excel(name = "号码缓存池大小; 标记为删除，代码已经不在引用该字段。")
-//    private Long phonenumBuffer;
-//
-//    /** 一批数据外呼后等待时间。标记为删除，代码已经不在引用该字段。 */
-//    @Excel(name = "一批数据外呼后等待时间。标记为删除，代码已经不在引用该字段。")
-//    private Long batchcallWaitTime;
+    /** 0 Pure manual outbound call; 1 Pure AI outbound calling; 2 Human-machine coupling */
+    @Excel(name = "0 Pure manual outbound call; 1 Pure AI outbound calling; 2 Human-machine coupling")
+    private Integer taskType;
 
     /** 使用哪条线路外呼 */
     @Excel(name = "使用哪条线路外呼")
@@ -79,9 +75,29 @@ public class CcCallTask implements Serializable {
     @Excel(name = "音源")
     private String voiceSource;
 
+    /** The average ringing duration of the call; seconds */
+    @Excel(name = "The average ringing duration of the call; seconds")
+    private Double avgRingTimeLen;
+
+    /** The average pure call duration per call; seconds */
+    @Excel(name = "The average pure call duration per call; seconds")
+    private Double avgCallTalkTimeLen;
+
+    /** The duration of form filling after the call ends; seconds */
+    @Excel(name = "The duration of form filling after the call ends; seconds")
+    private Double avgCallEndProcessTimeLen;
+
+    /** 外呼节点 */
+    @Excel(name = "外呼节点")
+    private String callNodeNo;
+
     /** 大模型底座账号的Id */
     @Excel(name = "大模型底座账号的Id")
     private Integer llmAccountId;
+
+    /** 播放次数 */
+    @Excel(name = "播放次数")
+    private Integer playTimes;
 
     /** 请求参数 */
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -101,5 +117,9 @@ public class CcCallTask implements Serializable {
 
     /** 未接通名单量 */
     private Integer noConnectCount;
+
+    /** 预估接通率 (百分数格式)*/
+    @Excel(name = "预估接通率")
+    private Integer conntectRate;
 
 }

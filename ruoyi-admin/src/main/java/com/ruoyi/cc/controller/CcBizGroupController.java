@@ -2,6 +2,8 @@ package com.ruoyi.cc.controller;
 
 import java.util.Date;
 import java.util.List;
+
+import com.ruoyi.aicall.domain.CcTtsAliyun;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -125,5 +127,17 @@ public class CcBizGroupController extends BaseController
     public AjaxResult remove(String ids)
     {
         return toAjax(ccBizGroupService.deleteCcBizGroupByGroupIds(ids));
+    }
+
+
+    /**
+     * 查询全部业务组列表
+     */
+    @GetMapping("/all")
+    @ResponseBody
+    public AjaxResult all()
+    {
+        List<CcBizGroup> list = ccBizGroupService.selectCcBizGroupList(new CcBizGroup());
+        return AjaxResult.success(list);
     }
 }

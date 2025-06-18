@@ -15,11 +15,20 @@
                             <input type="text" name="batchName"/>
                         </li>
                         <li>
+                            <label th:text="#{callTask.query.taskType}"></label>
+                            <select name="taskType">
+                                <option value="" th:text="#{options.all}"></option>
+                                <option value="0" th:text="#{callTask.query.taskType0}"></option>
+                                <option value="1" th:text="#{callTask.query.taskType1}"></option>
+                                <option value="2" th:text="#{callTask.query.taskType2}"></option>
+                            </select>
+                        </li>
+                        <li>
                             <label th:text="#{callTask.query.ifcall}"></label>
                             <select name="ifcall">
-                                <option value="">全部</option>
-                                <option value="1">外呼中</option>
-                                <option value="0">停止外呼</option>
+                                <option value="" th:text="#{options.all}"></option>
+                                <option value="1" th:text="#{callTask.table.ifcall1}"></option>
+                                <option value="0" th:text="#{callTask.table.ifcall0}"></option>
                             </select>
                         </li>
                         <li class="select-time">
@@ -56,9 +65,6 @@
             <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="aicall:callTask:edit">
                 <i class="fa fa-edit"></i> <span th:text="#{btn.edit}"></span>
             </a>
-<!--            <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="aicall:callTask:remove">-->
-<!--                <i class="fa fa-remove"></i> 删除-->
-<!--            </a>-->
         </div>
         <div class="col-sm-12 select-table table-striped">
             <table id="bootstrap-table"></table>
@@ -127,10 +133,28 @@
                     title: i18n('callTask.table.batchName')
                 },
                 {
+                    field: 'taskType',
+                    title: i18n('callTask.table.taskType'),
+                    formatter: function(value, row, index) {
+                        if (value == '0') {
+                            return i18n('callTask.table.taskType0');
+                        } else if (value == '1') {
+                            return i18n('callTask.table.taskType1');
+                        } else if (value == '2') {
+                            return i18n('callTask.table.taskType2');
+                        }
+                        return "-";
+                    }
+                },
+                {
                     field: 'ifcall',
                     title: i18n('callTask.table.ifcall'),
                     formatter: function(value, row, index) {
-                        return value === '1' ? i18n('callTask.table.ifcall1') : i18n('callTask.table.ifcall0');
+                        if (value == '1') {
+                            return i18n('callTask.table.ifcall1');
+                        } else {
+                            return i18n('callTask.table.ifcall0');
+                        }
                     }
                 },
                 {
@@ -141,14 +165,14 @@
                     field: 'gatewayId',
                     title: i18n('callTask.table.gatewayId'),
                     formatter: function(value, row, index) {
-                        return gatewayMap[value] || '未知';
+                        return gatewayMap[value] || '-';
                     }
                 },
                 {
                     field: 'voiceCode',
                     title: i18n('callTask.table.voiceCode'),
                     formatter: function(value, row, index) {
-                        return voiceMap[value] || '未知';
+                        return voiceMap[value] || '-';
                     }
                 },
                 {

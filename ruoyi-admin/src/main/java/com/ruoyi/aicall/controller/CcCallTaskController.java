@@ -126,6 +126,10 @@ public class CcCallTaskController extends BaseController
     @ResponseBody
     public AjaxResult addSave(CcCallTask ccCallTask)
     {
+        // 外呼速率=1/接通率
+        if (null != ccCallTask.getConntectRate() && ccCallTask.getConntectRate() > 0) {
+            ccCallTask.setRate(ccCallTask.getConntectRate()/100.0);
+        }
         ccCallTask.setCreatetime(System.currentTimeMillis());
         return toAjax(ccCallTaskService.insertCcCallTask(ccCallTask));
     }
@@ -138,6 +142,9 @@ public class CcCallTaskController extends BaseController
     public String edit(@PathVariable("batchId") Long batchId, ModelMap mmap)
     {
         CcCallTask ccCallTask = ccCallTaskService.selectCcCallTaskByBatchId(batchId);
+        if (null != ccCallTask.getRate() && ccCallTask.getRate() > 0) {
+            ccCallTask.setConntectRate((Double.valueOf(ccCallTask.getRate()*100.0).intValue()));
+        }
         mmap.put("ccCallTask", ccCallTask);
         return prefix + "/edit";
     }

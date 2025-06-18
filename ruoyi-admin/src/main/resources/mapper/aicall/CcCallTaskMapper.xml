@@ -16,13 +16,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="stopTime"    column="stop_time"    />
         <result property="userid"    column="userid"    />
         <result property="gatewayId"    column="gateway_id"    />
+        <result property="taskType"    column="task_type"    />
         <result property="voiceCode"    column="voice_code"    />
         <result property="voiceSource"    column="voice_source"    />
+        <result property="avgRingTimeLen"    column="avg_ring_time_len"    />
+        <result property="avgCallTalkTimeLen"    column="avg_call_talk_time_len"    />
+        <result property="avgCallEndProcessTimeLen"    column="avg_call_end_process_time_len"    />
+        <result property="callNodeNo"    column="call_node_no"    />
         <result property="llmAccountId"    column="llm_account_id"    />
+        <result property="playTimes"    column="play_times"    />
     </resultMap>
 
     <sql id="selectCcCallTaskVo">
-        select batch_id, group_id, batch_name, llm_account_id, ifcall, rate, thread_num, createtime, executing, stop_time, userid, gateway_id, voice_code, voice_source from cc_call_task
+        select batch_id, group_id, batch_name, ifcall, rate, thread_num, createtime, executing, stop_time, userid, task_type, gateway_id, voice_code, voice_source, avg_ring_time_len, avg_call_talk_time_len, avg_call_end_process_time_len, call_node_no, llm_account_id, play_times from cc_call_task
     </sql>
 
     <select id="selectCcCallTaskList" parameterType="CcCallTask" resultMap="CcCallTaskResult">
@@ -31,12 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="groupId != null  and groupId != ''"> and group_id = #{groupId}</if>
             <if test="batchName != null  and batchName != ''"> and batch_name like concat('%', #{batchName}, '%')</if>
             <if test="ifcall != null "> and ifcall = #{ifcall}</if>
-            <if test="rate != null "> and rate = #{rate}</if>
-            <if test="threadNum != null "> and thread_num = #{threadNum}</if>
-            <if test="createtime != null "> and createtime = #{createtime}</if>
-            <if test="executing != null "> and executing = #{executing}</if>
-            <if test="stopTime != null "> and stop_time = #{stopTime}</if>
-            <if test="userid != null  and userid != ''"> and userid = #{userid}</if>
+            <if test="taskType != null "> and task_type = #{taskType}</if>
             <if test="gatewayId != null "> and gateway_id = #{gatewayId}</if>
             <if test="voiceCode != null and voiceCode != ''"> and voice_code = #{voiceCode}</if>
             <if test="voiceSource != null and voiceSource != ''"> and voice_source = #{voiceSource}</if>
@@ -67,10 +68,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="executing != null">executing,</if>
             <if test="stopTime != null">stop_time,</if>
             <if test="userid != null and userid != ''">userid,</if>
+            <if test="taskType != null">task_type,</if>
             <if test="gatewayId != null">gateway_id,</if>
             <if test="voiceCode != null and voiceCode != ''">voice_code,</if>
             <if test="voiceSource != null and voiceSource != ''">voice_source,</if>
+            <if test="avgRingTimeLen != null">avg_ring_time_len,</if>
+            <if test="avgCallTalkTimeLen != null">avg_call_talk_time_len,</if>
+            <if test="avgCallEndProcessTimeLen != null">avg_call_end_process_time_len,</if>
+            <if test="callNodeNo != null">call_node_no,</if>
             <if test="llmAccountId != null">llm_account_id,</if>
+            <if test="playTimes != null">play_times,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="groupId != null and groupId != ''">#{groupId},</if>
@@ -82,10 +89,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="executing != null">#{executing},</if>
             <if test="stopTime != null">#{stopTime},</if>
             <if test="userid != null and userid != ''">#{userid},</if>
+            <if test="taskType != null">#{taskType},</if>
             <if test="gatewayId != null">#{gatewayId},</if>
             <if test="voiceCode != null and voiceCode != ''">#{voiceCode},</if>
             <if test="voiceSource != null and voiceSource != ''">#{voiceSource},</if>
+            <if test="avgRingTimeLen != null">#{avgRingTimeLen},</if>
+            <if test="avgCallTalkTimeLen != null">#{avgCallTalkTimeLen},</if>
+            <if test="avgCallEndProcessTimeLen != null">#{avgCallEndProcessTimeLen},</if>
+            <if test="callNodeNo != null">#{callNodeNo},</if>
             <if test="llmAccountId != null">#{llmAccountId},</if>
+            <if test="playTimes != null">#{playTimes},</if>
          </trim>
     </insert>
 
@@ -102,9 +115,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="stopTime != null">stop_time = #{stopTime},</if>
             <if test="userid != null and userid != ''">userid = #{userid},</if>
             <if test="gatewayId != null">gateway_id = #{gatewayId},</if>
+            <if test="taskType != null">task_type = #{taskType},</if>
             <if test="voiceCode != null and voiceCode != ''">voice_code = #{voiceCode},</if>
             <if test="voiceSource != null and voiceSource != ''">voice_source = #{voiceSource},</if>
+            <if test="avgRingTimeLen != null">avg_ring_time_len = #{avgRingTimeLen},</if>
+            <if test="avgCallTalkTimeLen != null">avg_call_talk_time_len = #{avgCallTalkTimeLen},</if>
+            <if test="avgCallEndProcessTimeLen != null">avg_call_end_process_time_len = #{avgCallEndProcessTimeLen},</if>
+            <if test="callNodeNo != null">call_node_no = #{callNodeNo},</if>
             <if test="llmAccountId != null">llm_account_id = #{llmAccountId},</if>
+            <if test="playTimes != null">play_times = #{playTimes},</if>
         </trim>
         where batch_id = #{batchId}
     </update>
