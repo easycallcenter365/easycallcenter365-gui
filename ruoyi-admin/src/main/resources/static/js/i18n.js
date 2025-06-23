@@ -19,24 +19,9 @@ $.i18n.properties({
 function i18n(msgKey) {
     try {
         var v = I18N.prop(msgKey);
-        // console.log(msgKey)
-        // console.log(v)
         return v
     } catch (e) {
         console.error(e)
-        return zh_CN(msgKey); // 如果找不到翻译则返回中文
-    }
-}
-
-// 初始化i18n函数
-function zh_CN(msgKey) {
-    try {
-        var v = I18N.prop(msgKey, 'zh-CN');
-        // console.log(msgKey)
-        // console.log(v)
-        return v
-    } catch (e) {
-        console.error(e)
-        return zh_CN(msgKey); // 如果找不到翻译则返回键值
+        return ""; // 如果找不到翻译则返回中文
     }
 }

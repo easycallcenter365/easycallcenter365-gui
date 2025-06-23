@@ -9,6 +9,8 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import com.ruoyi.common.constant.Constants;
 
+import java.util.Locale;
+
 /**
  * 资源文件配置加载
  * 
@@ -22,7 +24,8 @@ public class I18nConfig implements WebMvcConfigurer
     {
         SessionLocaleResolver slr = new SessionLocaleResolver();
         // 默认语言
-        slr.setDefaultLocale(Constants.DEFAULT_LOCALE);
+        slr.setDefaultLocale(Locale.US);
+        Locale.setDefault(Locale.US);
         return slr;
     }
 

@@ -17,7 +17,6 @@
                         <li>
                             <label th:text="#{callTask.query.taskType}"></label>
                             <select name="taskType">
-                                <option value="" th:text="#{options.all}"></option>
                                 <option value="0" th:text="#{callTask.query.taskType0}"></option>
                                 <option value="1" th:text="#{callTask.query.taskType1}"></option>
                                 <option value="2" th:text="#{callTask.query.taskType2}"></option>
@@ -115,6 +114,9 @@
                 });
             }
         });
+
+        // 设置 taskType 默认选中值为 1
+        $("#formId select[name='taskType']").val("1");
 
         var options = {
             url: prefix + "/list",
@@ -231,6 +233,11 @@
                 }]
         };
         $.table.init(options);
+
+        // 设置定时器，每10秒刷新一次表格
+        setInterval(function() {
+            $.table.refresh();
+        }, 10000); // 10000毫秒 = 10秒
     });
 
     // 启动外呼
@@ -301,7 +308,8 @@
 
     // 下载模板
     $.operate.downloadTemplate = function() {
-        var templateUrl = prefix + "/downloadTemplate"; // 假设模板文件放在静态资源目录下
+        var taskType = $("#formId select[name='taskType']").val();
+        var templateUrl = prefix + "/downloadTemplate?taskType=" + taskType; // 假设模板文件放在静态资源目录下
         window.location.href = templateUrl;
     };
 </script>

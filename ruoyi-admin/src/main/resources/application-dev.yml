@@ -202,3 +202,4 @@ sysconfig:
   hidden-key-list: api/app/token/key/secret/access
   # 是否开启敏感参数隐藏功能
   hide-secret: true
+

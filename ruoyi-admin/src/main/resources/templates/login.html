@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <script th:src="@{/js/jquery.min.js}"></script>
-    <script th:src="@{/js/jquery.i18n.properties.min.js}"></script>
+    <script th:src="@{/js/jquery.i18n.properties.js}"></script>
     <div id="root-path" th:text="${#servletContext.contextPath}" style="display:none;"></div>
     <div id="lang-country" th:text="${#locale.language + '_' + #locale.country}" style="display:none;"></div>
     <script th:src="@{/js/i18n.js}"></script>
@@ -132,16 +132,37 @@
     });
 
     document.addEventListener('DOMContentLoaded', function() {
-        var lang = new URLSearchParams(window.location.search).get('lang') || localStorage.getItem('lang') || 'zh_CN';
-        console.log('当前语言：' + lang)
+        // 从 URL 参数获取语言设置
+        var lang = new URLSearchParams(window.location.search).get('lang');
+        // 如果 URL 参数中没有语言设置，则从本地存储获取
+        if (!lang) {
+            lang = localStorage.getItem('lang');
+        }
+        // 如果本地存储中也没有语言设置，则从浏览器设置获取
+        if (!lang) {
+            lang = navigator.language || 'en_US'; // 默认值为 'en_US'
+        }
+        console.log('当前语言：' + lang);
         localStorage.setItem('lang', lang); // 更新本地存储的语言设置
 
         // 如果 URL 中没有 lang 参数，且本地存储中有 lang 设置，则更新 URL 参数
         if (lang && !new URLSearchParams(window.location.search).has('lang')) {
-            setLanguage(lang)
+            setLanguage(lang);
             // window.history.replaceState({}, document.title, window.location.pathname + "?lang=" + lang);
         }
     });
+
+    // document.addEventListener('DOMContentLoaded', function() {
+    //     var lang = new URLSearchParams(window.location.search).get('lang') || localStorage.getItem('lang') || 'en_US';
+    //     console.log('当前语言：' + lang)
+    //     localStorage.setItem('lang', lang); // 更新本地存储的语言设置
+    //
+    //     // 如果 URL 中没有 lang 参数，且本地存储中有 lang 设置，则更新 URL 参数
+    //     if (lang && !new URLSearchParams(window.location.search).has('lang')) {
+    //         setLanguage(lang)
+    //         // window.history.replaceState({}, document.title, window.location.pathname + "?lang=" + lang);
+    //     }
+    // });
 </script>
 </body>
 </html>

@@ -225,9 +225,17 @@ public class CcCallTaskController extends BaseController
 
     // 提供模板文件下载接口
     @GetMapping("/downloadTemplate")
-    public ResponseEntity<Resource> downloadTemplate() {
+    public ResponseEntity<Resource> downloadTemplate(@RequestParam (value = "taskType") Integer taskType) {
+        String templateName = "AICallList.xlsx";
+        if (null == taskType) {
+            taskType = 1;
+        } else if (taskType == 0) {
+            templateName = "PredictiveCallList.xlsx";
+        } else if (taskType == 2) {
+            templateName = "ReminderCallList.xlsx";
+        }
         // 模板文件路径
-        String filePath = "static/templates/CallListTemplate.xlsx"; // 静态资源路径
+        String filePath = "static/templates/" + templateName; // 静态资源路径
         ClassPathResource resource = new ClassPathResource(filePath);
 
         // 检查文件是否存在
@@ -237,7 +245,7 @@ public class CcCallTaskController extends BaseController
 
         // 设置响应头
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=CallListTemplate.xlsx");
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + templateName);
 
         // 返回文件
         return ResponseEntity.ok()

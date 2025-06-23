@@ -573,6 +573,12 @@ function _stopIt(e) {
 /** 设置全局ajax处理 */
 $.ajaxSetup({
     complete: function(XMLHttpRequest, textStatus) {
+        // 获取请求的URL
+        var url = this.url;
+        // 如果是语言包加载失败，则不提示
+        if (url && url.indexOf('i18n/messages') >= 0) {
+            return
+        }
         if (textStatus == 'timeout') {
             $.modal.alertWarning("服务器超时，请稍后再试！");
             $.modal.enable();
