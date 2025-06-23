@@ -1,6 +1,7 @@
 package com.ruoyi.cc.mapper;
 
 import com.ruoyi.cc.domain.CcParams;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -61,9 +62,9 @@ public interface CcParamsMapper
     public int deleteCcParamsByIds(String[] ids);
 
     /**
-     * 
+     *
      * @param paramCode
      * @param paramValue
      */
-    void updateParamsValue(String paramCode, String paramValue);
+    void updateParamsValue(@Param("paramCode") String paramCode, @Param("paramValue") String paramValue);
 }

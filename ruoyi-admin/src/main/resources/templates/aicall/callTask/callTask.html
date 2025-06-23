@@ -91,7 +91,7 @@
 
         // 加载线路下拉框数据
         $.ajax({
-            url: ctx + "cc/gateways/all",
+            url: ctx + "cc/gateways/outbound",
             success: function(rsp) {
                 var gatewaySelect = $("#gatewayIdSelect");
                 gatewaySelect.empty();
@@ -202,8 +202,14 @@
                     title: i18n('callTask.table.connectCount')
                 },
                 {
-                    field: 'noConnectCount',
-                    title: i18n('callTask.table.noConnectCount')
+                    field: 'realConnectRate',
+                    title: i18n('callTask.table.connectRate'),
+                    formatter: function(value, row, index) {
+                        if (value === null || value === undefined || value === '') {
+                            return '-';
+                        }
+                        return (value * 100).toFixed(2) + '%'; // 将值乘以100并格式化为百分数，保留两位小数
+                    }
                 },
                 {
                     title: i18n('callTask.table.opra'),

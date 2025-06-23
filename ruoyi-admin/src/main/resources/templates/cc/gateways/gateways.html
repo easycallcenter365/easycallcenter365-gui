@@ -18,6 +18,16 @@
                     <div class="select-list">
                         <ul>
                             <li>
+                                <label th:text="#{gateways.query.purpose}"></label> <!-- 网关用途的标签 -->
+                                <select name="purpose"> <!-- 下拉选择框 -->
+                                    <option value="" th:text="#{options.all}"></option> <!-- 默认选项 -->
+                                    <option value="0" th:text="#{gateways.query.purpose.abandoned}"></option> <!-- 0废弃 -->
+                                    <option value="1" th:text="#{gateways.query.purpose.toolbar}"></option> <!-- 工具条 -->
+                                    <option value="2" th:text="#{gateways.query.purpose.outgoing}"></option> <!-- 外呼 -->
+                                    <option value="3" th:text="#{gateways.query.purpose.unlimited}"></option> <!-- 不限制 -->
+                                </select>
+                            </li>
+                            <li>
                                 <label th:text="#{gateways.query.gwName}"></label>
                                 <input type="text" name="gwName"/>
                             </li>
@@ -102,6 +112,24 @@
                 {
                     field: 'gwName',
                     title: i18n('gateways.table.gwName'),
+                },
+                {
+                    field: 'purpose',
+                    title: i18n('gateways.table.purpose'),
+                    formatter: function(value, row, index) {
+                        switch (value) {
+                            case '0':
+                                return i18n('gateways.table.purpose.abandoned');
+                            case '1':
+                                return i18n('gateways.table.purpose.toolbar');
+                            case '2':
+                                return i18n('gateways.table.purpose.outgoing');
+                            case '3':
+                                return i18n('gateways.table.purpose.unlimited');
+                            default:
+                                return value; // 如果有其他值，直接显示原始值
+                        }
+                    }
                 },
                 {
                     field: 'profileName',

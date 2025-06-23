@@ -30,20 +30,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertCcLlmAgentProvider" parameterType="CcLlmAgentProvider" useGeneratedKeys="true" keyProperty="id">
         insert into cc_llm_agent_provider
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="providerClassName != null and providerClassName != ''">provider_class_name,</if>
-            <if test="note != null">note,</if>
-         </trim>
+            provider_class_name,
+            note,
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="providerClassName != null and providerClassName != ''">#{providerClassName},</if>
-            <if test="note != null">#{note},</if>
-         </trim>
+            #{providerClassName},
+            #{note},
+        </trim>
     </insert>
 
     <update id="updateCcLlmAgentProvider" parameterType="CcLlmAgentProvider">
         update cc_llm_agent_provider
         <trim prefix="SET" suffixOverrides=",">
-            <if test="providerClassName != null and providerClassName != ''">provider_class_name = #{providerClassName},</if>
-            <if test="note != null">note = #{note},</if>
+            provider_class_name = #{providerClassName},
+            note = #{note},
         </trim>
         where id = #{id}
     </update>

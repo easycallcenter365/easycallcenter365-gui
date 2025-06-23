@@ -100,6 +100,11 @@ public class CcCallTaskController extends BaseController
             data.setNoCallCount(statModel.getPhoneCount() - statModel.getCallCount());
             data.setConnectCount(statModel.getConnectCount());
             data.setNoConnectCount(statModel.getCallCount() - statModel.getConnectCount());
+            if (data.getCallCount() > 0) {
+                data.setRealConnectRate(data.getConnectCount()*1.0/data.getCallCount());
+            } else {
+                data.setRealConnectRate(0.0);
+            }
         }
         tableDataInfo.setRows(records);
         return tableDataInfo;

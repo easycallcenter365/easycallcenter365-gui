@@ -1,7 +1,6 @@
 package com.ruoyi.cc.controller;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -226,6 +225,21 @@ public class CcGatewaysController extends BaseController
     public AjaxResult all()
     {
         List<CcGateways> list = ccGatewaysService.selectCcGatewaysList(new CcGateways());
+        return AjaxResult.success(list);
+    }
+
+
+    /**
+     * 外呼网关列表
+     * @return
+     */
+    @GetMapping("/outbound")
+    @ResponseBody
+    public AjaxResult outbound()
+    {
+        Map<String, Object> params = new HashMap<>();
+        params.put("purposes", Arrays.asList(2,3));
+        List<CcGateways> list = ccGatewaysService.selectCcGatewaysList(new CcGateways().setParams(params));
         return AjaxResult.success(list);
     }
 }

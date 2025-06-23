@@ -1,5 +1,6 @@
 package com.ruoyi.cc.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -9,6 +10,8 @@ import com.ruoyi.common.core.domain.BaseEntity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 线路配置对象 cc_gateways
@@ -65,5 +68,13 @@ public class CcGateways implements Serializable {
 
     /** 自定义属性 */
     private String configs;
+
+    /** 网关用途 0 dropped; 1 phonebar; 2 outbound tasks; 3. Unlimited */
+    private Integer purpose;
+
+    /** 查询条件请求参数 */
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private Map<String, Object> params = new HashMap<>();
+
 
 }

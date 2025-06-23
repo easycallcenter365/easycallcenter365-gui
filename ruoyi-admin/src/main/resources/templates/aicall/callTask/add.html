@@ -130,7 +130,7 @@
         $(function() {
             // 加载网关下拉框数据
             $.ajax({
-                url: ctx + "cc/gateways/all",
+                url: ctx + "cc/gateways/outbound",
                 success: function(rsp) {
                     var gatewaySelect = $('select[name="gatewayId"]');
                     gatewaySelect.empty();

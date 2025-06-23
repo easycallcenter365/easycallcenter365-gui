@@ -32,23 +32,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertCcTtsAliyun" parameterType="CcTtsAliyun" useGeneratedKeys="true" keyProperty="id">
         insert into cc_tts_aliyun
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="voiceName != null and voiceName != ''">voice_name,</if>
-            <if test="voiceCode != null and voiceCode != ''">voice_code,</if>
-            <if test="voiceEnabled != null">voice_enabled,</if>
-         </trim>
+            voice_name,
+            voice_code,
+            voice_enabled,
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="voiceName != null and voiceName != ''">#{voiceName},</if>
-            <if test="voiceCode != null and voiceCode != ''">#{voiceCode},</if>
-            <if test="voiceEnabled != null">#{voiceEnabled},</if>
-         </trim>
+            #{voiceName},
+            #{voiceCode},
+            #{voiceEnabled},
+        </trim>
     </insert>
 
     <update id="updateCcTtsAliyun" parameterType="CcTtsAliyun">
         update cc_tts_aliyun
         <trim prefix="SET" suffixOverrides=",">
-            <if test="voiceName != null and voiceName != ''">voice_name = #{voiceName},</if>
-            <if test="voiceCode != null and voiceCode != ''">voice_code = #{voiceCode},</if>
-            <if test="voiceEnabled != null">voice_enabled = #{voiceEnabled},</if>
+            voice_name = #{voiceName},
+            voice_code = #{voiceCode},
+            voice_enabled = #{voiceEnabled},
         </trim>
         where id = #{id}
     </update>

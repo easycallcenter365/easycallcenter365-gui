@@ -118,6 +118,9 @@ public class CcCallTask implements Serializable {
     /** 未接通名单量 */
     private Integer noConnectCount;
 
+    /** 实际接通率 */
+    private Double realConnectRate;
+
     /** 预估接通率 (百分数格式)*/
     @Excel(name = "预估接通率")
     private Integer conntectRate;

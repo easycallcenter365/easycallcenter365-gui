@@ -20,10 +20,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
         <result property="register"    column="register"    />
         <result property="configs"    column="configs"    />
+        <result property="purpose"    column="purpose"    />
     </resultMap>
 
     <sql id="selectCcGatewaysVo">
-        select id, gw_name, profile_name, caller, callee_prefix, gw_addr, codec, gw_desc, max_concurrency, auth_username, auth_password, priority, update_time, register, configs from cc_gateways
+        select id, gw_name, profile_name, caller, callee_prefix, gw_addr, codec, gw_desc, max_concurrency, auth_username, auth_password, priority, update_time, register, configs, purpose from cc_gateways
     </sql>
 
     <select id="selectCcGatewaysList" parameterType="CcGateways" resultMap="CcGatewaysResult">
@@ -41,6 +42,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="authPassword != null  and authPassword != ''"> and auth_password = #{authPassword}</if>
             <if test="priority != null "> and priority = #{priority}</if>
             <if test="register != null "> and register = #{register}</if>
+            <if test="purpose != null "> and purpose = #{purpose}</if>
+            <if test="params.purposes != null and !params.purposes.isEmpty()">
+                and purpose in
+                <foreach item="purpose" collection="params.purposes" open="(" separator="," close=")">
+                    #{purpose}
+                </foreach>
+            </if>
         </where>
     </select>
     
@@ -66,6 +74,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             update_time,
             register,
             configs,
+            purpose,
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             #{gwName},
@@ -82,6 +91,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{updateTime},
             #{register},
             #{configs},
+            #{purpose},
          </trim>
     </insert>
 
@@ -102,6 +112,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             update_time = #{updateTime},
             register = #{register},
             configs = #{configs},
+            purpose = #{purpose},
         </trim>
         where id = #{id}
     </update>

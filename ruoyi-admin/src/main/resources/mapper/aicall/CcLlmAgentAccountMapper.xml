@@ -31,27 +31,26 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <insert id="insertCcLlmAgentAccount" parameterType="CcLlmAgentAccount">
         insert into cc_llm_agent_account
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">id,</if>
-            <if test="name != null">name,</if>
-            <if test="accountJson != null and accountJson != ''">account_json,</if>
-            <if test="providerClassName != null and providerClassName != ''">provider_class_name,</if>
-         </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">#{id},</if>
-            <if test="name != null">#{name},</if>
-            <if test="accountJson != null and accountJson != ''">#{accountJson},</if>
-            <if test="providerClassName != null and providerClassName != ''">#{providerClassName},</if>
-         </trim>
+        (
+            id,
+            name,
+            account_json,
+            provider_class_name
+        )
+        values (
+                   #{id},
+                   #{name},
+                   #{accountJson},
+                   #{providerClassName}
+               )
     </insert>
 
     <update id="updateCcLlmAgentAccount" parameterType="CcLlmAgentAccount">
         update cc_llm_agent_account
-        <trim prefix="SET" suffixOverrides=",">
-            <if test="name != null">name = #{name},</if>
-            <if test="accountJson != null and accountJson != ''">account_json = #{accountJson},</if>
-            <if test="providerClassName != null and providerClassName != ''">provider_class_name = #{providerClassName},</if>
-        </trim>
+        SET
+            name = #{name},
+            account_json = #{accountJson},
+            provider_class_name = #{providerClassName}
         where id = #{id}
     </update>
 

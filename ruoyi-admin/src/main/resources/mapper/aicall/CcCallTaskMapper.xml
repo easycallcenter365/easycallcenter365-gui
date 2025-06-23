@@ -48,6 +48,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="params.createTimeEnd != null and params.createTimeEnd != ''"><!-- 结束时间检索 -->
                 AND createtime &lt;= #{params.createTimeEnd}
             </if>
+            order by batch_id desc
         </where>
     </select>
     
@@ -59,71 +60,71 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertCcCallTask" parameterType="CcCallTask" useGeneratedKeys="true" keyProperty="batchId">
         insert into cc_call_task
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="groupId != null and groupId != ''">group_id,</if>
-            <if test="batchName != null and batchName != ''">batch_name,</if>
-            <if test="ifcall != null">ifcall,</if>
-            <if test="rate != null">rate,</if>
-            <if test="threadNum != null">thread_num,</if>
-            <if test="createtime != null">createtime,</if>
-            <if test="executing != null">executing,</if>
-            <if test="stopTime != null">stop_time,</if>
-            <if test="userid != null and userid != ''">userid,</if>
-            <if test="taskType != null">task_type,</if>
-            <if test="gatewayId != null">gateway_id,</if>
-            <if test="voiceCode != null and voiceCode != ''">voice_code,</if>
-            <if test="voiceSource != null and voiceSource != ''">voice_source,</if>
-            <if test="avgRingTimeLen != null">avg_ring_time_len,</if>
-            <if test="avgCallTalkTimeLen != null">avg_call_talk_time_len,</if>
-            <if test="avgCallEndProcessTimeLen != null">avg_call_end_process_time_len,</if>
-            <if test="callNodeNo != null">call_node_no,</if>
-            <if test="llmAccountId != null">llm_account_id,</if>
-            <if test="playTimes != null">play_times,</if>
-         </trim>
+            group_id,
+            batch_name,
+            ifcall,
+            rate,
+            thread_num,
+            createtime,
+            executing,
+            stop_time,
+            userid,
+            task_type,
+            gateway_id,
+            voice_code,
+            voice_source,
+            avg_ring_time_len,
+            avg_call_talk_time_len,
+            avg_call_end_process_time_len,
+            call_node_no,
+            llm_account_id,
+            play_times,
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="groupId != null and groupId != ''">#{groupId},</if>
-            <if test="batchName != null and batchName != ''">#{batchName},</if>
-            <if test="ifcall != null">#{ifcall},</if>
-            <if test="rate != null">#{rate},</if>
-            <if test="threadNum != null">#{threadNum},</if>
-            <if test="createtime != null">#{createtime},</if>
-            <if test="executing != null">#{executing},</if>
-            <if test="stopTime != null">#{stopTime},</if>
-            <if test="userid != null and userid != ''">#{userid},</if>
-            <if test="taskType != null">#{taskType},</if>
-            <if test="gatewayId != null">#{gatewayId},</if>
-            <if test="voiceCode != null and voiceCode != ''">#{voiceCode},</if>
-            <if test="voiceSource != null and voiceSource != ''">#{voiceSource},</if>
-            <if test="avgRingTimeLen != null">#{avgRingTimeLen},</if>
-            <if test="avgCallTalkTimeLen != null">#{avgCallTalkTimeLen},</if>
-            <if test="avgCallEndProcessTimeLen != null">#{avgCallEndProcessTimeLen},</if>
-            <if test="callNodeNo != null">#{callNodeNo},</if>
-            <if test="llmAccountId != null">#{llmAccountId},</if>
-            <if test="playTimes != null">#{playTimes},</if>
-         </trim>
+            #{groupId},
+            #{batchName},
+            #{ifcall},
+            #{rate},
+            #{threadNum},
+            #{createtime},
+            #{executing},
+            #{stopTime},
+            #{userid},
+            #{taskType},
+            #{gatewayId},
+            #{voiceCode},
+            #{voiceSource},
+            #{avgRingTimeLen},
+            #{avgCallTalkTimeLen},
+            #{avgCallEndProcessTimeLen},
+            #{callNodeNo},
+            #{llmAccountId},
+            #{playTimes},
+        </trim>
     </insert>
 
     <update id="updateCcCallTask" parameterType="CcCallTask">
         update cc_call_task
         <trim prefix="SET" suffixOverrides=",">
-            <if test="groupId != null and groupId != ''">group_id = #{groupId},</if>
-            <if test="batchName != null and batchName != ''">batch_name = #{batchName},</if>
-            <if test="ifcall != null">ifcall = #{ifcall},</if>
-            <if test="rate != null">rate = #{rate},</if>
-            <if test="threadNum != null">thread_num = #{threadNum},</if>
-            <if test="createtime != null">createtime = #{createtime},</if>
-            <if test="executing != null">executing = #{executing},</if>
-            <if test="stopTime != null">stop_time = #{stopTime},</if>
-            <if test="userid != null and userid != ''">userid = #{userid},</if>
-            <if test="gatewayId != null">gateway_id = #{gatewayId},</if>
-            <if test="taskType != null">task_type = #{taskType},</if>
-            <if test="voiceCode != null and voiceCode != ''">voice_code = #{voiceCode},</if>
-            <if test="voiceSource != null and voiceSource != ''">voice_source = #{voiceSource},</if>
-            <if test="avgRingTimeLen != null">avg_ring_time_len = #{avgRingTimeLen},</if>
-            <if test="avgCallTalkTimeLen != null">avg_call_talk_time_len = #{avgCallTalkTimeLen},</if>
-            <if test="avgCallEndProcessTimeLen != null">avg_call_end_process_time_len = #{avgCallEndProcessTimeLen},</if>
-            <if test="callNodeNo != null">call_node_no = #{callNodeNo},</if>
-            <if test="llmAccountId != null">llm_account_id = #{llmAccountId},</if>
-            <if test="playTimes != null">play_times = #{playTimes},</if>
+            group_id = #{groupId},
+            batch_name = #{batchName},
+            ifcall = #{ifcall},
+            rate = #{rate},
+            thread_num = #{threadNum},
+            createtime = #{createtime},
+            executing = #{executing},
+            stop_time = #{stopTime},
+            userid = #{userid},
+            gateway_id = #{gatewayId},
+            task_type = #{taskType},
+            voice_code = #{voiceCode},
+            voice_source = #{voiceSource},
+            avg_ring_time_len = #{avgRingTimeLen},
+            avg_call_talk_time_len = #{avgCallTalkTimeLen},
+            avg_call_end_process_time_len = #{avgCallEndProcessTimeLen},
+            call_node_no = #{callNodeNo},
+            llm_account_id = #{llmAccountId},
+            play_times = #{playTimes},
         </trim>
         where batch_id = #{batchId}
     </update>

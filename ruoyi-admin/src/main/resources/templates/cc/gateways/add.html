@@ -16,6 +16,19 @@
             </div>
             <div class="col-xs-12">
                 <div class="form-group">
+                    <label class="col-sm-3 control-label is-required" th:text="#{gateways.form.purpose}"></label>
+                    <div class="col-sm-8">
+                        <select name="purpose" class="form-control m-b">
+                            <option value="0" th:text="#{gateways.form.purpose.abandoned}"></option>
+                            <option value="1" th:text="#{gateways.form.purpose.toolbar}"></option>
+                            <option value="2" th:text="#{gateways.form.purpose.outgoing}"></option>
+                            <option value="3" th:text="#{gateways.form.purpose.unlimited}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="form-group">
                     <label class="col-sm-3 control-label is-required" th:text="#{gateways.form.profileName}"></label>
                     <div class="col-sm-8">
                         <select name="profileName" class="form-control m-b" >

@@ -305,6 +305,36 @@ public class FsConfController extends BaseController {
         }
     }
 
+    private AjaxResult saveAndReloadTtsModule(String asrFileName, String moduleName, JSONArray params){
+        String result = fsConfService.setAsrConf(params, asrFileName);
+        if(StringUtils.isEmpty(result)) {
+            String paramCode = "aliyun-tts-account-json";
+            JSONObject paramValues = new JSONObject();
+            for (int j = 0; j < params.size(); j++) {
+                JSONObject param = params.getJSONObject(j);
+                String attrName = param.getString("name");
+                String attValue = param.getString("value");
+                paramValues.put(attrName, attValue);
+            }
+            ccParamsService.updateParamsValue(paramCode, JSONObject.toJSONString(paramValues));
+
+            String reloadRsp = ccParamsService.reloadParams();
+            if(!reloadRsp.equalsIgnoreCase("success")){
+                return error("参数修改成功, 但是刷新失败, 请手动重启 call-center!");
+            }
+
+            EslMessage resp = EslConnectionUtil.sendSyncApiCommand("reload", moduleName);
+            String respText = CommonUtils.ListToString(resp.getBodyLines());
+            if(respText.contains("OK module loaded")) {
+                return AjaxResult.success("配置写入成功！\n  模块已成功加载!");
+            }else{
+                return AjaxResult.error("配置写入成功！\n  但是模块加载失败! \n" + respText);
+            }
+        }else{
+            return AjaxResult.error("配置文件写入失败！\n " + result);
+        }
+    }
+
     /**
      * 保存ASR配置
      * @param params
@@ -332,23 +362,7 @@ public class FsConfController extends BaseController {
     public AjaxResult setAliTtsConf(@RequestBody JSONArray params) {
         String asrFileName = "/autoload_configs/aliyun_tts.conf.xml";
         String moduleName = "mod_aliyun_tts";
-        AjaxResult result = saveAndReloadAsrModule(asrFileName, moduleName, params);
-        if (result.isSuccess()) {
-            String paramCode = "aliyun-tts-account-json";
-            JSONObject paramValues = new JSONObject();
-            for (int j = 0; j < params.size(); j++) {
-                JSONObject param = params.getJSONObject(j);
-                String attrName = param.getString("name");
-                String attValue = param.getString("value");
-                paramValues.put(attrName, attValue);
-            }
-            ccParamsService.updateParamsValue(paramCode, JSONObject.toJSONString(paramValues));
-
-            String reloadRsp = ccParamsService.reloadParams();
-            if(!reloadRsp.equalsIgnoreCase("success")){
-                return error("参数修改成功, 但是刷新失败, 请手动重启 call-center!");
-            }
-        }
+        AjaxResult result = saveAndReloadTtsModule(asrFileName, moduleName, params);
         return result;
     }
 
