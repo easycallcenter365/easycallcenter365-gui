@@ -173,7 +173,6 @@
                     rsp.data.forEach(function(llmAccount) {
                         llmAccountSelect.append($("<option>").attr("value", llmAccount.id).text(llmAccount.name));
                     });
-                    // 设置音色下拉框的选中项
                     var llmAccountId = /*[[${ccCallTask.llmAccountId}]]*/ '';
                     if (llmAccountId) {
                         llmAccountSelect.val(llmAccountId);

@@ -83,54 +83,54 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertCcCallPhone" parameterType="CcCallPhone">
         insert into cc_call_phone
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            id,
-            batch_id,
-            telephone,
-            cust_name,
-            createtime,
-            callstatus,
-            callout_time,
-            callcount,
-            call_end_time,
-            time_len,
-            valid_time_len,
-            uuid,
-            connected_time,
-            hangup_cause,
-            answered_time,
-            dialogue,
-            wavfile,
-            record_server_url,
-            biz_json,
-            dialogue_count,
-            acd_opnum,
-            acd_queue_time,
-            acd_wait_time,
-            tts_text,
+            <if test="id != null">id,</if>
+            <if test="batchId != null">batch_id,</if>
+            <if test="telephone != null and telephone != ''">telephone,</if>
+            <if test="custName != null and custName != ''">cust_name,</if>
+            <if test="createtime != null">createtime,</if>
+            <if test="callstatus != null">callstatus,</if>
+            <if test="calloutTime != null">callout_time,</if>
+            <if test="callcount != null">callcount,</if>
+            <if test="callEndTime != null">call_end_time,</if>
+            <if test="timeLen != null">time_len,</if>
+            <if test="validTimeLen != null">valid_time_len,</if>
+            <if test="uuid != null and uuid != ''">uuid,</if>
+            <if test="connectedTime != null">connected_time,</if>
+            <if test="hangupCause != null and hangupCause != ''">hangup_cause,</if>
+            <if test="answeredTime != null">answered_time,</if>
+            <if test="dialogue != null">dialogue,</if>
+            <if test="wavfile != null and wavfile != ''">wavfile,</if>
+            <if test="recordServerUrl != null and recordServerUrl != ''">record_server_url,</if>
+            <if test="bizJson != null and bizJson != ''">biz_json,</if>
+            <if test="dialogueCount != null">dialogue_count,</if>
+            <if test="acdOpnum != null and acdOpnum != ''">acd_opnum,</if>
+            <if test="acdQueueTime != null">acd_queue_time,</if>
+            <if test="acdWaitTime != null">acd_wait_time,</if>
+            <if test="ttsText != null">tts_text,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            #{id},
-            #{batchId},
-            #{telephone},
-            #{cust_name},
-            #{createtime},
-            #{callstatus},
-            #{calloutTime},
-            #{callcount},
-            #{callEndTime},
-            #{timeLen},
-            #{validTimeLen},
-            #{uuid},
-            #{connectedTime},
-            #{hangupCause},
-            #{answeredTime},
-            #{dialogue},
-            #{wavfile},
-            #{recordServerUrl},
-            #{bizJson},
-            #{dialogueCount},
-            #{acdOpnum},
-            #{acdQueueTime},
+            <if test="id != null">#{id},</if>
+            <if test="batchId != null">#{batchId},</if>
+            <if test="telephone != null and telephone != ''">#{telephone},</if>
+            <if test="custName != null and custName != ''">#{cust_name},</if>
+            <if test="createtime != null">#{createtime},</if>
+            <if test="callstatus != null">#{callstatus},</if>
+            <if test="calloutTime != null">#{calloutTime},</if>
+            <if test="callcount != null">#{callcount},</if>
+            <if test="callEndTime != null">#{callEndTime},</if>
+            <if test="timeLen != null">#{timeLen},</if>
+            <if test="validTimeLen != null">#{validTimeLen},</if>
+            <if test="uuid != null and uuid != ''">#{uuid},</if>
+            <if test="connectedTime != null">#{connectedTime},</if>
+            <if test="hangupCause != null and hangupCause != ''">#{hangupCause},</if>
+            <if test="answeredTime != null">#{answeredTime},</if>
+            <if test="dialogue != null">#{dialogue},</if>
+            <if test="wavfile != null and wavfile != ''">#{wavfile},</if>
+            <if test="recordServerUrl != null and recordServerUrl != ''">#{recordServerUrl},</if>
+            <if test="bizJson != null and bizJson != ''">#{bizJson},</if>
+            <if test="dialogueCount != null">#{dialogueCount},</if>
+            <if test="acdOpnum != null and acdOpnum != ''">#{acdOpnum},</if>
+            <if test="acdQueueTime != null">#{acdQueueTime},</if>
             #{acdWaitTime},
             #{ttsText},
         </trim>
@@ -139,29 +139,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateCcCallPhone" parameterType="CcCallPhone">
         update cc_call_phone
         <trim prefix="SET" suffixOverrides=",">
-            batch_id = #{batchId},
-            telephone = #{telephone},
-            cust_name = #{custName},
-            createtime = #{createtime},
-            callstatus = #{callstatus},
-            callout_time = #{calloutTime},
-            callcount = #{callcount},
-            call_end_time = #{callEndTime},
-            time_len = #{timeLen},
-            valid_time_len = #{validTimeLen},
-            >uuid = #{uuid},
-            connected_time = #{connectedTime},
-            hangup_cause = #{hangupCause},
-            answered_time = #{answeredTime},
-            dialogue = #{dialogue},
-            wavfile = #{wavfile},
-            record_server_url = #{recordServerUrl},
-            biz_json = #{bizJson},
-            dialogue_count = #{dialogueCount},
-            acd_opnum = #{acdOpnum},
-            acd_queue_time = #{acdQueueTime},
-            acd_wait_time = #{acdWaitTime},
-            tts_text = #{ttsText},
+            <if test="batchId != null">batch_id = #{batchId},</if>
+            <if test="telephone != null and telephone != ''">telephone = #{telephone},</if>
+            <if test="custName != null and custName != ''">cust_name = #{custName},</if>
+            <if test="createtime != null">createtime = #{createtime},</if>
+            <if test="callstatus != null">callstatus = #{callstatus},</if>
+            <if test="calloutTime != null">callout_time = #{calloutTime},</if>
+            <if test="callcount != null">callcount = #{callcount},</if>
+            <if test="callEndTime != null">call_end_time = #{callEndTime},</if>
+            <if test="timeLen != null">time_len = #{timeLen},</if>
+            <if test="validTimeLen != null">valid_time_len = #{validTimeLen},</if>
+            <if test="uuid != null and uuid != ''">uuid = #{uuid},</if>
+            <if test="connectedTime != null">connected_time = #{connectedTime},</if>
+            <if test="hangupCause != null and hangupCause != ''">hangup_cause = #{hangupCause},</if>
+            <if test="answeredTime != null">answered_time = #{answeredTime},</if>
+            <if test="dialogue != null">dialogue = #{dialogue},</if>
+            <if test="wavfile != null and wavfile != ''">wavfile = #{wavfile},</if>
+            <if test="recordServerUrl != null and recordServerUrl != ''">record_server_url = #{recordServerUrl},</if>
+            <if test="bizJson != null and bizJson != ''">biz_json = #{bizJson},</if>
+            <if test="dialogueCount != null">dialogue_count = #{dialogueCount},</if>
+            <if test="acdOpnum != null and acdOpnum != ''">acd_opnum = #{acdOpnum},</if>
+            <if test="acdQueueTime != null">acd_queue_time = #{acdQueueTime},</if>
+            <if test="acdWaitTime != null">acd_wait_time = #{acdWaitTime},</if>
+            <if test="ttsText != null">tts_text = #{ttsText},</if>
         </trim>
         where id = #{id}
     </update>

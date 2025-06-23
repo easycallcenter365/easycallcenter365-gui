@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.aicall.mapper.CcInboundLlmAccountMapper">
+    
+    <resultMap type="CcInboundLlmAccount" id="CcInboundLlmAccountResult">
+        <result property="id"    column="id"    />
+        <result property="llmAccountId"    column="llm_account_id"    />
+        <result property="callee"    column="callee"    />
+    </resultMap>
+
+    <sql id="selectCcInboundLlmAccountVo">
+        select id, llm_account_id, callee from cc_inbound_llm_account
+    </sql>
+
+    <select id="selectCcInboundLlmAccountList" parameterType="CcInboundLlmAccount" resultMap="CcInboundLlmAccountResult">
+        <include refid="selectCcInboundLlmAccountVo"/>
+        <where>  
+            <if test="llmAccountId != null "> and llm_account_id = #{llmAccountId}</if>
+            <if test="callee != null  and callee != ''"> and callee = #{callee}</if>
+        </where>
+    </select>
+    
+    <select id="selectCcInboundLlmAccountById" parameterType="Integer" resultMap="CcInboundLlmAccountResult">
+        <include refid="selectCcInboundLlmAccountVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCcInboundLlmAccount" parameterType="CcInboundLlmAccount">
+        insert into cc_inbound_llm_account
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,
+            llm_account_id,
+            callee,
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{id},
+            #{llmAccountId},
+            #{callee},
+         </trim>
+    </insert>
+
+    <update id="updateCcInboundLlmAccount" parameterType="CcInboundLlmAccount">
+        update cc_inbound_llm_account
+        <trim prefix="SET" suffixOverrides=",">
+            llm_account_id = #{llmAccountId},
+            callee = #{callee},
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCcInboundLlmAccountById" parameterType="Integer">
+        delete from cc_inbound_llm_account where id = #{id}
+    </delete>
+
+    <delete id="deleteCcInboundLlmAccountByIds" parameterType="String">
+        delete from cc_inbound_llm_account where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>
