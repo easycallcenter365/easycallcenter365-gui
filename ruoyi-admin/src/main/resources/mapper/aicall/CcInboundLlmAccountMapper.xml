@@ -8,10 +8,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="id"    column="id"    />
         <result property="llmAccountId"    column="llm_account_id"    />
         <result property="callee"    column="callee"    />
+        <result property="voiceCode"    column="voice_code"    />
+        <result property="voiceSource"    column="voice_source"    />
     </resultMap>
 
     <sql id="selectCcInboundLlmAccountVo">
-        select id, llm_account_id, callee from cc_inbound_llm_account
+        select id, llm_account_id, callee, voice_code, voice_source from cc_inbound_llm_account
     </sql>
 
     <select id="selectCcInboundLlmAccountList" parameterType="CcInboundLlmAccount" resultMap="CcInboundLlmAccountResult">
@@ -19,6 +21,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>  
             <if test="llmAccountId != null "> and llm_account_id = #{llmAccountId}</if>
             <if test="callee != null  and callee != ''"> and callee = #{callee}</if>
+            <if test="voiceCode != null  and voiceCode != ''"> and voice_code = #{voiceCode}</if>
+            <if test="voiceSource != null  and voiceSource != ''"> and voice_source = #{voiceSource}</if>
         </where>
     </select>
     
@@ -33,11 +37,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             id,
             llm_account_id,
             callee,
+            voice_code,
+            voice_source,
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             #{id},
             #{llmAccountId},
             #{callee},
+            #{voiceCode},
+            #{voiceSource},
          </trim>
     </insert>
 
@@ -46,6 +54,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             llm_account_id = #{llmAccountId},
             callee = #{callee},
+            voice_code = #{voiceCode},
+            voice_source = #{voiceSource},
         </trim>
         where id = #{id}
     </update>

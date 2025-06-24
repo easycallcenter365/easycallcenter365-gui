@@ -58,4 +58,11 @@ public interface ICcTtsAliyunService
      * @return 结果
      */
     public int deleteCcTtsAliyunById(Integer id);
+
+    /**
+     * 根据音色编号查询
+     * @param voiceCode
+     * @return
+     */
+    CcTtsAliyun selectCcTtsAliyunByVoiceCode(String voiceCode);
 }

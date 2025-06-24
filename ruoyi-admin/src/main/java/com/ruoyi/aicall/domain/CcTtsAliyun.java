@@ -1,6 +1,7 @@
 package com.ruoyi.aicall.domain;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -15,6 +16,7 @@ import java.io.Serializable;
  * @date 2025-05-29
  */
 @Data
+@Accessors(chain = true)
 public class CcTtsAliyun implements Serializable {
     private static final long serialVersionUID = 1L;
 

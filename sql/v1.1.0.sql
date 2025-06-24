@@ -515,4 +515,10 @@ VALUES('80', '空号识别定义', 'empty-number-detection-config', '[{"key":"AS
 
 
 
+ALTER TABLE `cc_inbound_llm_account` ADD COLUMN voice_code VARCHAR(255) DEFAULT '' COMMENT 'TTS voice code for the robot';
+ALTER TABLE `cc_inbound_llm_account` ADD COLUMN voice_source VARCHAR(255) DEFAULT 'aliyuntts' COMMENT 'tts provider';
+
+
+
+
 

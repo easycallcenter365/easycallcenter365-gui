@@ -88,6 +88,11 @@ public class CcLlmAgentAccountController extends BaseController
     @ResponseBody
     public AjaxResult addSave(CcLlmAgentAccount ccLlmAgentAccount)
     {
+        if ("Coze".equalsIgnoreCase(ccLlmAgentAccount.getProviderClassName())) {
+            ccLlmAgentAccount.setAccountEntity("CozeAccount");
+        } else {
+            ccLlmAgentAccount.setAccountEntity("LlmAccount");
+        }
         return toAjax(ccLlmAgentAccountService.insertCcLlmAgentAccount(ccLlmAgentAccount));
     }
 
@@ -112,6 +117,11 @@ public class CcLlmAgentAccountController extends BaseController
     @ResponseBody
     public AjaxResult editSave(CcLlmAgentAccount ccLlmAgentAccount)
     {
+        if ("Coze".equalsIgnoreCase(ccLlmAgentAccount.getProviderClassName())) {
+            ccLlmAgentAccount.setAccountEntity("CozeAccount");
+        } else {
+            ccLlmAgentAccount.setAccountEntity("LlmAccount");
+        }
         return toAjax(ccLlmAgentAccountService.updateCcLlmAgentAccount(ccLlmAgentAccount));
     }
 

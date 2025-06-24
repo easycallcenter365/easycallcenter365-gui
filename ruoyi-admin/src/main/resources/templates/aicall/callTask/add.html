@@ -201,10 +201,10 @@
                 }
             });
 
-            // 初始化时根据默认值显示字段
-            $('select[name="taskType"]').trigger('change');
             // 默认选中AI外呼
             $("select[name='taskType']").val("1");
+            // 初始化时根据默认值显示字段
+            $('select[name="taskType"]').trigger('change');
         });
 
         // 表单验证

@@ -10,8 +10,8 @@
                 <form id="formId">
                     <div class="select-list">
                         <ul>
-                            <li>
-                                <label th:text="#{inboundllm.query.llmAccountId}"></label>
+                            <li th:width="40%">
+                                <label th:width="20%" th:text="#{inboundllm.query.llmAccountId}"></label>
                                 <select name="llmAccountId" class="form-control" id="llmAccountIdSelect">
                                     <option value="" th:text="#{inboundllm.query.llmAccountId.empty}"></option>
                                 </select>
@@ -70,6 +70,10 @@
                 {
                     field: 'llmAccountName',
                     title: i18n('inboundllm.table.llmAccountName'),
+                },
+                {
+                    field: 'voiceName',
+                    title: i18n('inboundllm.table.voiceName'),
                 },
                 {
                     field: 'callee',

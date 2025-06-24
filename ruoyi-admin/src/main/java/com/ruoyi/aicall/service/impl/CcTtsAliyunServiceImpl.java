@@ -91,4 +91,13 @@ public class CcTtsAliyunServiceImpl implements ICcTtsAliyunService
     {
         return ccTtsAliyunMapper.deleteCcTtsAliyunById(id);
     }
+
+    @Override
+    public CcTtsAliyun selectCcTtsAliyunByVoiceCode(String voiceCode) {
+        List<CcTtsAliyun> list = ccTtsAliyunMapper.selectCcTtsAliyunList(new CcTtsAliyun().setVoiceCode(voiceCode));
+        if (null != list && list.size() > 0) {
+            return list.get(0);
+        }
+        return null;
+    }
 }

@@ -3,7 +3,9 @@ package com.ruoyi.aicall.controller;
 import java.util.List;
 
 import com.ruoyi.aicall.domain.CcLlmAgentAccount;
+import com.ruoyi.aicall.domain.CcTtsAliyun;
 import com.ruoyi.aicall.service.ICcLlmAgentAccountService;
+import com.ruoyi.aicall.service.ICcTtsAliyunService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -38,6 +40,8 @@ public class CcInboundLlmAccountController extends BaseController
     private ICcInboundLlmAccountService ccInboundLlmAccountService;
     @Autowired
     private ICcLlmAgentAccountService llmAgentAccountService;
+    @Autowired
+    private ICcTtsAliyunService ttsAliyunService;
 
     @RequiresPermissions("aicall:inboundllm:view")
     @GetMapping()
@@ -60,7 +64,15 @@ public class CcInboundLlmAccountController extends BaseController
         List<CcInboundLlmAccount> records = (List<CcInboundLlmAccount>) tableDataInfo.getRows();
         for (CcInboundLlmAccount data: records) {
             CcLlmAgentAccount llmAgentAccount = llmAgentAccountService.selectCcLlmAgentAccountById(data.getLlmAccountId());
-            data.setLlmAccountName(llmAgentAccount.getName());
+            if (null != llmAgentAccount) {
+                data.setLlmAccountName(llmAgentAccount.getName());
+            } else {
+                data.setLlmAccountName("");
+            }
+            CcTtsAliyun ccTtsAliyun = ttsAliyunService.selectCcTtsAliyunByVoiceCode(data.getVoiceCode());
+            if (null != ccTtsAliyun) {
+                data.setVoiceName(ccTtsAliyun.getVoiceName());
+            }
         }
         tableDataInfo.setRows(records);
         return tableDataInfo;
