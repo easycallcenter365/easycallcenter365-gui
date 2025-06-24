@@ -1,59 +1,58 @@
 DROP TABLE IF EXISTS `cc_call_task`;
 CREATE TABLE `cc_call_task` (
-                                `batch_id` INT(11) NOT NULL AUTO_INCREMENT,
-                                `group_id` VARCHAR(256) NOT NULL DEFAULT '1' COMMENT '外呼任务的业务组 ',
-                                `batch_name` VARCHAR(50) NOT NULL DEFAULT '外呼任务名称',
-                                `ifcall` SMALLINT(6) NOT NULL DEFAULT '0' COMMENT '是否启动任务, 1 启动， 0 停止',
-                                `rate` DOUBLE NOT NULL DEFAULT '5' COMMENT '外呼速率',
-                                `thread_num` INT(11) NOT NULL DEFAULT '30' COMMENT '当前任务最大可用外线数',
-                                `createtime` BIGINT(20) NOT NULL DEFAULT '0' COMMENT '任务创建时间',
-                                `executing` INT(11) NOT NULL DEFAULT '0' COMMENT '任务是否正在执行;',
-                                `stop_time` BIGINT(20) NOT NULL DEFAULT '0' COMMENT '任务停止时间',
-                                `userid` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '任务创建者用户id',
-                                `phonenum_buffer` INT(11) NOT NULL DEFAULT '10000' COMMENT '号码缓存池大小; 标记为删除，代码已经不在引用该字段。',
-                                `batchcall_wait_time` INT(11) NOT NULL DEFAULT '5000' COMMENT '一批数据外呼后等待时间。标记为删除，代码已经不在引用该字段。',
-                                `gateway_id` INT(11) NOT NULL COMMENT '使用哪条线路外呼',
-                                `voice_code` VARCHAR(255) DEFAULT NULL COMMENT '音色',
-                                `voice_source` VARCHAR(255) DEFAULT NULL COMMENT '音源',
-                                PRIMARY KEY (`batch_id`)
-) ENGINE=INNODB AUTO_INCREMENT=131 DEFAULT CHARSET=utf8 COMMENT='外呼任务表';
+                                `batch_id` int(11) NOT NULL AUTO_INCREMENT,
+                                `group_id` varchar(256) NOT NULL DEFAULT '1' COMMENT '外呼任务的业务组 ',
+                                `batch_name` varchar(50) NOT NULL DEFAULT '外呼任务名称',
+                                `ifcall` smallint(6) NOT NULL DEFAULT '0' COMMENT '是否启动任务, 1 启动， 0 停止',
+                                `rate` double NOT NULL DEFAULT '5' COMMENT '外呼速率',
+                                `thread_num` int(11) NOT NULL DEFAULT '30' COMMENT '当前任务最大可用外线数',
+                                `createtime` bigint(20) NOT NULL DEFAULT '0' COMMENT '任务创建时间',
+                                `executing` int(11) NOT NULL DEFAULT '0' COMMENT '任务是否正在执行;',
+                                `stop_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '任务停止时间',
+                                `userid` varchar(32) NOT NULL DEFAULT '' COMMENT '任务创建者用户id',
+                                `task_type` int(2) NOT NULL DEFAULT '1' COMMENT '0 Pure manual outbound call; 1 AI outbound calling; 2 voice call notification.',
+                                `gateway_id` int(11) NOT NULL COMMENT '使用哪条线路外呼',
+                                `voice_code` varchar(255) NOT NULL DEFAULT '' COMMENT '外呼任务，机器人的发音人',
+                                `voice_source` varchar(255) NOT NULL DEFAULT 'aliyun' COMMENT '外呼任务，机器人的tts提供者',
+                                `avg_ring_time_len` double(8,3) NOT NULL DEFAULT '0.000' COMMENT 'The average ringing duration of the call; seconds',
+  `avg_call_talk_time_len` double(8,3) NOT NULL DEFAULT '0.000' COMMENT 'The average pure call duration per call; seconds',
+  `avg_call_end_process_time_len` double(8,3) NOT NULL DEFAULT '0.000' COMMENT 'The duration of form filling after the call ends; seconds',
+  `call_node_no` varchar(11) NOT NULL DEFAULT '01' COMMENT '外呼节点',
+  `llm_account_id` int(8) NOT NULL DEFAULT '0' COMMENT '大模型底座账号的Id',
+  `play_times` int(2) NOT NULL DEFAULT '2' COMMENT 'voice call notification play times.',
+  PRIMARY KEY (`batch_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=137 DEFAULT CHARSET=utf8 COMMENT='外呼任务表';
 
 
 DROP TABLE IF EXISTS `cc_call_phone`;
 CREATE TABLE `cc_call_phone` (
-                                 `id` VARCHAR(32) NOT NULL,
-                                 `group_id` VARCHAR(32) DEFAULT NULL COMMENT '业务组',
-                                 `batch_id` INT(11) NOT NULL COMMENT '任务批次id',
-                                 `telephone` VARCHAR(50) NOT NULL,
-                                 `createtime` BIGINT(20) NOT NULL DEFAULT '0' COMMENT '任务创建时间',
-                                 `callstatus` SMALLINT(6) NOT NULL DEFAULT '0' COMMENT '0  未拨打; 1   已经进入呼叫队列;  2   正在呼叫（进行中）;  3   未接通（状态： 客户正在通话中;   关机 ；  空号;  无人接听;   停机， ）;  4   已接通（拆分成接通后我方挂断，接通后对方挂断）; 5   呼损（未触发、未弹屏、仅弹屏、己介入）; 6   成功转接座席或者AI（只针对人机耦合）;  7线路故障;   [ 3、4、5  是统计大类， 实际写入到数据表的值是 后面的大数字 ]     31;  客户正在通话中;  32 关机;  33 空号;  34 无人接听; 35 停机。 41 拆分成接通后我方挂断;  42 接通后对方挂断 。 51 未触发（未到达弹屏节点）; 52 未弹屏（到达弹屏节点，没有弹屏出来） ;   53 仅弹屏（仅弹屏给座席但座席未介入通话，包括呼损）;   54 己介入（弹屏给到座席座席介入通话）',
-                                 `callout_time` BIGINT(20) NOT NULL DEFAULT '0' COMMENT '外呼时间',
-                                 `callcount` SMALLINT(6) NOT NULL DEFAULT '0' COMMENT '呼叫次数',
-                                 `call_end_time` BIGINT(20) NOT NULL DEFAULT '0' COMMENT '呼叫结束时间',
-                                 `time_len` INT(11) NOT NULL DEFAULT '0' COMMENT '通话时长; 秒;',
-                                 `valid_time_len` INT(11) NOT NULL DEFAULT '0' COMMENT '有效通话时长; 秒',
-                                 `uuid` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '通话唯一标志',
-                                 `uuid_robot` VARCHAR(50) NOT NULL DEFAULT '' COMMENT '机器人接听端的通话唯一标识; ',
-                                 `connected_time` BIGINT(20) NOT NULL DEFAULT '0' COMMENT '通话接通时间',
-                                 `hangup_cause` VARCHAR(50) NOT NULL DEFAULT 'Normal Clearing' COMMENT '挂机原因',
-                                 `queue_time` BIGINT(20) NOT NULL DEFAULT '0' COMMENT '加入转人工排队的时间; ',
-                                 `answered_time` BIGINT(20) NOT NULL DEFAULT '0' COMMENT '电话应答时间',
-                                 `dialogue` TEXT COMMENT '对话内容',
-                                 `wavfile` VARCHAR(200) NOT NULL DEFAULT '' COMMENT '全程通话录音文件名',
-                                 `record_server_url` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '录音文件路径前缀',
-                                 `biz_json` VARCHAR(5000) NOT NULL DEFAULT '' COMMENT '业务json数据',
-                                 `ringing_file_flag` SMALLINT(6) NOT NULL DEFAULT '0' COMMENT '振铃文件是否写入了磁盘; 0 否 1是',
-                                 `ringing_wav_file` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '振铃文件路径;',
-                                 `ringing_file_processed` SMALLINT(6) NOT NULL DEFAULT '0' COMMENT '振铃文件是否已经送asr识别; 0 否 1 是',
-                                 `asr_product` INT(11) NOT NULL DEFAULT '0' COMMENT 'asr引擎;  0 没有获取到asr通道;  1 阿里; 2 思必驰 3 百度',
-                                 `who_hangup` INT(11) NOT NULL DEFAULT '1' COMMENT '1客户主动挂断; 2机器人主动挂断;',
-                                 `dialogue_count` INT(11) DEFAULT '0' COMMENT '交互轮次（一问一答算一轮交互）',
-                                 `gateway_id` INT(11) DEFAULT NULL COMMENT '使用哪条线路外呼',
-                                 `voice_code` VARCHAR(255) DEFAULT NULL COMMENT '音色',
-                                 `voice_source` VARCHAR(255) DEFAULT NULL COMMENT '音源',
-                                 `record_path` VARCHAR(255) DEFAULT NULL COMMENT '话术录音文件根路径',
+                                 `id` varchar(32) CHARACTER SET utf8mb4 NOT NULL,
+                                 `batch_id` int(11) NOT NULL COMMENT '任务批次id',
+                                 `telephone` varchar(50) NOT NULL,
+                                 `cust_name` varchar(50) NOT NULL DEFAULT '' COMMENT '客户称呼',
+                                 `createtime` bigint(20) NOT NULL DEFAULT '0' COMMENT '任务创建时间',
+                                 `callstatus` smallint(6) NOT NULL DEFAULT '0' COMMENT '0. Not dialed  \r\n1. Entered call queue  \r\n2. Dialing (in progress)  \r\n3. Not connected (If the empty number detection feature is turned off)\r\n4. Connected  \r\n5. Call dropped (hung up before transferring to agent)  \r\n6. Successfully transferred to agent or AI  \r\n7. Line failure  \r\n\r\n30. Not connected\r\n31. Customer is on another call  \r\n32. Phone is powered off  \r\n33. Invalid number  \r\n34. No answer  \r\n35. Suspended service  \r\n36. Network busy  \r\n37. Voice assistant\r\n38. Temporarily unavailable\r\n39. Call restriction',
+                                 `callout_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '外呼时间',
+                                 `callcount` smallint(6) NOT NULL DEFAULT '0' COMMENT '呼叫次数',
+                                 `call_end_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '呼叫结束时间',
+                                 `time_len` int(11) NOT NULL DEFAULT '0' COMMENT '通话时长; 秒;',
+                                 `valid_time_len` int(11) NOT NULL DEFAULT '0' COMMENT '人工接听的通话时长; 秒',
+                                 `uuid` varchar(50) NOT NULL DEFAULT '' COMMENT '通话唯一标志',
+                                 `connected_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '通话接通时间',
+                                 `hangup_cause` varchar(50) NOT NULL DEFAULT 'Normal Clearing' COMMENT '挂机原因',
+                                 `answered_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '人工坐席应答时间',
+                                 `dialogue` text COMMENT '对话内容',
+                                 `wavfile` varchar(200) NOT NULL DEFAULT '' COMMENT '全程通话录音文件名',
+                                 `record_server_url` varchar(255) NOT NULL DEFAULT '' COMMENT '录音文件路径前缀',
+                                 `biz_json` varchar(5000) NOT NULL DEFAULT '' COMMENT '业务json数据',
+                                 `dialogue_count` int(11) DEFAULT '0' COMMENT '交互轮次（一问一答算一轮交互）',
+                                 `acd_opnum` varchar(50) NOT NULL DEFAULT '' COMMENT '人工坐席工号',
+                                 `acd_queue_time` bigint(20) NOT NULL DEFAULT '0' COMMENT '加入转人工排队的时间; ',
+                                 `acd_wait_time` int(8) NOT NULL DEFAULT '0' COMMENT '人工排队等待时长,秒',
+                                 `tts_text` text COMMENT 'tts text for voice call notification.',
+                                 `empty_number_detection_text` varchar(1000) NOT NULL DEFAULT '',
                                  PRIMARY KEY (`id`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='外呼号码表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='外呼号码表';
 
 
 
@@ -252,6 +251,268 @@ insert  into `cc_tts_aliyun`(`id`,`voice_name`,`voice_code`,`voice_enabled`) val
 insert  into `cc_tts_aliyun`(`id`,`voice_name`,`voice_code`,`voice_enabled`) values (151,'donna_ecmix - 美式英文女声','donna_ecmix',147);
 insert  into `cc_tts_aliyun`(`id`,`voice_name`,`voice_code`,`voice_enabled`) values (152,'david_ecmix - 美式英文男声','david_ecmix',148);
 insert  into `cc_tts_aliyun`(`id`,`voice_name`,`voice_code`,`voice_enabled`) values (153,'eva_ecmix - 美式英文女声','eva_ecmix',149);
+
+
+ALTER TABLE `sys_menu` ADD COLUMN menu_code VARCHAR(255) COMMENT '菜单编号（国际化用这个字段作为key）' AFTER menu_name;
+
+UPDATE sys_menu SET menu_code = 'sysManage' WHERE menu_id = 1;
+UPDATE sys_menu SET menu_code = 'sysMonitor' WHERE menu_id = 2;
+UPDATE sys_menu SET menu_code = 'sysTools' WHERE menu_id = 3;
+UPDATE sys_menu SET menu_code = 'userManage' WHERE menu_id = 100;
+UPDATE sys_menu SET menu_code = 'roleManage' WHERE menu_id = 101;
+UPDATE sys_menu SET menu_code = 'menuManage' WHERE menu_id = 102;
+UPDATE sys_menu SET menu_code = 'deptManage' WHERE menu_id = 103;
+UPDATE sys_menu SET menu_code = 'postManage' WHERE menu_id = 104;
+UPDATE sys_menu SET menu_code = 'dictManage' WHERE menu_id = 105;
+UPDATE sys_menu SET menu_code = 'configManage' WHERE menu_id = 106;
+UPDATE sys_menu SET menu_code = 'noticeManage' WHERE menu_id = 107;
+UPDATE sys_menu SET menu_code = 'logManage' WHERE menu_id = 108;
+UPDATE sys_menu SET menu_code = 'onlineUser' WHERE menu_id = 109;
+UPDATE sys_menu SET menu_code = 'jobManage' WHERE menu_id = 110;
+UPDATE sys_menu SET menu_code = 'dataMonitor' WHERE menu_id = 111;
+UPDATE sys_menu SET menu_code = 'serverManage' WHERE menu_id = 112;
+UPDATE sys_menu SET menu_code = 'cacheMonitor' WHERE menu_id = 113;
+UPDATE sys_menu SET menu_code = 'buildTool' WHERE menu_id = 114;
+UPDATE sys_menu SET menu_code = 'genTool' WHERE menu_id = 115;
+UPDATE sys_menu SET menu_code = 'swaggerTool' WHERE menu_id = 116;
+UPDATE sys_menu SET menu_code = 'operLog' WHERE menu_id = 500;
+UPDATE sys_menu SET menu_code = 'loginLog' WHERE menu_id = 501;
+UPDATE sys_menu SET menu_code = 'userQuery' WHERE menu_id = 1000;
+UPDATE sys_menu SET menu_code = 'userAdd' WHERE menu_id = 1001;
+UPDATE sys_menu SET menu_code = 'userEdit' WHERE menu_id = 1002;
+UPDATE sys_menu SET menu_code = 'userDel' WHERE menu_id = 1003;
+UPDATE sys_menu SET menu_code = 'userExport' WHERE menu_id = 1004;
+UPDATE sys_menu SET menu_code = 'userImport' WHERE menu_id = 1005;
+UPDATE sys_menu SET menu_code = 'resetPass' WHERE menu_id = 1006;
+UPDATE sys_menu SET menu_code = 'roleQuery' WHERE menu_id = 1007;
+UPDATE sys_menu SET menu_code = 'roleAdd' WHERE menu_id = 1008;
+UPDATE sys_menu SET menu_code = 'roleEdit' WHERE menu_id = 1009;
+UPDATE sys_menu SET menu_code = 'roleDel' WHERE menu_id = 1010;
+UPDATE sys_menu SET menu_code = 'roleExport' WHERE menu_id = 1011;
+UPDATE sys_menu SET menu_code = 'menuQuery' WHERE menu_id = 1012;
+UPDATE sys_menu SET menu_code = 'menuAdd' WHERE menu_id = 1013;
+UPDATE sys_menu SET menu_code = 'menuEdit' WHERE menu_id = 1014;
+UPDATE sys_menu SET menu_code = 'menuDel' WHERE menu_id = 1015;
+UPDATE sys_menu SET menu_code = 'deptQuery' WHERE menu_id = 1016;
+UPDATE sys_menu SET menu_code = 'deptAdd' WHERE menu_id = 1017;
+UPDATE sys_menu SET menu_code = 'deptEdit' WHERE menu_id = 1018;
+UPDATE sys_menu SET menu_code = 'deptDel' WHERE menu_id = 1019;
+UPDATE sys_menu SET menu_code = 'postQuery' WHERE menu_id = 1020;
+UPDATE sys_menu SET menu_code = 'postAdd' WHERE menu_id = 1021;
+UPDATE sys_menu SET menu_code = 'postEdit' WHERE menu_id = 1022;
+UPDATE sys_menu SET menu_code = 'postDel' WHERE menu_id = 1023;
+UPDATE sys_menu SET menu_code = 'postExport' WHERE menu_id = 1024;
+UPDATE sys_menu SET menu_code = 'dictQuery' WHERE menu_id = 1025;
+UPDATE sys_menu SET menu_code = 'dictAdd' WHERE menu_id = 1026;
+UPDATE sys_menu SET menu_code = 'dictEdit' WHERE menu_id = 1027;
+UPDATE sys_menu SET menu_code = 'dictDel' WHERE menu_id = 1028;
+UPDATE sys_menu SET menu_code = 'dictExport' WHERE menu_id = 1029;
+UPDATE sys_menu SET menu_code = 'configQuery' WHERE menu_id = 1030;
+UPDATE sys_menu SET menu_code = 'configAdd' WHERE menu_id = 1031;
+UPDATE sys_menu SET menu_code = 'configEdit' WHERE menu_id = 1032;
+UPDATE sys_menu SET menu_code = 'configDel' WHERE menu_id = 1033;
+UPDATE sys_menu SET menu_code = 'configExport' WHERE menu_id = 1034;
+UPDATE sys_menu SET menu_code = 'noticeQuery' WHERE menu_id = 1035;
+UPDATE sys_menu SET menu_code = 'noticeAdd' WHERE menu_id = 1036;
+UPDATE sys_menu SET menu_code = 'noticeEdit' WHERE menu_id = 1037;
+UPDATE sys_menu SET menu_code = 'noticeDel' WHERE menu_id = 1038;
+UPDATE sys_menu SET menu_code = 'opraQuery' WHERE menu_id = 1039;
+UPDATE sys_menu SET menu_code = 'opraDel' WHERE menu_id = 1040;
+UPDATE sys_menu SET menu_code = 'opraDetails' WHERE menu_id = 1041;
+UPDATE sys_menu SET menu_code = 'opraExport' WHERE menu_id = 1042;
+UPDATE sys_menu SET menu_code = 'loginLogQuery' WHERE menu_id = 1043;
+UPDATE sys_menu SET menu_code = 'loginLogDel' WHERE menu_id = 1044;
+UPDATE sys_menu SET menu_code = 'loginLogExport' WHERE menu_id = 1045;
+UPDATE sys_menu SET menu_code = 'userUnlock' WHERE menu_id = 1046;
+UPDATE sys_menu SET menu_code = 'onlineQuery' WHERE menu_id = 1047;
+UPDATE sys_menu SET menu_code = 'batchOffline' WHERE menu_id = 1048;
+UPDATE sys_menu SET menu_code = 'oneOffline' WHERE menu_id = 1049;
+UPDATE sys_menu SET menu_code = 'jobQuery' WHERE menu_id = 1050;
+UPDATE sys_menu SET menu_code = 'jobAdd' WHERE menu_id = 1051;
+UPDATE sys_menu SET menu_code = 'jobEdit' WHERE menu_id = 1052;
+UPDATE sys_menu SET menu_code = 'jobDel' WHERE menu_id = 1053;
+UPDATE sys_menu SET menu_code = 'jobStatusEdit' WHERE menu_id = 1054;
+UPDATE sys_menu SET menu_code = 'jobDetails' WHERE menu_id = 1055;
+UPDATE sys_menu SET menu_code = 'jobExport' WHERE menu_id = 1056;
+UPDATE sys_menu SET menu_code = 'genQuery' WHERE menu_id = 1057;
+UPDATE sys_menu SET menu_code = 'genEdit' WHERE menu_id = 1058;
+UPDATE sys_menu SET menu_code = 'genDel' WHERE menu_id = 1059;
+UPDATE sys_menu SET menu_code = 'previewCode' WHERE menu_id = 1060;
+UPDATE sys_menu SET menu_code = 'genCode' WHERE menu_id = 1061;
+UPDATE sys_menu SET menu_code = 'callManage' WHERE menu_id = 2000;
+UPDATE sys_menu SET menu_code = 'switchConf' WHERE menu_id = 2001;
+UPDATE sys_menu SET menu_code = 'varConf' WHERE menu_id = 2002;
+UPDATE sys_menu SET menu_code = 'xunfeiAsrConf' WHERE menu_id = 2003;
+UPDATE sys_menu SET menu_code = 'aliAsrConf' WHERE menu_id = 2004;
+UPDATE sys_menu SET menu_code = 'certWsspen' WHERE menu_id = 2005;
+UPDATE sys_menu SET menu_code = 'extnum' WHERE menu_id = 2010;
+UPDATE sys_menu SET menu_code = 'extnumAdd' WHERE menu_id = 2011;
+UPDATE sys_menu SET menu_code = 'extnumEdit' WHERE menu_id = 2012;
+UPDATE sys_menu SET menu_code = 'extnumInfo' WHERE menu_id = 2013;
+UPDATE sys_menu SET menu_code = 'bizgroup' WHERE menu_id = 2020;
+UPDATE sys_menu SET menu_code = 'bizgroupAdd' WHERE menu_id = 2021;
+UPDATE sys_menu SET menu_code = 'bizgroupEdit' WHERE menu_id = 2022;
+UPDATE sys_menu SET menu_code = 'bizgroupInfo' WHERE menu_id = 2023;
+UPDATE sys_menu SET menu_code = 'catLogs' WHERE menu_id = 2030;
+UPDATE sys_menu SET menu_code = 'extpower' WHERE menu_id = 2040;
+UPDATE sys_menu SET menu_code = 'extpowerAdd' WHERE menu_id = 2041;
+UPDATE sys_menu SET menu_code = 'extpowerEdit' WHERE menu_id = 2042;
+UPDATE sys_menu SET menu_code = 'extpowerDel' WHERE menu_id = 2043;
+UPDATE sys_menu SET menu_code = 'extpowerQuery' WHERE menu_id = 2044;
+UPDATE sys_menu SET menu_code = 'profileConf' WHERE menu_id = 2050;
+UPDATE sys_menu SET menu_code = 'profileConfAdd' WHERE menu_id = 2051;
+UPDATE sys_menu SET menu_code = 'profileConfEdit' WHERE menu_id = 2052;
+UPDATE sys_menu SET menu_code = 'profileConfStatus' WHERE menu_id = 2053;
+UPDATE sys_menu SET menu_code = 'profileConfStart' WHERE menu_id = 2054;
+UPDATE sys_menu SET menu_code = 'profileConfStop' WHERE menu_id = 2055;
+UPDATE sys_menu SET menu_code = 'profileConfRestart' WHERE menu_id = 2056;
+UPDATE sys_menu SET menu_code = 'profileConfInfo' WHERE menu_id = 2057;
+UPDATE sys_menu SET menu_code = 'gateways' WHERE menu_id = 2060;
+UPDATE sys_menu SET menu_code = 'gatewaysAdd' WHERE menu_id = 2061;
+UPDATE sys_menu SET menu_code = 'gatewaysEdit' WHERE menu_id = 2062;
+UPDATE sys_menu SET menu_code = 'gatewaysQuery' WHERE menu_id = 2063;
+UPDATE sys_menu SET menu_code = 'outboundcdr' WHERE menu_id = 2070;
+UPDATE sys_menu SET menu_code = 'outboundcdrListen' WHERE menu_id = 2071;
+UPDATE sys_menu SET menu_code = 'outboundcdrDownload' WHERE menu_id = 2072;
+UPDATE sys_menu SET menu_code = 'outboundcdrInfo' WHERE menu_id = 2073;
+UPDATE sys_menu SET menu_code = 'inboundcdr' WHERE menu_id = 2080;
+UPDATE sys_menu SET menu_code = 'inboundcdrListen' WHERE menu_id = 2081;
+UPDATE sys_menu SET menu_code = 'inboundcdrDownload' WHERE menu_id = 2082;
+UPDATE sys_menu SET menu_code = 'inboundcdrInfo' WHERE menu_id = 2083;
+UPDATE sys_menu SET menu_code = 'agentMonitor' WHERE menu_id = 2090;
+UPDATE sys_menu SET menu_code = 'agentMonitorListen' WHERE menu_id = 2091;
+UPDATE sys_menu SET menu_code = 'inboundMonitor' WHERE menu_id = 2100;
+UPDATE sys_menu SET menu_code = 'custInfo' WHERE menu_id = 2110;
+UPDATE sys_menu SET menu_code = 'custInfoAdd' WHERE menu_id = 2111;
+UPDATE sys_menu SET menu_code = 'custInfoEdit' WHERE menu_id = 2112;
+UPDATE sys_menu SET menu_code = 'custInfoDel' WHERE menu_id = 2113;
+UPDATE sys_menu SET menu_code = 'custInfoQuery' WHERE menu_id = 2114;
+UPDATE sys_menu SET menu_code = 'asrengine' WHERE menu_id = 2120;
+UPDATE sys_menu SET menu_code = 'params' WHERE menu_id = 2130;
+UPDATE sys_menu SET menu_code = 'paramsAdd' WHERE menu_id = 2131;
+UPDATE sys_menu SET menu_code = 'paramsEdit' WHERE menu_id = 2132;
+UPDATE sys_menu SET menu_code = 'paramsDel' WHERE menu_id = 2133;
+UPDATE sys_menu SET menu_code = 'paramsInfo' WHERE menu_id = 2134;
+UPDATE sys_menu SET menu_code = 'AIAssistant' WHERE menu_id = 3000;
+UPDATE sys_menu SET menu_code = 'faq' WHERE menu_id = 3010;
+UPDATE sys_menu SET menu_code = 'faqAdd' WHERE menu_id = 3011;
+UPDATE sys_menu SET menu_code = 'faqEdit' WHERE menu_id = 3012;
+UPDATE sys_menu SET menu_code = 'faqDel' WHERE menu_id = 3013;
+UPDATE sys_menu SET menu_code = 'faqImport' WHERE menu_id = 3014;
+UPDATE sys_menu SET menu_code = 'faqExport' WHERE menu_id = 3015;
+UPDATE sys_menu SET menu_code = 'faqPublish' WHERE menu_id = 3016;
+UPDATE sys_menu SET menu_code = 'alittsconf' WHERE menu_id = 3017;
+UPDATE sys_menu SET menu_code = 'ASRConf' WHERE menu_id = 3018;
+UPDATE sys_menu SET menu_code = 'TTSConf' WHERE menu_id = 3019;
+UPDATE sys_menu SET menu_code = 'funasrconf' WHERE menu_id = 3020;
+UPDATE sys_menu SET menu_code = 'FreeswitchConf' WHERE menu_id = 3022;
+UPDATE sys_menu SET menu_code = 'callTask' WHERE menu_id = 3030;
+UPDATE sys_menu SET menu_code = 'callTaskAdd' WHERE menu_id = 3031;
+UPDATE sys_menu SET menu_code = 'callTaskEdit' WHERE menu_id = 3032;
+UPDATE sys_menu SET menu_code = 'callTaskQuery' WHERE menu_id = 3033;
+UPDATE sys_menu SET menu_code = 'callTaskStart' WHERE menu_id = 3034;
+UPDATE sys_menu SET menu_code = 'callTaskPause' WHERE menu_id = 3035;
+UPDATE sys_menu SET menu_code = 'callListImport' WHERE menu_id = 3036;
+UPDATE sys_menu SET menu_code = 'callPhone' WHERE menu_id = 3040;
+UPDATE sys_menu SET menu_code = 'callPhoneQuery' WHERE menu_id = 3041;
+
+
+-- 大模型底座菜单
+INSERT INTO `sys_menu` (`menu_id`,`menu_name`,`menu_code`,`parent_id`,`order_num`,`url`,`target`,`menu_type`,`visible`,`is_refresh`,`perms`,`icon`,`create_by`,`create_time`)
+VALUES('3050','大模型配置','llmAccount','3000','4','/aicall/account','menuItem','C','0','1','aicall:account:view','#','admin',NOW()) ;
+
+INSERT INTO `sys_menu` (`menu_id`,`menu_name`,`menu_code`,`parent_id`,`order_num`,`url`,`target`,`menu_type`,`visible`,`is_refresh`,`perms`,`icon`,`create_by`,`create_time`)
+VALUES('3051','大模型配置查询','llmAccountQuery','3050','1','#','','F','0','1','aicall:account:list','#','admin',NOW()) ;
+
+INSERT INTO `sys_menu` (`menu_id`,`menu_name`,`menu_code`,`parent_id`,`order_num`,`url`,`target`,`menu_type`,`visible`,`is_refresh`,`perms`,`icon`,`create_by`,`create_time`)
+VALUES('3052','大模型配置新增','llmAccountAdd','3050','1','#','','F','0','1','aicall:account:add','#','admin',NOW()) ;
+
+INSERT INTO `sys_menu` (`menu_id`,`menu_name`,`menu_code`,`parent_id`,`order_num`,`url`,`target`,`menu_type`,`visible`,`is_refresh`,`perms`,`icon`,`create_by`,`create_time`)
+VALUES('3053','大模型配置修改','llmAccountEdit','3050','1','#','','F','0','1','aicall:account:edit','#','admin',NOW()) ;
+
+INSERT INTO `sys_menu` (`menu_id`,`menu_name`,`menu_code`,`parent_id`,`order_num`,`url`,`target`,`menu_type`,`visible`,`is_refresh`,`perms`,`icon`,`create_by`,`create_time`)
+VALUES('3054','大模型配置删除','llmAccountDel','3050','1','#','','F','0','1','aicall:account:del','#','admin',NOW()) ;
+
+
+
+UPDATE `sys_menu` SET menu_name = 'AI外呼' WHERE menu_id = 3000;
+UPDATE `sys_menu` SET visible = '1' WHERE menu_id = 3010;
+UPDATE `sys_menu` SET visible = '1' WHERE parent_id = 3010;
+
+ALTER TABLE cc_gateways ADD COLUMN purpose INT(2) DEFAULT 0 COMMENT '网关用途 0 dropped; 1 phonebar; 2 outbound tasks; 3. Unlimited';
+
+-- 菜单 SQL
+INSERT INTO sys_menu (menu_id, menu_name, menu_code, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+VALUES('3060', '呼入配置', 'inboundllm', '3000', '5', '/aicall/inboundllm', 'C', '0', 'aicall:inboundllm:view', '#', 'admin', SYSDATE(), '', NULL, '呼入大模型配置菜单');
+
+-- 按钮 SQL
+INSERT INTO sys_menu (menu_id, menu_name, menu_code, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+VALUES('3061','呼入大模型配置查询', 'inboundllmQuery', '3060', '1',  '#',  'F', '0', 'aicall:inboundllm:list',         '#', 'admin', SYSDATE(), '', NULL, '');
+
+INSERT INTO sys_menu (menu_id, menu_name, menu_code, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+VALUES('3062','呼入大模型配置新增', 'inboundllmAdd', '3060', '2',  '#',  'F', '0', 'aicall:inboundllm:add',          '#', 'admin', SYSDATE(), '', NULL, '');
+
+INSERT INTO sys_menu (menu_id, menu_name, menu_code, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+VALUES('3063','呼入大模型配置修改', 'inboundllmEdit', '3060', '3',  '#',  'F', '0', 'aicall:inboundllm:edit',         '#', 'admin', SYSDATE(), '', NULL, '');
+
+INSERT INTO sys_menu (menu_id, menu_name, menu_code, parent_id, order_num, url, menu_type, visible, perms, icon, create_by, create_time, update_by, update_time, remark)
+VALUES('3064','呼入大模型配置删除', 'inboundllmDel', '3060', '4',  '#',  'F', '0', 'aicall:inboundllm:remove',       '#', 'admin', SYSDATE(), '', NULL, '');
+
+
+-- cc_inbound_llm_account
+DROP TABLE IF EXISTS `cc_inbound_llm_account`;
+CREATE TABLE `cc_inbound_llm_account` (
+                                          `id` INT(8) NOT NULL AUTO_INCREMENT,
+                                          `llm_account_id` INT(8) NOT NULL COMMENT 'llm or ai-agent account id.',
+                                          `callee` VARCHAR(30) NOT NULL DEFAULT '' COMMENT 'callee number',
+                                          PRIMARY KEY (`id`)
+) ENGINE=INNODB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4;
+
+
+
+-- cc_llm_agent_account
+DROP TABLE IF EXISTS `cc_llm_agent_account`;
+CREATE TABLE `cc_llm_agent_account` (
+                                        `id` INT(8) NOT NULL AUTO_INCREMENT,
+                                        `account_json` TEXT NOT NULL,
+                                        `provider_class_name` VARCHAR(100) NOT NULL COMMENT 'Name of the implementation class.',
+                                        `name` VARCHAR(50) NOT NULL COMMENT '别名',
+                                        `account_entity` VARCHAR(50) NOT NULL DEFAULT '' COMMENT 'Entity class for storing account config info.',
+                                        PRIMARY KEY (`id`)
+) ENGINE=INNODB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COMMENT='Conversation foundation:  configuration parameters for accessing large language models or ai agents.';
+
+
+-- cc_llm_agent_provider
+DROP TABLE IF EXISTS `cc_llm_agent_provider`;
+CREATE TABLE `cc_llm_agent_provider` (
+                                         `id` int(8) NOT NULL AUTO_INCREMENT,
+                                         `provider_class_name` varchar(100) NOT NULL,
+                                         `note` varchar(100) DEFAULT NULL,
+                                         PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `cc_llm_agent_provider` */
+
+insert  into `cc_llm_agent_provider`(`id`,`provider_class_name`,`note`) values (1,'DeepSeekChat','对接deepseek chat模型');
+insert  into `cc_llm_agent_provider`(`id`,`provider_class_name`,`note`) values (2,'ChatGpt4o','对接chatgpt4o-mini');
+insert  into `cc_llm_agent_provider`(`id`,`provider_class_name`,`note`) values (3,'Coze','对接字节扣子智能体');
+insert  into `cc_llm_agent_provider`(`id`,`provider_class_name`,`note`) values (4,'MaxKB','对接MaxKB');
+insert  into `cc_llm_agent_provider`(`id`,`provider_class_name`,`note`) values (5,'Dify','对接Dify');
+
+
+-- cc_params增加参数数据
+INSERT INTO `cc_params` (`id`, `param_name`, `param_code`, `param_value`, `param_type`, `hide_value`)
+VALUES('77', '群呼转人工坐席的场景下，是否开启预测外呼算法', 'outbound-enable-prediction-algorithm', 'true', 'batchcall', '0') ;
+
+INSERT INTO `cc_params` (`id`, `param_name`, `param_code`, `param_value`, `param_type`, `hide_value`)
+VALUES('78', '阿里云tts账号参数json', 'aliyun-tts-account-json', 'param_value', '{"access_key_id":"LT**********","app_key":"nb********Wr","sample_rate":"16000","voice_volume":"50","write_pcm_enable":"0","ws_conn_timeout_ms":"9000","access_key_secret":"1e*********","speech_rate":"5","voice_name":"aixia","server_url":"wss://nls-gateway-cn-beijing.aliyuncs.com/ws/v1","server_url_webapi":"https://nls-gateway.aliyuncs.com/stream/v1/tts"}', '1') ;
+
+INSERT INTO `cc_params` (`id`, `param_name`, `param_code`, `param_value`, `param_type`, `hide_value`)
+VALUES('79', '空号识别功能是否开启', 'empty-number-detection-enabled', 'true', 'batchcall', '0') ;
+
+INSERT INTO `cc_params` (`id`, `param_name`, `param_code`, `param_value`, `param_type`, `hide_value`)
+VALUES('80', '空号识别定义', 'empty-number-detection-config', '[{"key":"ASSISTANT","code":37,"cat":"语音助手","words":"留言,结束请挂机,语音信箱服务,语音助手,秘书,助理"},{"key":"NO_ANSWER","code":34,"cat":"无人接听","words":"无人接听,暂时无人"},{"key":"BUSY","code":31,"cat":"占线","words":"用户正忙,正在通话中,电话通话中,电话正在通话"},{"key":"EMPTY","code":33,"cat":"空号","words":"是空号,号码不存在"},{"key":"OFF","code":32,"cat":"关机","words":"用户已关机,电话已关机"},{"key":"STOP","code":35,"cat":"停机","words":"已停机,已暂停服务"},{"key":"NETWORK_BUSY","code":36,"cat":"网络忙","words":"网络忙"},{"key":"NOT_AVAILABLE","code":38,"cat":"无法接通","words":"暂时无法接通,不在服务区"},{"key":"REMINDER","code":30,"cat":"来电提醒","words":"来电提醒,来电信息将以短信,短信提醒,短信通知,短信的形式,启动通信助理"},{"key":"LIMIT","code":39,"cat":"呼入限制","words":"已呼入限制,已互祝限制"}]', 'sys', '0') ;
+
 
 
 

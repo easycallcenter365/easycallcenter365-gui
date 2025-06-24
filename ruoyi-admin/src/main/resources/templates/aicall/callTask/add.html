@@ -17,12 +17,18 @@
             <div class="col-xs-12">
                 <div class="form-group">
                     <label class="col-sm-3 control-label is-required" th:text="#{callTask.form.taskType}"></label>
-                    <div class="col-sm-8">
+                    <div class="col-sm-6">
                         <select name="taskType" class="form-control" required>
                             <option value="0" th:text="#{callTask.form.taskType0}"></option>
                             <option value="1" th:text="#{callTask.form.taskType1}"></option>
                             <option value="2" th:text="#{callTask.form.taskType2}"></option>
                         </select>
+                    </div>
+                    <div class="col-sm-2">
+                        <!-- 添加下载模板的链接 -->
+                        <a href="javascript:void(0);" onclick="downloadTemplate()">
+                            <span th:text="#{callTask.form.downloadTemplate}">下载模板</span>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -197,6 +203,8 @@
 
             // 初始化时根据默认值显示字段
             $('select[name="taskType"]').trigger('change');
+            // 默认选中AI外呼
+            $("select[name='taskType']").val("1");
         });
 
         // 表单验证
@@ -210,6 +218,13 @@
                 $.operate.save(prefix + "/add", $('#form-callTask-add').serialize());
             }
         }
+
+        // 下载模板
+        function downloadTemplate () {
+            var taskType = $("select[name='taskType']").val();
+            var templateUrl = prefix + "/downloadTemplate?taskType=" + taskType; // 假设模板文件放在静态资源目录下
+            window.location.href = templateUrl;
+        };
     </script>
 </body>
 </html>

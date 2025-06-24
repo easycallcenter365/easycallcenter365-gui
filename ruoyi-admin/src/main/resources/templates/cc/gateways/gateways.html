@@ -117,17 +117,16 @@
                     field: 'purpose',
                     title: i18n('gateways.table.purpose'),
                     formatter: function(value, row, index) {
-                        switch (value) {
-                            case 0:
-                                return i18n('gateways.table.purpose.abandoned');
-                            case 1:
-                                return i18n('gateways.table.purpose.toolbar');
-                            case 2:
-                                return i18n('gateways.table.purpose.outgoing');
-                            case 3:
-                                return i18n('gateways.table.purpose.unlimited');
-                            default:
-                                return value; // 如果有其他值，直接显示原始值
+                        if (value == '0') {
+                            return i18n('gateways.table.purpose.abandoned');
+                        } else if (value == '1') {
+                            return i18n('gateways.table.purpose.toolbar');
+                        } else if (value == '2') {
+                            return i18n('gateways.table.purpose.outgoing');
+                        } else if (value == '3') {
+                            return i18n('gateways.table.purpose.unlimited');
+                        } else {
+                            return value;
                         }
                     }
                 },
