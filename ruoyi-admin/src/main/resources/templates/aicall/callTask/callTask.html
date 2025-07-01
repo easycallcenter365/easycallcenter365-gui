@@ -17,6 +17,7 @@
                         <li>
                             <label th:text="#{callTask.query.taskType}"></label>
                             <select name="taskType">
+                                <option value="" th:text="#{options.all}"></option>
                                 <option value="0" th:text="#{callTask.query.taskType0}"></option>
                                 <option value="1" th:text="#{callTask.query.taskType1}"></option>
                                 <option value="2" th:text="#{callTask.query.taskType2}"></option>
@@ -115,8 +116,8 @@
             }
         });
 
-        // 设置 taskType 默认选中值为 1
-        $("#formId select[name='taskType']").val("1");
+        // // 设置 taskType 默认选中值为 1
+        // $("#formId select[name='taskType']").val("1");
 
         var options = {
             url: prefix + "/list",

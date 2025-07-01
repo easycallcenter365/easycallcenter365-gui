@@ -72,7 +72,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="params.answeredTimeEnd != null and params.answeredTimeEnd != ''"><!-- 结束时间检索 -->
                 AND answered_time &lt;= #{params.answeredTimeEnd}
             </if>
+            AND callstatus >= 2
         </where>
+        order by id desc
     </select>
     
     <select id="selectCcCallPhoneById" parameterType="String" resultMap="CcCallPhoneResult">
