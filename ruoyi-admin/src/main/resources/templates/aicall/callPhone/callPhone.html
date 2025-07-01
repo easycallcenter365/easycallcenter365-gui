@@ -247,47 +247,44 @@
                     field: 'callstatus',
                     title: i18n('callPhone.table.callstatus'),
                     formatter: function(value, row, index) {
-                        switch (value) {
-                            case 0:
-                                return '未拨打';
-                            case 1:
-                                return '已经进入呼叫队列';
-                            case 2:
-                                return '正在呼叫（进行中）';
-                            case 3:
-                                return '未接通';
-                            case 4:
-                                return '已接通';
-                            case 5:
-                                return '呼损';
-                            case 6:
-                                return '成功转接座席或者AI';
-                            case 7:
-                                return '线路故障';
-                            case 31:
-                                return '客户正在通话中';
-                            case 32:
-                                return '关机';
-                            case 33:
-                                return '空号';
-                            case 34:
-                                return '无人接听';
-                            case 35:
-                                return '停机';
-                            case 41:
-                                return '接通后我方挂断';
-                            case 42:
-                                return '接通后对方挂断';
-                            case 51:
-                                return '未触发（未到达弹屏节点）';
-                            case 52:
-                                return '未弹屏（到达弹屏节点，没有弹屏出来）';
-                            case 53:
-                                return '仅弹屏（仅弹屏给座席但座席未介入通话，包括呼损）';
-                            case 54:
-                                return '己介入（弹屏给到座席座席介入通话）';
-                            default:
-                                return '未知状态';
+                        if (value == 0) {
+                            return i18n('callPhone.table.callstatus0');
+                        } else if (value == 1) {
+                            return i18n('callPhone.table.callstatus1');
+                        } else if (value == 2) {
+                            return i18n('callPhone.table.callstatus2');
+                        } else if (value == 3) {
+                            return i18n('callPhone.table.callstatus3');
+                        } else if (value == 4) {
+                            return i18n('callPhone.table.callstatus4');
+                        } else if (value == 5) {
+                            return i18n('callPhone.table.callstatus5');
+                        } else if (value == 6) {
+                            return i18n('callPhone.table.callstatus6');
+                        } else if (value == 7) {
+                            return i18n('callPhone.table.callstatus7');
+                        } else if (value == 30) {
+                            return i18n('callPhone.table.callstatus30');
+                        } else if (value == 31) {
+                            return i18n('callPhone.table.callstatus31');
+                        } else if (value == 32) {
+                            return i18n('callPhone.table.callstatus32');
+                        } else if (value == 33) {
+                            return i18n('callPhone.table.callstatus33');
+                        } else if (value == 34) {
+                            return i18n('callPhone.table.callstatus34');
+                        } else if (value == 35) {
+                            return i18n('callPhone.table.callstatus35');
+                        } else if (value == 36) {
+                            return i18n('callPhone.table.callstatus36');
+                        } else if (value == 37) {
+                            return i18n('callPhone.table.callstatus37');
+                        } else if (value == 38) {
+                            return i18n('callPhone.table.callstatus38');
+                        } else if (value == 39) {
+                            return i18n('callPhone.table.callstatus39');
+                        } else {
+                            return i18n('callPhone.table.callstatusNone');
                         }
                     }
                 },

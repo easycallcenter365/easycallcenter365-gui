@@ -505,7 +505,7 @@ INSERT INTO `cc_params` (`id`, `param_name`, `param_code`, `param_value`, `param
 VALUES('77', '群呼转人工坐席的场景下，是否开启预测外呼算法', 'outbound-enable-prediction-algorithm', 'true', 'batchcall', '0') ;
 
 INSERT INTO `cc_params` (`id`, `param_name`, `param_code`, `param_value`, `param_type`, `hide_value`)
-VALUES('78', '阿里云tts账号参数json', 'aliyun-tts-account-json', 'param_value', '{"access_key_id":"LT**********","app_key":"nb********Wr","sample_rate":"16000","voice_volume":"50","write_pcm_enable":"0","ws_conn_timeout_ms":"9000","access_key_secret":"1e*********","speech_rate":"5","voice_name":"aixia","server_url":"wss://nls-gateway-cn-beijing.aliyuncs.com/ws/v1","server_url_webapi":"https://nls-gateway.aliyuncs.com/stream/v1/tts"}', '1') ;
+VALUES('78', '阿里云tts账号参数json', 'aliyun-tts-account-json', '{"access_key_id":"LT**********","app_key":"nb********Wr","sample_rate":"16000","voice_volume":"50","write_pcm_enable":"0","ws_conn_timeout_ms":"9000","access_key_secret":"1e*********","speech_rate":"5","voice_name":"aixia","server_url":"wss://nls-gateway-cn-beijing.aliyuncs.com/ws/v1","server_url_webapi":"https://nls-gateway.aliyuncs.com/stream/v1/tts"}', 'tts', '1') ;
 
 INSERT INTO `cc_params` (`id`, `param_name`, `param_code`, `param_value`, `param_type`, `hide_value`)
 VALUES('79', '空号识别功能是否开启', 'empty-number-detection-enabled', 'true', 'batchcall', '0') ;
