@@ -6,6 +6,7 @@ import com.ruoyi.aicall.domain.CcLlmAgentAccount;
 import com.ruoyi.aicall.domain.CcTtsAliyun;
 import com.ruoyi.aicall.service.ICcLlmAgentAccountService;
 import com.ruoyi.aicall.service.ICcTtsAliyunService;
+import com.ruoyi.common.utils.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -110,6 +111,9 @@ public class CcInboundLlmAccountController extends BaseController
     @ResponseBody
     public AjaxResult addSave(CcInboundLlmAccount ccInboundLlmAccount)
     {
+        if (StringUtils.isBlank(ccInboundLlmAccount.getVoiceSource())) {
+            ccInboundLlmAccount.setVoiceSource("aliyuntts");
+        }
         return toAjax(ccInboundLlmAccountService.insertCcInboundLlmAccount(ccInboundLlmAccount));
     }
 
@@ -134,6 +138,9 @@ public class CcInboundLlmAccountController extends BaseController
     @ResponseBody
     public AjaxResult editSave(CcInboundLlmAccount ccInboundLlmAccount)
     {
+        if (StringUtils.isBlank(ccInboundLlmAccount.getVoiceSource())) {
+            ccInboundLlmAccount.setVoiceSource("aliyuntts");
+        }
         return toAjax(ccInboundLlmAccountService.updateCcInboundLlmAccount(ccInboundLlmAccount));
     }
 
