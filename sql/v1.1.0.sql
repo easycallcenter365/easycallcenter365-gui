@@ -462,11 +462,13 @@ VALUES('3064','呼入大模型配置删除', 'inboundllmDel', '3060', '4',  '#',
 -- cc_inbound_llm_account
 DROP TABLE IF EXISTS `cc_inbound_llm_account`;
 CREATE TABLE `cc_inbound_llm_account` (
-                                          `id` INT(8) NOT NULL AUTO_INCREMENT,
-                                          `llm_account_id` INT(8) NOT NULL COMMENT 'llm or ai-agent account id.',
-                                          `callee` VARCHAR(30) NOT NULL DEFAULT '' COMMENT 'callee number',
+                                          `id` int NOT NULL AUTO_INCREMENT,
+                                          `llm_account_id` int NOT NULL COMMENT 'llm or ai-agent account id.',
+                                          `callee` varchar(30) NOT NULL DEFAULT '' COMMENT 'callee number',
+                                          `voice_code` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT 'TTS voice code for the robot',
+                                          `voice_source` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8_general_ci NOT NULL DEFAULT 'aliyun_tts' COMMENT 'tts provider',
                                           PRIMARY KEY (`id`)
-) ENGINE=INNODB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 
 
 
@@ -512,12 +514,6 @@ VALUES('79', '空号识别功能是否开启', 'empty-number-detection-enabled',
 
 INSERT INTO `cc_params` (`id`, `param_name`, `param_code`, `param_value`, `param_type`, `hide_value`)
 VALUES('80', '空号识别定义', 'empty-number-detection-config', '[{"key":"ASSISTANT","code":37,"cat":"语音助手","words":"留言,结束请挂机,语音信箱服务,语音助手,秘书,助理"},{"key":"NO_ANSWER","code":34,"cat":"无人接听","words":"无人接听,暂时无人"},{"key":"BUSY","code":31,"cat":"占线","words":"用户正忙,正在通话中,电话通话中,电话正在通话"},{"key":"EMPTY","code":33,"cat":"空号","words":"是空号,号码不存在"},{"key":"OFF","code":32,"cat":"关机","words":"用户已关机,电话已关机"},{"key":"STOP","code":35,"cat":"停机","words":"已停机,已暂停服务"},{"key":"NETWORK_BUSY","code":36,"cat":"网络忙","words":"网络忙"},{"key":"NOT_AVAILABLE","code":38,"cat":"无法接通","words":"暂时无法接通,不在服务区"},{"key":"REMINDER","code":30,"cat":"来电提醒","words":"来电提醒,来电信息将以短信,短信提醒,短信通知,短信的形式,启动通信助理"},{"key":"LIMIT","code":39,"cat":"呼入限制","words":"已呼入限制,已互祝限制"}]', 'sys', '0') ;
-
-
-
-ALTER TABLE `cc_inbound_llm_account` ADD COLUMN voice_code VARCHAR(255) DEFAULT '' COMMENT 'TTS voice code for the robot';
-ALTER TABLE `cc_inbound_llm_account` ADD COLUMN voice_source VARCHAR(255) DEFAULT 'aliyuntts' COMMENT 'tts provider';
-
 
 
 
