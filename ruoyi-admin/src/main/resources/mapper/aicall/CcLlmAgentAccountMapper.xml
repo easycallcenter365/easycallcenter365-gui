@@ -10,10 +10,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="accountJson"    column="account_json"    />
         <result property="providerClassName"    column="provider_class_name"    />
         <result property="accountEntity"    column="account_entity"    />
+        <result property="interruptFlag"    column="interrupt_flag"    />
+        <result property="interruptKeywords"    column="interrupt_keywords"    />
+        <result property="interruptIgnoreKeywords"    column="interrupt_ignore_keywords"    />
     </resultMap>
 
     <sql id="selectCcLlmAgentAccountVo">
-        select id, name, account_json, provider_class_name, account_entity from cc_llm_agent_account
+        select id, name, account_json, provider_class_name, account_entity, interrupt_flag, interrupt_keywords, interrupt_ignore_keywords from cc_llm_agent_account
     </sql>
 
     <select id="selectCcLlmAgentAccountList" parameterType="CcLlmAgentAccount" resultMap="CcLlmAgentAccountResult">
@@ -37,6 +40,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             account_json,
             provider_class_name,
             account_entity,
+            interrupt_flag,
+            interrupt_keywords,
+            interrupt_ignore_keywords,
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
                    #{id},
@@ -44,6 +50,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                    #{accountJson},
                    #{providerClassName},
                    #{accountEntity},
+                   #{interruptFlag},
+                   #{interruptKeywords},
+                   #{interruptIgnoreKeywords},
         </trim>
     </insert>
 
@@ -54,6 +63,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             account_json = #{accountJson},
             provider_class_name = #{providerClassName},
             account_entity = #{accountEntity},
+            interrupt_flag = #{interruptFlag},
+            interrupt_keywords = #{interruptKeywords},
+            interrupt_ignore_keywords = #{interruptIgnoreKeywords},
         </trim>
         where id = #{id}
     </update>

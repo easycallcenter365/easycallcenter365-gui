@@ -3,6 +3,8 @@ package com.ruoyi.aicall.controller;
 import java.util.List;
 
 import com.ruoyi.aicall.domain.CcLlmAgentProvider;
+import com.ruoyi.cc.service.ICcParamsService;
+import com.ruoyi.common.utils.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -35,6 +37,8 @@ public class CcLlmAgentAccountController extends BaseController
 
     @Autowired
     private ICcLlmAgentAccountService ccLlmAgentAccountService;
+    @Autowired
+    private ICcParamsService ccParamsService;
 
     @RequiresPermissions("aicall:account:view")
     @GetMapping()
@@ -74,8 +78,12 @@ public class CcLlmAgentAccountController extends BaseController
      * 新增机器人参数配置
      */
     @GetMapping("/add")
-    public String add()
+    public String add(ModelMap mmap)
     {
+        CcLlmAgentAccount ccLlmAgentAccount = new CcLlmAgentAccount();
+        ccLlmAgentAccount.setInterruptIgnoreKeywords(ccParamsService.getParamValueByCode("default_interrupt_ignore_keywords", ""));
+        ccLlmAgentAccount.setInterruptFlag(0);
+        mmap.put("ccLlmAgentAccount", ccLlmAgentAccount);
         return prefix + "/add";
     }
 
@@ -104,6 +112,26 @@ public class CcLlmAgentAccountController extends BaseController
     public String edit(@PathVariable("id") Integer id, ModelMap mmap)
     {
         CcLlmAgentAccount ccLlmAgentAccount = ccLlmAgentAccountService.selectCcLlmAgentAccountById(id);
+        if (StringUtils.isBlank(ccLlmAgentAccount.getInterruptIgnoreKeywords())) {
+            ccLlmAgentAccount.setInterruptIgnoreKeywords(ccParamsService.getParamValueByCode("default_interrupt_ignore_keywords", ""));
+        }
+        mmap.put("ccLlmAgentAccount", ccLlmAgentAccount);
+        return prefix + "/edit";
+    }
+
+    /**
+     * 复制机器人参数配置
+     */
+    @RequiresPermissions("aicall:account:edit")
+    @GetMapping("/copy/{id}")
+    public String copy(@PathVariable("id") Integer id, ModelMap mmap)
+    {
+        CcLlmAgentAccount ccLlmAgentAccount = ccLlmAgentAccountService.selectCcLlmAgentAccountById(id);
+        if (StringUtils.isBlank(ccLlmAgentAccount.getInterruptIgnoreKeywords())) {
+            ccLlmAgentAccount.setInterruptIgnoreKeywords(ccParamsService.getParamValueByCode("default_interrupt_ignore_keywords", ""));
+        }
+        ccLlmAgentAccount.setId(-1);
+        ccLlmAgentAccount.setName(ccLlmAgentAccount.getName() + "-副本");
         mmap.put("ccLlmAgentAccount", ccLlmAgentAccount);
         return prefix + "/edit";
     }
@@ -122,7 +150,11 @@ public class CcLlmAgentAccountController extends BaseController
         } else {
             ccLlmAgentAccount.setAccountEntity("LlmAccount");
         }
-        return toAjax(ccLlmAgentAccountService.updateCcLlmAgentAccount(ccLlmAgentAccount));
+        if (ccLlmAgentAccount.getId() > 0) {
+            return toAjax(ccLlmAgentAccountService.updateCcLlmAgentAccount(ccLlmAgentAccount));
+        } else {
+            return toAjax(ccLlmAgentAccountService.insertCcLlmAgentAccount(ccLlmAgentAccount));
+        }
     }
 
     /**

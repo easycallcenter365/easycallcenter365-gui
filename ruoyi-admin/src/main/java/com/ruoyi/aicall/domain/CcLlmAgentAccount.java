@@ -37,4 +37,16 @@ public class CcLlmAgentAccount implements Serializable {
     @Excel(name = "实现类")
     private String providerClassName;
 
+    /** 是否打断（1：是，0：否） */
+    @Excel(name = "是否打断（1：是，0：否）")
+    private Integer interruptFlag;
+
+    /** 打断关键词列表 */
+    @Excel(name = "打断关键词列表")
+    private String interruptKeywords;
+
+    /** 打断忽略关键字列表 */
+    @Excel(name = "打断忽略关键字列表")
+    private String interruptIgnoreKeywords;
+
 }

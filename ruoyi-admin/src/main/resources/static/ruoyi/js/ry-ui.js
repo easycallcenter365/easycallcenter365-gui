@@ -1193,6 +1193,21 @@ var table = {
                     $.modal.open(i18n('btn.edit') + table.options.modalName, $.operate.editUrl(id));
                 }
             },
+            // 复制信息
+            copy: function(id) {
+                table.set();
+                if ($.common.isEmpty(id) && table.options.type == table_type.bootstrapTreeTable) {
+                    var row = $("#" + table.options.id).bootstrapTreeTable('getSelections')[0];
+                    if ($.common.isEmpty(row)) {
+                        $.modal.alertWarning("请至少选择一条记录");
+                        return;
+                    }
+                    var url = table.options.copyUrl.replace("{id}", row[table.options.uniqueId]);
+                    $.modal.open(i18n('btn.copy') + table.options.modalName, url);
+                } else {
+                    $.modal.open(i18n('btn.copy') + table.options.modalName, $.operate.copyUrl(id));
+                }
+            },
             // 修改信息，以tab页展现
             editTab: function(id) {
                 table.set();
@@ -1231,6 +1246,21 @@ var table = {
                         return;
                     }
                     url = table.options.updateUrl.replace("{id}", id);
+                }
+                return url;
+            },
+            // 修改访问地址
+            copyUrl: function(id) {
+                var url = "/404.html";
+                if ($.common.isNotEmpty(id)) {
+                    url = table.options.copyUrl.replace("{id}", id);
+                } else {
+                    var id = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+                    if (id.length == 0) {
+                        $.modal.alertWarning("请至少选择一条记录");
+                        return;
+                    }
+                    url = table.options.copyUrl.replace("{id}", id);
                 }
                 return url;
             },

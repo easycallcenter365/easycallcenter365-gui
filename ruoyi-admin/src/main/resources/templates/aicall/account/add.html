@@ -5,7 +5,7 @@
 </head>
 <body class="white-bg">
 <div class="wrapper wrapper-content animated fadeInRight ibox-content">
-    <form class="form-horizontal m" id="form-account-add">
+    <form class="form-horizontal m" id="form-account-add" th:object="${ccLlmAgentAccount}">
         <div class="col-xs-12">
             <div class="form-group">
                 <label class="col-sm-3 control-label is-required" th:text="#{llmAcount.form.name}"></label>
@@ -27,12 +27,41 @@
         <div class="col-xs-12" id="dynamicFieldsContainer">
             <!-- 动态字段将在这里显示 -->
         </div>
-
+        <div class="col-xs-12">
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required" th:text="#{llmAcount.form.interruptFlag}"></label>
+                <div class="col-sm-8">
+                    <label class="radio-inline">
+                        <input type="radio" name="interruptFlag" value="1" onclick="toggleInterruptFields(true)" th:field="*{interruptFlag}" th:text="#{llmAcount.form.interruptFlag1}">
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="interruptFlag" value="0" onclick="toggleInterruptFields(false)" th:field="*{interruptFlag}" th:text="#{llmAcount.form.interruptFlag0}">
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12" id="interruptKeywordsContainer" style="display: none;">
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required" th:text="#{llmAcount.form.interruptKeywords}"></label>
+                <div class="col-sm-8">
+                    <textarea name="interruptKeywords" class="form-control" rows="5" th:field="*{interruptKeywords}"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12" id="interruptIgnoreKeywordsContainer" style="display: none;">
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required" th:text="#{llmAcount.form.interruptIgnoreKeywords}"></label>
+                <div class="col-sm-8">
+                    <textarea name="interruptIgnoreKeywords" class="form-control" rows="5" th:field="*{interruptIgnoreKeywords}"></textarea>
+                </div>
+            </div>
+        </div>
     </form>
 </div>
 <th:block th:include="include :: footer" />
 <script th:inline="javascript">
     var prefix = ctx + "aicall/account"
+    var _interruptFlag = [[${ccLlmAgentAccount.interruptFlag}]];
     var _accountJson = {};
     $(document).ready(function() {
         // 获取实现类下拉框数据
@@ -63,6 +92,11 @@
         $("#providerClassNameSelect").change(function() {
             updateDynamicFields($(this).val());
         });
+        if (_interruptFlag) {
+            toggleInterruptFields(true);
+        } else {
+            toggleInterruptFields(false);
+        }
     });
 
     // 根据选择的实现类动态更新表单字段
@@ -285,6 +319,16 @@
             var formData = $('#form-account-add').serializeArray();
             formData.push({"name": "accountJson", "value": JSON.stringify(dynamicFields)})
             $.operate.save(prefix + "/add", formData);
+        }
+    }
+
+    function toggleInterruptFields(show) {
+        if (show) {
+            document.getElementById('interruptKeywordsContainer').style.display = 'block';
+            document.getElementById('interruptIgnoreKeywordsContainer').style.display = 'block';
+        } else {
+            document.getElementById('interruptKeywordsContainer').style.display = 'none';
+            document.getElementById('interruptIgnoreKeywordsContainer').style.display = 'none';
         }
     }
 

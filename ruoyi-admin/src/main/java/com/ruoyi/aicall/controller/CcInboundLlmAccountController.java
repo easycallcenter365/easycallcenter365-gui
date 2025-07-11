@@ -112,7 +112,7 @@ public class CcInboundLlmAccountController extends BaseController
     public AjaxResult addSave(CcInboundLlmAccount ccInboundLlmAccount)
     {
         if (StringUtils.isBlank(ccInboundLlmAccount.getVoiceSource())) {
-            ccInboundLlmAccount.setVoiceSource("aliyuntts");
+            ccInboundLlmAccount.setVoiceSource("aliyun_tts");
         }
         return toAjax(ccInboundLlmAccountService.insertCcInboundLlmAccount(ccInboundLlmAccount));
     }
@@ -139,7 +139,7 @@ public class CcInboundLlmAccountController extends BaseController
     public AjaxResult editSave(CcInboundLlmAccount ccInboundLlmAccount)
     {
         if (StringUtils.isBlank(ccInboundLlmAccount.getVoiceSource())) {
-            ccInboundLlmAccount.setVoiceSource("aliyuntts");
+            ccInboundLlmAccount.setVoiceSource("aliyun_tts");
         }
         return toAjax(ccInboundLlmAccountService.updateCcInboundLlmAccount(ccInboundLlmAccount));
     }

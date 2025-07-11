@@ -518,3 +518,12 @@ VALUES('80', '空号识别定义', 'empty-number-detection-config', '[{"key":"AS
 
 
 
+ALTER TABLE `cc_llm_agent_account` ADD COLUMN interrupt_flag INT(2) DEFAULT 0 COMMENT '是否打断（1：是，0：否）';
+ALTER TABLE `cc_llm_agent_account` ADD COLUMN interrupt_keywords TEXT COMMENT '打断关键词列表';
+ALTER TABLE `cc_llm_agent_account` ADD COLUMN interrupt_ignore_keywords TEXT COMMENT '打断忽略关键字列表';
+
+INSERT INTO `cc_params` (`id`, `param_name`, `param_code`, `param_value`, `param_type`, `hide_value`)
+VALUES('81', '打断忽略关键字列表默认值', 'default_interrupt_ignore_keywords', '嗯,啊,额', 'sys', '0') ;
+
+
+

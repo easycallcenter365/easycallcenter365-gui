@@ -1,12 +1,12 @@
 package com.ruoyi.web.controller.system;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSONObject;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.ruoyi.cc.domain.CcExtNum;
 import com.ruoyi.cc.domain.CcGateways;
 import com.ruoyi.cc.domain.SysDivisionData;
@@ -253,5 +253,32 @@ public class SysIndexController extends BaseController
             return DateUtils.differentDaysByMillisecond(nowDate, pwdUpdateDate) > passwordValidateDays;
         }
         return false;
+    }
+
+    public static void main(String[] args) {
+        try {
+            String authTokenSecret = "TeleRobot2048AbDfF@#!";
+            //登录成功后生成JWT
+            //JWT的header部分,该map可以是空的,因为有默认值{"alg":HS256,"typ":"JWT"}
+            Map<String, Object> map = new HashMap<>();
+            Calendar instance = Calendar.getInstance();
+            instance.add(Calendar.HOUR, 24);
+            String token = JWT.create()
+                    //添加头部
+                    .withHeader(map)
+                    //添加payload
+                    .withClaim("extnum", "1004")
+                    .withClaim("opnum", "jtbank")
+                    .withClaim("groupId", "1")
+                    .withClaim("skillLevel", "9")
+                    .withClaim("projectId", "1942155412793647106")
+                    //设置过期时间
+                    .withExpiresAt(instance.getTime())
+                    //设置签名 密钥
+                    .sign(Algorithm.HMAC256(authTokenSecret));
+            System.out.println(token);
+
+        } catch (Exception err) {
+        }
     }
 }
