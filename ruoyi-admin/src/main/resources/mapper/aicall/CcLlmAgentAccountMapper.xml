@@ -25,6 +25,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
             <if test="providerClassName != null  and providerClassName != ''"> and provider_class_name like concat('%', #{providerClassName}, '%')</if>
         </where>
+        order by id desc
     </select>
     
     <select id="selectCcLlmAgentAccountById" parameterType="Integer" resultMap="CcLlmAgentAccountResult">

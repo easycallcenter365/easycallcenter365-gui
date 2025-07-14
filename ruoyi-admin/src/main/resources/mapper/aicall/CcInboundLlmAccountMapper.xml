@@ -24,6 +24,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="voiceCode != null  and voiceCode != ''"> and voice_code = #{voiceCode}</if>
             <if test="voiceSource != null  and voiceSource != ''"> and voice_source = #{voiceSource}</if>
         </where>
+        order by id desc
     </select>
     
     <select id="selectCcInboundLlmAccountById" parameterType="Integer" resultMap="CcInboundLlmAccountResult">

@@ -153,6 +153,7 @@ public class CcLlmAgentAccountController extends BaseController
         if (ccLlmAgentAccount.getId() > 0) {
             return toAjax(ccLlmAgentAccountService.updateCcLlmAgentAccount(ccLlmAgentAccount));
         } else {
+            ccLlmAgentAccount.setId(null);
             return toAjax(ccLlmAgentAccountService.insertCcLlmAgentAccount(ccLlmAgentAccount));
         }
     }
