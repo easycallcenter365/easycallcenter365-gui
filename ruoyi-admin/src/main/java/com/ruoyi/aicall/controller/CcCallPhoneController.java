@@ -52,6 +52,14 @@ public class CcCallPhoneController extends BaseController
         startPage();
         List<CcCallPhone> list = ccCallPhoneService.selectCcCallPhoneList(ccCallPhone);
         TableDataInfo tableDataInfo = getDataTable(list);
+        List<CcCallPhone> records = (List<CcCallPhone>) tableDataInfo.getRows();
+        for (CcCallPhone data: records) {
+            if (data.getWavfile().startsWith("/")) {
+                data.setWavfile(data.getWavfile().substring(1));
+            }
+            data.setWavfile("/recordings/files?filename=" + data.getWavfile());
+        }
+        tableDataInfo.setRows(records);
         return tableDataInfo;
     }
 

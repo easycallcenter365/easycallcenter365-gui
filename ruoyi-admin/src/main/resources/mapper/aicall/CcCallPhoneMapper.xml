@@ -37,7 +37,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectCcCallPhoneList" parameterType="CcCallPhone" resultMap="CcCallPhoneResult">
         <include refid="selectCcCallPhoneVo"/>
-        <where>  
+        <where>
+            <if test="uuid != null and uuid != '' "> and uuid = #{uuid}</if>
             <if test="batchId != null "> and batch_id = #{batchId}</if>
             <if test="telephone != null  and telephone != ''"> and telephone = #{telephone}</if>
             <if test="custName != null  and custName != ''"> and cust_name = #{custName}</if>
@@ -74,7 +75,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             </if>
             AND callstatus >= 2
         </where>
-        order by id desc
+        order by call_end_time desc
     </select>
     
     <select id="selectCcCallPhoneById" parameterType="String" resultMap="CcCallPhoneResult">

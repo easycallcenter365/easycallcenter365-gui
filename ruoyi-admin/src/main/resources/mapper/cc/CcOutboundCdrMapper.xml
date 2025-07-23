@@ -60,7 +60,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="recordFilename != null  and recordFilename != ''"> and record_filename like concat('%', #{recordFilename}, '%')</if>
             <if test="hangupCause != null  and hangupCause != ''"> and hangup_cause = #{hangupCause}</if>
         </where>
-        order by start_time desc
+        order by end_time desc
     </select>
     
     <select id="selectCcOutboundCdrById" parameterType="String" resultMap="CcOutboundCdrResult">

@@ -61,7 +61,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="uuid != null  and uuid != ''"> and uuid = #{uuid}</if>
             <if test="wavFile != null  and wavFile != ''"> and wav_file = #{wavFile}</if>
         </where>
-        order by inbound_time desc
+        order by hangup_time desc
     </select>
     
     <select id="selectCcInboundCdrById" parameterType="String" resultMap="CcInboundCdrResult">
