@@ -36,6 +36,28 @@
                     </div>
                 </div>
             </div>
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label is-required" th:text="#{inboundllm.form.serviceType}"></label>
+                    <div class="col-sm-8">
+                        <select name="serviceType" class="form-control" required>
+                            <option value="ai" th:text="#{inboundllm.form.serviceTypeAI}"></option>
+                            <option value="acd" th:text="#{inboundllm.form.serviceTypeACD}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div class="form-group" >
+                    <label class="col-sm-3 control-label is-required" th:text="#{inboundllm.form.groupId}"></label>
+                    <div class="col-sm-8">
+                        <select name="groupId" class="form-control" required>
+                            <option value="" th:text="#{inboundllm.form.groupId.empty}"></option>
+                            <!-- 业务组选项将通过接口动态加载 -->
+                        </select>
+                    </div>
+                </div>
+            </div>
         </form>
     </div>
     <th:block th:include="include :: footer" />
@@ -56,7 +78,6 @@
                 }
             });
 
-
             // 加载音色下拉框数据
             $.ajax({
                 url: ctx + "aicall/ttsAliyun/all",
@@ -66,6 +87,19 @@
                     voiceSelect.append('<option value="">' + i18n('inboundllm.form.voiceCode.empty') + '</option>');
                     rsp.data.forEach(function(voice) {
                         voiceSelect.append($("<option>").attr("value", voice.voiceCode).text(voice.voiceName));
+                    });
+                }
+            });
+
+            // 加载业务组下拉框数据
+            $.ajax({
+                url: ctx + "cc/bizgroup/all",
+                success: function(rsp) {
+                    var groupSelect = $('select[name="groupId"]');
+                    groupSelect.empty();
+                    groupSelect.append('<option value="">' + i18n('inboundllm.form.groupId.empty') + '</option>');
+                    rsp.data.forEach(function(bizGroup) {
+                        groupSelect.append($("<option>").attr("value", bizGroup.groupId).text(bizGroup.bizGroupName));
                     });
                 }
             });

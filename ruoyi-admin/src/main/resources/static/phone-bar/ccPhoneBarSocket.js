@@ -390,6 +390,66 @@ function ccPhoneBarSocket() {
 						}
 					}
 
+					if (parseInt(resp_status) === parseInt(ccPhoneBarSocket.eventList.customer_channel_hold)) {
+						_cc.changeUiOnHold();
+					}
+
+					if (parseInt(resp_status) === parseInt(ccPhoneBarSocket.eventList.customer_channel_unhold)) {
+						_cc.changeUiOnUnHold();
+					}
+
+					if (parseInt(resp_status) === parseInt(ccPhoneBarSocket.eventList.customer_on_hold_hangup)) {
+						_cc.changeUiOnUnHold();
+						$("#holdBtn").removeClass('on');
+						$("#callStatus").text("保持的通话已挂机.");
+					}
+
+					if (parseInt(resp_status) === parseInt(ccPhoneBarSocket.eventList.customer_channel_call_wait)) {
+						$("#stopCallWait").show();
+						$("#doConsultationBtn").hide();
+						$("#callStatus").text("客户电话等待中.");
+						_cc.showTransferAreaUI();
+					}
+
+					if (parseInt(resp_status) === parseInt(ccPhoneBarSocket.eventList.customer_channel_off_call_wait)) {
+						$("#stopCallWait").hide();
+                        $("#transferCallWait").hide();
+						_cc.hideTransferAreaUI();
+						$("#callStatus").text("等待的电话已接回.");
+					}
+
+                    if (parseInt(resp_status) === parseInt(ccPhoneBarSocket.eventList.inner_consultation_start)) {
+                        $("#callStatus").text("咨询已开始.");
+                        $("#transferCallWait").show();
+                    }
+
+					if (parseInt(resp_status) === parseInt(ccPhoneBarSocket.eventList.inner_consultation_stop)) {
+						$("#callStatus").text("咨询已结束.");
+						$("#transferCallWait").hide();
+					}
+
+                    if (parseInt(resp_status) === parseInt(ccPhoneBarSocket.eventList.customer_on_call_wait_hangup)) {
+						$("#stopCallWait").hide();
+                        $("#transferCallWait").hide();
+						$("#callStatus").text("等待的客户已挂机.");
+					}
+
+					if (parseInt(resp_status) === parseInt(ccPhoneBarSocket.eventList.inner_consultation_start)) {
+						$("#holdBtn").removeClass('on');
+						$("#hangUpBtn").removeClass('on');
+						$("#transferBtn").removeClass('on');
+					}
+
+					if (parseInt(resp_status) === parseInt(ccPhoneBarSocket.eventList.transfer_call_success)) {
+						var extNum = msg["object"]["callee"];
+						if(extNum === _cc.getExtNum()) {
+							$("#holdBtn").addClass('on');
+							$("#hangUpBtn").addClass('on');
+							$("#transferBtn").addClass('on');
+						}
+
+					}
+
 					if (parseInt(resp_status) === parseInt(ccPhoneBarSocket.eventList.agent_status_data_changed)) {
 						if(_cc.subscribeAgentListStarted) {
 							if (_cc.callConfig.agentList == null) {
@@ -421,6 +481,28 @@ function ccPhoneBarSocket() {
 	this.sendMsg = function(jsonObject) {
 		console.debug("ws.send:", jsonObject);
 		ws.send(JSON.stringify(jsonObject));
+	};
+
+	this.changeUiOnHold = function() {
+		$("#holdBtnLi").hide();
+		$("#unHoldBtnLi").show();
+		$("#unHoldBtn").addClass('on');
+	};
+
+	this.changeUiOnUnHold = function() {
+		$("#holdBtnLi").show();
+		$("#holdBtn").addClass('on');
+		$("#unHoldBtnLi").hide();
+	};
+
+	this.hideTransferAreaUI = function(){
+		var transferArea = document.getElementById("transfer_area");
+		transferArea.style.display = "none";
+	};
+
+	this.showTransferAreaUI = function(){
+		var transferArea = document.getElementById("transfer_area");
+		transferArea.style.display = "block";
 	};
 
 	/**
@@ -584,48 +666,101 @@ function ccPhoneBarSocket() {
 
 		"asr_process_started" : 622,
 
+		/**
+		 * customer call session hold.
+		 */
+		"customer_channel_hold" : 623,
+
+		/**
+		 * customer call session unHold.
+		 */
+		"customer_channel_unhold" : 624,
+
+		/**
+		 * customer call session on hold is hangup.
+		 */
+		"customer_on_hold_hangup" : 625,
+
+		"inner_consultation_request" : 626,
+
+		/**
+		 * customer call session on call-wait.
+		 */
+		"customer_channel_call_wait" : 627,
+
+		/**
+		 * customer call session off call-wait.
+		 */
+		"customer_channel_off_call_wait" : 628,
+
+		/**
+		 * customer call session on call-wait is hangup.
+		 */
+		"customer_on_call_wait_hangup" : 629,
+
+		/**
+		 *  extension on line event
+		 */
+		"extension_on_line" : 630,
+
+		/**
+		 * extension off line event
+		 */
+		"extension_off_line" : 631,
+
+        /**
+         * Notify the agent that the call consultation has started.
+         */
+        "inner_consultation_start" : 632,
+
+        /**
+         *  Notify the agent that the call consultation has stopped.
+         */
+        "inner_consultation_stop" : 633,
+
+
 	    /**
 		* 多人电话会议，重复的被叫 ,
 		*/
-		"conference_repeat_callee"  :  "660" ,
+		"conference_repeat_callee"  :  660 ,
 
 		 /**
 		 * 多人电话会议，呼叫成员超时 ,
 		 */
-		 "CONFERENCE_CALL_MODERATOR_TIMEOUT"  :  "661" ,
+		 "CONFERENCE_CALL_MODERATOR_TIMEOUT"  :  661 ,
 
 		/**
 		 * 多人电话会议，成员接通 ,
 		 */
-		"CONFERENCE_MEMBER_ANSWERED"  :  "662" ,
+		"CONFERENCE_MEMBER_ANSWERED"  :  662 ,
 
 
 		/**
 		 * 多人电话会议，成员挂机 ,
 		 */
-		"CONFERENCE_MEMBER_HANGUP"  :  "663" ,
+		"CONFERENCE_MEMBER_HANGUP"  :  663 ,
 
 		/**
 		 * 多人电话会议，成员禁言成功 ,
 		 */
-		"CONFERENCE_MEMBER_MUTED_SUCCESS"  :  "666" ,
+		"CONFERENCE_MEMBER_MUTED_SUCCESS"  :  666 ,
 
 
 		/**
 		 * 多人电话会议，成员禁言失败 ,
 		 */
-		"CONFERENCE_MEMBER_MUTED_FAILED"  : "665"  ,
+		"CONFERENCE_MEMBER_MUTED_FAILED"  : 665  ,
 
 		/**
 		 * 多人电话会议，成员解除禁言成功 ,
 		 */
-		"CONFERENCE_MEMBER_UNMUTED_SUCCESS"  :  "667" ,
+		"CONFERENCE_MEMBER_UNMUTED_SUCCESS"  :  667 ,
 
 
 		/**
 		 * 多人电话会议，成员解除禁言失败 ,
 		 */
-		"CONFERENCE_MEMBER_UNMUTED_FAILED"  : "668"  ,
+		"CONFERENCE_MEMBER_UNMUTED_FAILED"  : 668  ,
 
 		/**
 		 * 多人电话会议，会议成员不存在，无法执行相关操作：
@@ -714,6 +849,52 @@ function ccPhoneBarSocket() {
 		cmdInfo.action="setAgentStatus";
 		cmdInfo.body = {"cmd" : "disconnect", "args" : { "cause": "disconnect request from js client." }  };
 		ws.send(JSON.stringify(cmdInfo));
+	};
+
+	/**
+	 *  在咨询失败的情况下使用该按钮，接回处于等待中的电话
+	 */
+	this.stopCallWaitBtnClickUI = function () {
+		var cmd = {};
+		cmd.action="callWait";
+		cmd.body = {"cmd" : "stop", "args" : {} };
+		ws.send(JSON.stringify(cmd));
+	};
+
+    /**
+     * 在咨询成功的情况下使用该按钮，把电话转接给专家坐席。
+     */
+	this.transferCallWaitBtnClickUI = function () {
+        this.callControl("transferCallWait", {})
+    };
+
+	this.consultationBtnClickUI = function () {
+		var groupId = $("#transfer_to_groupIds").val();
+		if($.trim(groupId) == ""){
+			alert("请选择业务组!");
+			$("#transfer_to_groupIds").focus();
+			return;
+		}
+		var member = $("#transfer_to_member").val();
+		if($.trim(member) == ""){
+			alert("请选择要咨询的坐席成员!");
+			$("#transfer_to_member").focus();
+			return;
+		}
+
+		var selectText = $('#transfer_to_member option:selected').text();
+		if(selectText.indexOf("空闲") == -1){
+			alert("请选择空闲的坐席成员!");
+			$("#transfer_to_member").focus();
+			return;
+		}
+
+		if(member == this.getOpNum()) {
+			alert("不能咨询自己，请选择其他坐席成员!");
+			return;
+		}
+
+		this.callControl("consultation", {"to": member});
 	};
 
 	/**
@@ -899,15 +1080,15 @@ function ccPhoneBarSocket() {
 	 */
 	  ccPhoneBarSocket.eventListWithTextInfo = {
 		"ws_connected": { "code": 200,  msg:"已签入",
-			btn_text:[{id:"#onLineBtn", name:i18n('phonebar.btn.offLine')}],
-			enabled_btn:['#setFree','#callBtn','#onLineBtn']
+			btn_text:[{id:"#onLineBtn",name:i18n('phonebar.btn.offLine')}],
+			enabled_btn:['#setFree','#callBtn','#onLineBtn', '#consultationBtn']
 		},
 		"ws_disconnected": { "code" : 202, msg:i18n('phonebar.ws.state.disconnect'),
-			btn_text:[{id:"#onLineBtn", name:i18n('phonebar.btn.onLine')}],
+			btn_text:[{id:"#onLineBtn",name:i18n('phonebar.btn.onLine')}],
 			enabled_btn:['#onLineBtn']
 		},
 		"user_login_on_other_device": { "code" : 201, msg:"用户已在其他设备登录",
-			btn_text:[{id:"#onLineBtn", name:i18n('phonebar.btn.onLine')}],
+			btn_text:[{id:"#onLineBtn",name:i18n('phonebar.btn.onLine')}],
 			enabled_btn:['#onLineBtn']
 		},
 		"request_args_error":{ "code" : 400, msg:"客户端请求参数错误",
@@ -920,35 +1101,35 @@ function ccPhoneBarSocket() {
 		},
 		"caller_answered":{ "code" : 600, msg:"分机已接通",
 			btn_text:[],
-			enabled_btn:['#resetStatus', '#hangUpBtn', '#transferBtn']
+			enabled_btn:['#resetStatus', '#hangUpBtn', '#transferBtn', '#holdBtn', '#consultationBtn']
 		},
 		"caller_hangup":{ "code" : 601, msg:"分机已挂断",
 			btn_text:[],
-			enabled_btn:['#onLineBtn', '#resetStatus', '#callBtn', '#setFree' ]
+			enabled_btn:['#onLineBtn', '#resetStatus', '#callBtn', '#setFree', '#consultationBtn' ]
 		},
 		"caller_busy":{ "code" : 602, msg:"分机忙,上一通电话未挂断",
 			btn_text:[],
-			enabled_btn:['#onLineBtn', '#resetStatus', '#callBtn', '#setFree']
+			enabled_btn:['#onLineBtn', '#resetStatus', '#callBtn', '#setFree', '#consultationBtn']
 		},
 		"caller_not_login":{ "code" : 603, msg:"分机未登录，请检查",
 			btn_text:[],
-			enabled_btn:['#onLineBtn', '#resetStatus', '#callBtn', '#setFree']
+			enabled_btn:['#onLineBtn', '#resetStatus', '#callBtn', '#setFree', '#consultationBtn']
 		},
 		"caller_respond_timeout":{ "code" : 604, msg:"分机未应答超时，请重新打开分机",
 			btn_text:[],
-			enabled_btn:['#onLineBtn', '#resetStatus', '#callBtn', '#setFree']
+			enabled_btn:['#onLineBtn', '#resetStatus', '#callBtn', '#setFree', '#consultationBtn']
 		},
 		"callee_answered":{ "code" : 605, msg:"被叫已接通",
 			btn_text:[],
-			enabled_btn:['#resetStatus', '#hangUpBtn', '#transferBtn']
+			enabled_btn:['#resetStatus', '#hangUpBtn', '#transferBtn', '#holdBtn', '#consultationBtn' ]
 		},
 		"callee_hangup":{ "code" : 606, msg:"通话结束",
 			btn_text:[],
-			enabled_btn:['#onLineBtn', '#resetStatus', '#callBtn', '#setFree' ]
+			enabled_btn:['#onLineBtn', '#resetStatus', '#callBtn', '#setFree' , '#consultationBtn']
 		},
 		"callee_ringing":{ "code" : 607, msg:"被叫振铃中",
 			btn_text:[],
-			enabled_btn:['#resetStatus', '#hangUpBtn', '#transferBtn']
+			enabled_btn:['#resetStatus', '#hangUpBtn', '#transferBtn', '#consultationBtn']
 		},
 		"status_changed":{ "code" : 608, msg:"状态已改变",
 			btn_text:[],
@@ -956,15 +1137,23 @@ function ccPhoneBarSocket() {
 		},
 		"free":{ "code" : 0, msg:"空闲中",
 			btn_text:[],
-			enabled_btn:['#setBusy','#onLineBtn']
+			enabled_btn:['#setBusy','#onLineBtn', '#consultationBtn']
 		},
 		"busy":{ "code" : 1, msg:"忙碌",
 			btn_text:[],
-			enabled_btn:['#setFree', '#onLineBtn',  '#callBtn']  //  '#transferBtn'
+			enabled_btn:['#setFree', '#onLineBtn',  '#callBtn', '#consultationBtn']  //  '#transferBtn'
+		},
+		"customer_channel_hold" : { "code" : 623, msg:"通话已保持.",
+			btn_text:[],
+			enabled_btn:['#setFree',  '#callBtn', '#unHoldBtn', '#consultationBtn' ]
+		},
+	   "customer_channel_unhold" : { "code" : 624, msg:"通话已接回.",
+			  btn_text:[],
+			  enabled_btn:[ '#hangUpBtn', '#holdBtn' ]
 		}
 	};
 
-	ccPhoneBarSocket.phone_buttons = ['#setFree', '#setBusy', '#callBtn','#hangUpBtn' , '#resetStatus' ,'#onLineBtn', '#transferBtn'];
+	ccPhoneBarSocket.phone_buttons = ['#setFree', '#setBusy', '#callBtn','#hangUpBtn' , '#resetStatus' ,'#onLineBtn', '#transferBtn', '#holdBtn', '#unHoldBtn', '#consultationBtn'];
 
 	// 更新状态显示
 	this.updatePhoneBar = function (msg, status_key) {
@@ -1028,6 +1217,8 @@ function ccPhoneBarSocket() {
 			if (!confirm('关闭网页将导致您无法接听电话，确定要关闭吗 ?')) return false;
 		};
 
+		$("#unHoldBtnLi").hide();
+
 		if(!_cc.callConfig.useDefaultUi){
 			console.log("callConfig.useDefaultUi = false ， 已禁用默认ui工具条按钮.");
 			return;
@@ -1073,6 +1264,19 @@ function ccPhoneBarSocket() {
 			}
 		});
 
+		$('#holdBtn').on('click', function () {
+			if ($(this).hasClass('on')) {
+				_cc.holdCall();
+			}
+		});
+
+		$('#unHoldBtn').on('click', function () {
+			if ($(this).hasClass('on')) {
+				_cc.unHoldCall();
+			}
+		});
+
+		$("#doTransferBtn").hide();
 		$('#transferBtn').on('click', function () {
 			if ($(this).hasClass('on')) {
 				if(!_cc.getIsConnected()){
@@ -1083,15 +1287,42 @@ function ccPhoneBarSocket() {
 				if(transferArea.style.display === "block"){
 					transferArea.style.display = "none";
 					_phoneBar.unSubscribeAgentList();
+					$("#doTransferBtn").hide();
+					$("#doConsultationBtn").hide();
 				}else{
 					transferArea.style.display = "block";
 					populateGroupIdOptions();
 					_phoneBar.subscribeAgentList();
+					$("#doTransferBtn").show();
+					$("#doConsultationBtn").hide();
 				}
 			}
 		});
 
-
+        $("#stopCallWait").hide();
+        $("#transferCallWait").hide();
+		$("#doConsultationBtn").hide();
+		$('#consultationBtn').on('click', function () {
+			if ($(this).hasClass('on')) {
+				if(!_cc.getIsConnected()){
+					console.log('请先上线.');
+					return;
+				}
+				var transferArea = document.getElementById("transfer_area");
+				if(transferArea.style.display === "block"){
+					transferArea.style.display = "none";
+					_phoneBar.unSubscribeAgentList();
+					$("#doConsultationBtn").hide();
+					$("#doTransferBtn").hide();
+				}else{
+					transferArea.style.display = "block";
+					populateGroupIdOptions();
+					_phoneBar.subscribeAgentList();
+					$("#doConsultationBtn").show();
+					$("#doTransferBtn").hide();
+				}
+			}
+		});
 
 		$('#onLineBtn').on('click', function () {
 			if ($(this).hasClass('on')) {
@@ -1138,6 +1369,26 @@ function ccPhoneBarSocket() {
 				}
 			}
 		});
+	};
+
+	/**
+	 *  保持通话
+	 */
+	this.holdCall = function(){
+		var cmd = {};
+		cmd.action="callHold";
+		cmd.body = {"cmd" : "hold", "args" : {} };
+		ws.send(JSON.stringify(cmd));
+	};
+
+	/**
+	 *  接回保持的通话
+	 */
+	this.unHoldCall = function(){
+		var cmd = {};
+		cmd.action="callHold";
+		cmd.body = {"cmd" : "unhold", "args" : {} };
+		ws.send(JSON.stringify(cmd));
 	};
 
 	/**

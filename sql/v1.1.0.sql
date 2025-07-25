@@ -523,7 +523,12 @@ ALTER TABLE `cc_llm_agent_account` ADD COLUMN interrupt_keywords TEXT COMMENT '�
 ALTER TABLE `cc_llm_agent_account` ADD COLUMN interrupt_ignore_keywords TEXT COMMENT '打断忽略关键字列表';
 
 INSERT INTO `cc_params` (`id`, `param_name`, `param_code`, `param_value`, `param_type`, `hide_value`)
-VALUES('81', '打断忽略关键字列表默认值', 'default_interrupt_ignore_keywords', '嗯,啊,额', 'sys', '0') ;
+VALUES('81', '打断忽略关键字列表默认值', 'default_interrupt_ignore_keywords', '呃 哦 哦哦 嗯 嗯嗯 嗯好的 好的 对 对对 是的 明白 啊 这样啊 是这样啊这样的 您好 你好', 'sys', '0') ;
 
 
+ALTER TABLE cc_call_phone MODIFY dialogue TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+
+ALTER TABLE `cc_inbound_llm_account` ADD COLUMN service_type VARCHAR(10)  COMMENT ' ai机器人 / acd转人工';
+ALTER TABLE `cc_inbound_llm_account` ADD COLUMN group_id INT(10)  COMMENT '转人工业务组';
 

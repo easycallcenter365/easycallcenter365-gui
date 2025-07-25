@@ -10,10 +10,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="callee"    column="callee"    />
         <result property="voiceCode"    column="voice_code"    />
         <result property="voiceSource"    column="voice_source"    />
+        <result property="serviceType"    column="service_type"    />
+        <result property="groupId"    column="group_id"    />
     </resultMap>
 
     <sql id="selectCcInboundLlmAccountVo">
-        select id, llm_account_id, callee, voice_code, voice_source from cc_inbound_llm_account
+        select id, llm_account_id, callee, voice_code, voice_source, service_type, group_id from cc_inbound_llm_account
     </sql>
 
     <select id="selectCcInboundLlmAccountList" parameterType="CcInboundLlmAccount" resultMap="CcInboundLlmAccountResult">
@@ -23,6 +25,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="callee != null  and callee != ''"> and callee = #{callee}</if>
             <if test="voiceCode != null  and voiceCode != ''"> and voice_code = #{voiceCode}</if>
             <if test="voiceSource != null  and voiceSource != ''"> and voice_source = #{voiceSource}</if>
+            <if test="serviceType != null  and serviceType != ''"> and service_type = #{serviceType}</if>
+            <if test="groupId != null "> and group_id = #{groupId}</if>
         </where>
         order by id desc
     </select>
@@ -40,6 +44,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             callee,
             voice_code,
             voice_source,
+            service_type,
+            group_id
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             #{id},
@@ -47,6 +53,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{callee},
             #{voiceCode},
             #{voiceSource},
+            #{serviceType},
+            #{groupId},
          </trim>
     </insert>
 
@@ -57,6 +65,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             callee = #{callee},
             voice_code = #{voiceCode},
             voice_source = #{voiceSource},
+            service_type = #{serviceType},
+            group_id = #{groupId},
         </trim>
         where id = #{id}
     </update>

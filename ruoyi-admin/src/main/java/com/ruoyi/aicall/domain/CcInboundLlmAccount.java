@@ -45,4 +45,9 @@ public class CcInboundLlmAccount implements Serializable {
     /** TTS voice for the robot */
     private String voiceName;
 
+    private String serviceType;
+
+    /** TTS voice for the robot */
+    private Integer groupId;
+
 }

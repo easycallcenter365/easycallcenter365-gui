@@ -29,7 +29,7 @@
 
     <form>
         <!-- 首页/工作台 -->
-        <table width="1080">
+        <table width="1224">
             <tr>
                 <td width="70%">
                     <div>
@@ -45,15 +45,19 @@
                             </dl>
 
                             <ul class="dial_btn">
-                                <li><a href="#" id="setFree" class="xz_btn off"></a><span th:text="#{phonebar.btn.free}"></span></li>
-                                <li><a href="#" id="setBusy" class="sm_btn off"></a><span th:text="#{phonebar.btn.busy}"></span></li>
-                                <li><a href="#" id="callBtn" class="wh_btn"></a><span th:text="#{phonebar.btn.call}"></span></li>
-                                <li><a href="#" id="transferBtn" class="zjie_btn"></a><span th:text="#{phonebar.btn.transfer}"></span></li>
-                                <li><a href="#" id="conferenceBtn" class="hy_btn"></a><span th:text="#{phonebar.btn.conference}"></span></li>
-                                <li><a href="#" id="hangUpBtn" class="gj_btn"></a><span th:text="#{phonebar.btn.hangUp}"></span></li>
-                                <li><a href="#" id="resetStatus" class="qz_btn"></a><span th:text="#{phonebar.btn.reset}"></span></li>
-                                <li><a href="#" id="onLineBtn" class="sx_btn on"></a><span th:text="#{phonebar.btn.onLine}"></span></li>
+                                <li><a href="#" id="setFree" class="xz_btn off"></a><span th:text="#{phonebar.btn.free}">置闲</span></li>
+                                <li><a href="#" id="setBusy" class="sm_btn off"></a><span th:text="#{phonebar.btn.busy}">忙碌</span></li>
+                                <li><a href="#" id="callBtn" class="wh_btn"></a><span th:text="#{phonebar.btn.call}">外呼</span></li>
+                                <li id="holdBtnLi"><a href="#" id="holdBtn" class="bc_btn off"></a><span th:text="#{phonebar.btn.hold}">保 持</span></li>
+                                <li id="unHoldBtnLi"><a href="#" id="unHoldBtn" class="bc2_btn off"></a><span th:text="#{phonebar.btn.unhold}">取消保持</span></li>
+                                <li><a href="#" id="transferBtn" class="zjie_btn"></a><span th:text="#{phonebar.btn.transfer}">转接</span></li>
+                                <li><a href="#" id="consultationBtn" class="zixun_btn"></a><span th:text="#{phonebar.btn.consultation}">咨询</span></li>
+                                <li><a href="#" id="conferenceBtn" class="hy_btn"></a><span th:text="#{phonebar.btn.conference}">会议</span></li>
+                                <li><a href="#" id="hangUpBtn" class="gj_btn"></a><span th:text="#{phonebar.btn.hangUp}">挂机</span></li>
+                                <li><a href="#" id="resetStatus" class="qz_btn"></a><span th:text="#{phonebar.btn.reset}">强置</span></li>
+                                <li><a href="#" id="onLineBtn" class="sx_btn on"></a><span th:text="#{phonebar.btn.onLine}">签入</span></li>
                             </ul>
+
                         </div>
                     </div>
                 </td>
@@ -197,6 +201,19 @@
                                        onclick="_phoneBar.transferBtnClickUI('张三')"
                                        style="width: 70px;" value="转接电话" />
                             </td>
+
+                            <input type="button" name="stopCallWait" id="stopCallWait"
+                                   onclick="_phoneBar.stopCallWaitBtnClickUI()"
+                                   style="width: 70px;" value="接回客户" title="在咨询失败的情况下使用该按钮，接回处于等待中的电话。" /> &nbsp;
+
+                            <input type="button" name="transferCallWait" id="transferCallWait"
+                                   onclick="_phoneBar.transferCallWaitBtnClickUI()"
+                                   style="width: 70px;" value="转接客户" title="在咨询成功的情况下使用该按钮，把电话转接给专家坐席。" /> &nbsp;
+
+                            <input type="button" name="doConsultationBtn" id="doConsultationBtn"
+                                   onclick="_phoneBar.consultationBtnClickUI()"
+                                   style="width: 70px;" value="拨号咨询" title="" />
+
                         </tr>
                     </table>
                 </td>
@@ -333,10 +350,32 @@
                 $("#reInviteVideoBtn").removeAttr("disabled");
             });
 
+            _phoneBar.on(ccPhoneBarSocket.eventList.customer_channel_hold, function (msg) {
+                console.log("客户通话已保持: " ,msg);
+                $("#callStatus").text("通话已保持");
+            });
+
+            _phoneBar.on(ccPhoneBarSocket.eventList.customer_channel_unhold, function (msg) {
+                console.log("客户通话已接回." ,msg);
+                $("#callStatus").text("客户通话已接回");
+            });
+
             // 视频通话已建立
             _phoneBar.on(ccPhoneBarSocket.eventList.on_video_call_connected, function(msg){
                 console.log("视频通话已建立: " ,msg);
                 $("#sendVideoFileBtn").removeAttr("disabled");
+            });
+
+            _phoneBar.on(ccPhoneBarSocket.eventList.inner_consultation_start, function(msg){
+                $("#callStatus").text("咨询开始.");
+            });
+
+            _phoneBar.on(ccPhoneBarSocket.eventList.inner_consultation_stop, function(msg){
+                $("#callStatus").text("咨询结束.");
+            });
+
+            _phoneBar.on(ccPhoneBarSocket.eventList.transfer_call_success, function(msg){
+                $("#callStatus").text("电话转接成功.");
             });
 
             // 会议成员已经接通
