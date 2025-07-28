@@ -265,6 +265,7 @@ public class CcCallTaskController extends BaseController
         if (file == null || file.isEmpty()) {
             return AjaxResult.error("上传文件不能为空！");
         }
+        Long t0 = System.currentTimeMillis();
         CcCallTask ccCallTask = ccCallTaskService.selectCcCallTaskByBatchId(batchId);
         try (InputStream inputStream = file.getInputStream()) {
             // 使用 Apache POI 解析 Excel 文件
@@ -319,6 +320,11 @@ public class CcCallTaskController extends BaseController
                             callPhone.setTtsText(ttsText);
                             phoneList.add(callPhone);
                             phoneMap.put(phoneNumber, rowNum);
+                            // 每200条入一次库
+                            if (phoneList.size() >= 200) {
+                                ccCallPhoneService.batchInsertCcCallPhone(phoneList);
+                                phoneList = new ArrayList<>();
+                            }
                         } else {
                             log.info("第{}行数据“{}”与第{}行重复，排除", rowNum, phoneNumber, phoneMap.get(phoneNumber));
                         }
@@ -333,7 +339,7 @@ public class CcCallTaskController extends BaseController
                 ccCallPhoneService.batchInsertCcCallPhone(phoneList);
             }
 
-            return AjaxResult.success("导入成功！共解析 " + phoneList.size() + " 个手机号码。");
+            return AjaxResult.success("导入成功！共解析 " + phoneMap.keySet().size() + " 个手机号码。累计耗时" + (System.currentTimeMillis() - t0)/1000 + "秒");
         } catch (Exception e) {
             e.printStackTrace();
             return AjaxResult.error("导入失败：" + e.getMessage());

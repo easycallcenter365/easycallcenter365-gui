@@ -268,6 +268,10 @@ public class FsConfController extends BaseController {
                 JSONObject var = new JSONObject();
                 var.put("name", name);
                 boolean hidden =  fsConfService.checkNeedHidden(name);
+                // server_url_webapi不需要加密
+                if ("server_url_webapi".equals(name)) {
+                    hidden = false;
+                }
                 if(hidden){
                     var.put("value", CommonUtils.maskStringUtil(confAllVars.getString(name)));
                 }else {
