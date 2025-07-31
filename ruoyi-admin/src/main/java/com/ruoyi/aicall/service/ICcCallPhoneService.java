@@ -1,6 +1,8 @@
 package com.ruoyi.aicall.service;
 
 import com.ruoyi.aicall.domain.CcCallPhone;
+import com.ruoyi.aicall.domain.CcLlmAgentAccount;
+import com.ruoyi.aicall.model.CallPhoneExportVo;
 import com.ruoyi.aicall.model.CallTaskStatModel;
 
 import java.util.List;
@@ -73,4 +75,10 @@ public interface ICcCallPhoneService
      * @param phoneList
      */
     public void batchInsertCcCallPhone(List<CcCallPhone> phoneList);
+
+    List<CcCallPhone> getCustIntentionList();
+
+    void updateIntentionByIds(String intention, List<String> phoneIds);
+
+    String getIntenetionByDialogue(CcLlmAgentAccount ccLlmAgentAccount, String dialogue);
 }

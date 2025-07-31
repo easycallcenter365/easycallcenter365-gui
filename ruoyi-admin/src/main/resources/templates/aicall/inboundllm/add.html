@@ -104,6 +104,27 @@
                 }
             });
 
+            $('input[name="callee"]').rules('add', {
+                remote: {
+                    url: prefix + '/checkCallee',
+                    type: 'get',
+                    data: {
+                        callee: function () {
+                            return $('input[name="callee"]').val();
+                        }
+                    },
+                    dataFilter: function (resp) {
+                        // 根据后端返回格式做判断
+                        // 假设返回 {"data":true/false}
+                        var json = JSON.parse(resp);
+                        return json.data ? 'true' : '"该号码不可用"';
+                    }
+                },
+                messages: {
+                    remote: '该号码不可用'
+                }
+            });
+
         })
         $("#form-inboundllm-add").validate({
             focusCleanup: true

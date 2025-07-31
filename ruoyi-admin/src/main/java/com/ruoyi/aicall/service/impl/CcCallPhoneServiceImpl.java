@@ -3,8 +3,16 @@ package com.ruoyi.aicall.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.aicall.domain.CcLlmAgentAccount;
+import com.ruoyi.aicall.llm.ILlmCapability;
+import com.ruoyi.aicall.llm.model.AccountBaseEntity;
 import com.ruoyi.aicall.model.CallTaskStatModel;
+import com.ruoyi.cc.utils.LlmAccountParser;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.aicall.mapper.CcCallPhoneMapper;
@@ -19,6 +27,7 @@ import com.ruoyi.common.core.text.Convert;
  * @date 2025-05-29
  */
 @Service
+@Slf4j
 public class CcCallPhoneServiceImpl implements ICcCallPhoneService 
 {
     @Autowired
@@ -157,5 +166,36 @@ public class CcCallPhoneServiceImpl implements ICcCallPhoneService
     @Override
     public void batchInsertCcCallPhone(List<CcCallPhone> phoneList) {
         ccCallPhoneMapper.batchInsertCcCallPhone(phoneList);
+    }
+
+    @Override
+    public List<CcCallPhone> getCustIntentionList() {
+        return ccCallPhoneMapper.getCustIntentionList();
+    }
+
+    @Override
+    public void updateIntentionByIds(String intention, List<String> phoneIds) {
+        if (StringUtils.isBlank(intention) || phoneIds.size() <= 0) {
+            return;
+        }
+        ccCallPhoneMapper.updateIntentionByIds(intention, phoneIds);
+    }
+
+    @Override
+    public String getIntenetionByDialogue(CcLlmAgentAccount ccLlmAgentAccount, String dialogue) {
+        try {
+            ILlmCapability llmAccount;
+            String provider = ccLlmAgentAccount.getProviderClassName();
+            AccountBaseEntity account =  LlmAccountParser.parse(ccLlmAgentAccount);
+            llmAccount = (ILlmCapability) (Class.forName("com.ruoyi.aicall.llm.impl." + provider).newInstance());
+            JSONArray dialogueContents = JSONArray.parseArray(dialogue);
+            log.info("account:{}", JSONObject.toJSONString(account));
+            llmAccount.setAccount(account);
+            String intention = llmAccount.getIntentionByTips(ccLlmAgentAccount, dialogueContents);
+            return intention;
+        } catch (Exception e) {
+
+        }
+        return "";
     }
 }

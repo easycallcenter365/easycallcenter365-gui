@@ -146,6 +146,28 @@
             <form id="formId">
                 <div class="select-list">
                     <ul>
+                        <!-- 外呼任务下拉框 -->
+                        <li>
+                            <label th:text="#{callPhone.query.callTask}">外呼任务</label>
+                            <select name="batchId" id="callTaskSelect">
+                                <option value="">全部</option>
+                            </select>
+                        </li>
+                        <!-- 客户意向下拉框 -->
+                        <li>
+                            <label th:text="#{callPhone.query.intent}">客户意向</label>
+                            <select name="intent">
+                                <option value="">全部</option>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                                <option value="D">D</option>
+                                <option value="E">E</option>
+                                <option value="F">F</option>
+                                <option value="G">G</option>
+                            </select>
+                        </li>
+
                         <li>
                             <label th:text="#{callPhone.query.uuid}"></label>
                             <input type="text" name="uuid"/>
@@ -182,6 +204,9 @@
                         <li>
                             <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;<span th:text="#{btn.search}"></span></a>
                             <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;<span th:text="#{btn.reset}"></span></a>
+                            <a class="btn btn-warning" onclick="$.table.exportExcel()">
+                                <i class="fa fa-download"></i> <span th:text="#{btn.export}"></span>
+                            </a>
                         </li>
                     </ul>
                 </div>
@@ -233,6 +258,11 @@
                     field: 'id',
                     title: '${comment}',
                     visible: false
+                },
+                {
+                    field: 'batchName',
+                    title: i18n('callPhone.table.callTask'),
+                    width: 120
                 },
                 {
                     field: 'uuid',
@@ -287,6 +317,11 @@
                             return i18n('callPhone.table.callstatusNone');
                         }
                     }
+                },
+                {
+                    field: 'intent',
+                    title: i18n('callPhone.table.intent'),
+                    width: 120
                 },
                 {
                     field: 'calloutTime',
@@ -379,7 +414,16 @@
                     }
                 }]
         };
-        $.table.init(options);
+
+        // 加载外呼任务下拉选项
+        $.get(ctx + 'aicall/callTask/all', function (resp) {
+            var html = '';
+            $.each(resp.data, function (i, task) {
+                html += '<option value="' + task.batchId + '">' + task.batchName + '</option>';
+            });
+            $('#callTaskSelect').html(html);
+            $.table.init(options);
+        });
     });
 
     var player; // 定义一个全局变量来存储播放器实例
@@ -417,6 +461,7 @@
             }
         }
     });
+
     function checkFileExistence(url) {
         fetch(url, { method: 'HEAD' })
             .then(response => {

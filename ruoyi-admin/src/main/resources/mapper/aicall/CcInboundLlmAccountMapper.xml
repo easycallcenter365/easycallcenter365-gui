@@ -82,4 +82,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </delete>
 
+    <select id="selectCcInboundLlmAccountByCallee" parameterType="String">
+        <include refid="selectCcInboundLlmAccountVo"/>
+           where callee = #{callee}
+    </select>
+
 </mapper>

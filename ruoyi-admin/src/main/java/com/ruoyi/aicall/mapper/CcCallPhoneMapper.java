@@ -2,6 +2,8 @@ package com.ruoyi.aicall.mapper;
 
 import com.ruoyi.aicall.domain.CcCallPhone;
 import com.ruoyi.aicall.model.CallTaskStatModel;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -73,4 +75,12 @@ public interface CcCallPhoneMapper
      * @param phoneList
      */
     void batchInsertCcCallPhone(List<CcCallPhone> phoneList);
+
+    /**
+     * 获取所有的已挂机未跑批客户意向的通话记录
+     * @return
+     */
+    List<CcCallPhone> getCustIntentionList();
+
+    int updateIntentionByIds(@Param("intention") String intention, @Param("phoneIds") List<String> phoneIds);
 }

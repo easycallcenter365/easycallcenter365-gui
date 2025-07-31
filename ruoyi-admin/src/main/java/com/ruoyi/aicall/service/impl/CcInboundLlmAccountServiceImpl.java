@@ -91,4 +91,9 @@ public class CcInboundLlmAccountServiceImpl implements ICcInboundLlmAccountServi
     {
         return ccInboundLlmAccountMapper.deleteCcInboundLlmAccountById(id);
     }
+
+    @Override
+    public List<CcInboundLlmAccount> selectCcInboundLlmAccountByCallee(String callee) {
+        return ccInboundLlmAccountMapper.selectCcInboundLlmAccountByCallee(callee);
+    }
 }

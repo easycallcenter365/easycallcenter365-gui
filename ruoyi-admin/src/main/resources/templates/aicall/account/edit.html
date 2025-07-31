@@ -57,6 +57,14 @@
                     </div>
                 </div>
             </div>
+            <div class="col-xs-12" >
+                <div class="form-group">
+                    <label class="col-sm-3 control-label is-required" th:text="#{llmAcount.form.intentionTips}"></label>
+                    <div class="col-sm-8">
+                        <textarea name="intentionTips" class="form-control" rows="5" th:field="*{intentionTips}"></textarea>
+                    </div>
+                </div>
+            </div>
         </form>
     </div>
     <th:block th:include="include :: footer" />

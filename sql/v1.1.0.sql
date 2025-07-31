@@ -532,3 +532,14 @@ ALTER TABLE cc_call_phone MODIFY dialogue TEXT CHARACTER SET utf8mb4 COLLATE utf
 ALTER TABLE `cc_inbound_llm_account` ADD COLUMN service_type VARCHAR(10)  COMMENT ' ai机器人 / acd转人工';
 ALTER TABLE `cc_inbound_llm_account` ADD COLUMN group_id INT(10)  COMMENT '转人工业务组';
 
+
+
+ALTER TABLE `cc_call_phone` ADD COLUMN intent VARCHAR(32) DEFAULT '' COMMENT '客户意向';
+UPDATE cc_call_phone SET intent = '' WHERE intent IS NULL;
+
+
+ALTER TABLE `cc_llm_agent_account` ADD COLUMN intention_tips TEXT COMMENT '客户意向提示词';
+ALTER TABLE cc_llm_agent_account MODIFY COLUMN account_json MEDIUMTEXT COMMENT '账号详细信息';
+
+
+

@@ -49,4 +49,8 @@ public class CcLlmAgentAccount implements Serializable {
     @Excel(name = "打断忽略关键字列表")
     private String interruptIgnoreKeywords;
 
+    /** 客户意向提示词 */
+    @Excel(name = "客户意向提示词")
+    private String intentionTips;
+
 }

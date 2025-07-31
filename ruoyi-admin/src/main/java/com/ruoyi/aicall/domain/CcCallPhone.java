@@ -8,6 +8,7 @@ import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -120,8 +121,16 @@ public class CcCallPhone implements Serializable {
     @Excel(name = "tts text for voice call notification.", readConverterExp = "tts text for voice call notification.")
     private String ttsText;
 
+    /** 客户意向 */
+    @Excel(name = "客户意向", readConverterExp = "客户意向")
+    private String intent;
+
     /** 请求参数 */
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private Map<String, Object> params;
+    private Map<String, Object> params = new HashMap<>();
+
+    /** 批次名称 */
+    @Excel(name = "批次名称", readConverterExp = "批次名称")
+    private String batchName;
 
 }

@@ -29,10 +29,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="acdQueueTime"    column="dialogue_count"    />
         <result property="acdWaitTime"    column="dialogue_count"    />
         <result property="ttsText"    column="tts_text"    />
+        <result property="intent"    column="intent"    />
     </resultMap>
 
     <sql id="selectCcCallPhoneVo">
-        select id, batch_id, telephone, cust_name, createtime, callstatus, callout_time, callcount, call_end_time, time_len, valid_time_len, uuid, connected_time, hangup_cause, answered_time, dialogue, wavfile, record_server_url, biz_json, dialogue_count, acd_opnum, acd_queue_time, acd_wait_time, tts_text from cc_call_phone
+        select id, batch_id, telephone, cust_name, createtime, callstatus, callout_time, callcount, call_end_time, time_len, valid_time_len, uuid, connected_time, hangup_cause, answered_time, dialogue, wavfile, record_server_url, biz_json, dialogue_count, acd_opnum, acd_queue_time, acd_wait_time, tts_text, intent from cc_call_phone
     </sql>
 
     <select id="selectCcCallPhoneList" parameterType="CcCallPhone" resultMap="CcCallPhoneResult">
@@ -73,9 +74,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="params.answeredTimeEnd != null and params.answeredTimeEnd != ''"><!-- 结束时间检索 -->
                 AND answered_time &lt;= #{params.answeredTimeEnd}
             </if>
-            AND callstatus >= 2
+            <if test="batchId != null and batchId != ''">
+                AND batch_id = #{batchId}
+            </if>
+            <if test="intent != null and intent != ''">
+                AND intent = #{intent}
+            </if>
+            AND callstatus >= 3 AND call_end_time > 0
         </where>
         order by call_end_time desc
+    </select>
+
+    <select id="getCustIntentionList" parameterType="CcCallPhone" resultMap="CcCallPhoneResult">
+        <include refid="selectCcCallPhoneVo"/>
+          where intent = '' AND callstatus >= 3 AND call_end_time > 0 limit 1000
     </select>
     
     <select id="selectCcCallPhoneById" parameterType="String" resultMap="CcCallPhoneResult">
@@ -212,4 +224,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             )
         </foreach>
     </insert>
+
+    <update id="updateIntentionByIds">
+        UPDATE cc_call_phone
+        SET intent = #{intention}
+        WHERE id IN
+        <foreach collection="phoneIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
 </mapper>

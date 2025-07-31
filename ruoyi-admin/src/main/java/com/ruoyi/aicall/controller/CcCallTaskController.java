@@ -6,6 +6,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 
 import com.ruoyi.aicall.domain.CcCallPhone;
+import com.ruoyi.aicall.domain.CcLlmAgentProvider;
 import com.ruoyi.aicall.model.CallTaskStatModel;
 import com.ruoyi.aicall.service.ICcCallPhoneService;
 import com.ruoyi.common.utils.DateUtils;
@@ -397,4 +398,13 @@ public class CcCallTaskController extends BaseController
         callPhone.setAcdWaitTime(0);
         return callPhone;
     }
+
+    @GetMapping("/all")
+    @ResponseBody
+    public AjaxResult all()
+    {
+        List<CcCallTask> list = ccCallTaskService.selectCcCallTaskList(new CcCallTask());
+        return AjaxResult.success(list);
+    }
+
 }

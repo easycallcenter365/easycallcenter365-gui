@@ -11,11 +11,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.aicall.domain.CcInboundLlmAccount;
@@ -154,5 +150,21 @@ public class CcInboundLlmAccountController extends BaseController
     public AjaxResult remove(String ids)
     {
         return toAjax(ccInboundLlmAccountService.deleteCcInboundLlmAccountByIds(ids));
+    }
+
+    @ResponseBody
+    @GetMapping("/checkCallee")
+    public AjaxResult checkCallee(@RequestParam(value = "id", required = false) Integer id, @RequestParam("callee") String callee)
+    {
+        List<CcInboundLlmAccount> ccInboundLlmAccounts = ccInboundLlmAccountService.selectCcInboundLlmAccountByCallee(callee);
+        // caller不存在校验通过
+        if (ccInboundLlmAccounts.size() <= 0) {
+            return AjaxResult.success(true);
+        }
+        // 存在但id相同，校验通过
+        if (null != id && ccInboundLlmAccounts.get(0).getId().equals(id)) {
+            return AjaxResult.success(true);
+        }
+        return AjaxResult.success(false);
     }
 }

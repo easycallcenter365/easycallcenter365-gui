@@ -58,4 +58,6 @@ public interface CcInboundLlmAccountMapper
      * @return 结果
      */
     public int deleteCcInboundLlmAccountByIds(String[] ids);
+
+    List<CcInboundLlmAccount> selectCcInboundLlmAccountByCallee(String callee);
 }

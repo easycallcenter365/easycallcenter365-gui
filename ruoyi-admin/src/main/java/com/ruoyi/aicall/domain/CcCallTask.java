@@ -8,6 +8,7 @@ import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -101,7 +102,7 @@ public class CcCallTask implements Serializable {
 
     /** 请求参数 */
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private Map<String, Object> params;
+    private Map<String, Object> params = new HashMap<>();
 
     /** 总名单量 */
     private Integer phoneCount;

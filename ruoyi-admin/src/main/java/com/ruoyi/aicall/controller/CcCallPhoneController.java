@@ -1,7 +1,17 @@
 package com.ruoyi.aicall.controller;
 
-import java.util.List;
+import java.text.ParseException;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import com.ruoyi.aicall.domain.CcCallTask;
+import com.ruoyi.aicall.model.CallPhoneExportVo;
+import com.ruoyi.aicall.service.ICcCallTaskService;
+import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.MessageUtils;
+import com.ruoyi.common.utils.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -33,6 +43,8 @@ public class CcCallPhoneController extends BaseController
 
     @Autowired
     private ICcCallPhoneService ccCallPhoneService;
+    @Autowired
+    private ICcCallTaskService ccCallTaskService;
 
     @RequiresPermissions("aicall:callPhone:view")
     @GetMapping()
@@ -53,11 +65,23 @@ public class CcCallPhoneController extends BaseController
         List<CcCallPhone> list = ccCallPhoneService.selectCcCallPhoneList(ccCallPhone);
         TableDataInfo tableDataInfo = getDataTable(list);
         List<CcCallPhone> records = (List<CcCallPhone>) tableDataInfo.getRows();
+        Map<Long, String> batchNameMap = new HashMap<>();
         for (CcCallPhone data: records) {
             if (data.getWavfile().startsWith("/")) {
                 data.setWavfile(data.getWavfile().substring(1));
             }
             data.setWavfile("/recordings/files?filename=" + data.getWavfile());
+            String batchName = batchNameMap.getOrDefault(data.getBatchId(), "");
+            if (StringUtils.isBlank(batchName)) {
+                CcCallTask ccCallTask = ccCallTaskService.selectCcCallTaskByBatchId(data.getBatchId());
+                if (null != ccCallTask) {
+                    batchName = ccCallTask.getBatchName();
+                } else {
+                    batchName = "-";
+                }
+                batchNameMap.put(data.getBatchId(), batchName);
+            }
+            data.setBatchName(batchName);
         }
         tableDataInfo.setRows(records);
         return tableDataInfo;
@@ -73,8 +97,45 @@ public class CcCallPhoneController extends BaseController
     public AjaxResult export(CcCallPhone ccCallPhone)
     {
         List<CcCallPhone> list = ccCallPhoneService.selectCcCallPhoneList(ccCallPhone);
-        ExcelUtil<CcCallPhone> util = new ExcelUtil<CcCallPhone>(CcCallPhone.class);
-        return util.exportExcel(list, "外呼号码数据");
+        Date d0 = DateUtils.dateTime( "yyyy-MM-dd", "2025-01-01");
+        Map<Long, String> batchNameMap = new HashMap<>();
+        List<CallPhoneExportVo> dataList = new ArrayList<>();
+        for (CcCallPhone data: list) {
+            String batchName = batchNameMap.getOrDefault(data.getBatchId(), "");
+            if (StringUtils.isBlank(batchName)) {
+                CcCallTask ccCallTask = ccCallTaskService.selectCcCallTaskByBatchId(data.getBatchId());
+                if (null != ccCallTask) {
+                    batchName = ccCallTask.getBatchName();
+                } else {
+                    batchName = "-";
+                }
+                batchNameMap.put(data.getBatchId(), batchName);
+            }
+            data.setBatchName(batchName);
+            CallPhoneExportVo vo = new CallPhoneExportVo();
+            BeanUtils.copyProperties(data, vo);
+            vo.setCallstatusName(MessageUtils.message("callPhone.table.callstatus" + data.getCallstatus()));
+            if (data.getCalloutTime() <= d0.getTime()) {
+                vo.setCalloutTimeStr("-");
+            } else {
+                vo.setCalloutTimeStr(DateUtils.parseDateToStr("yyyy-MM-dd HH:mm:ss", new Date(data.getCalloutTime())));
+            }
+            if (data.getAnsweredTime() <= d0.getTime()) {
+                vo.setAnsweredTimeStr("-");
+            } else {
+                vo.setAnsweredTimeStr(DateUtils.parseDateToStr("yyyy-MM-dd HH:mm:ss", new Date(data.getAnsweredTime())));
+            }
+            if (data.getCallEndTime() <= d0.getTime()) {
+                vo.setCallEndTimeStr("-");
+            } else {
+                vo.setCallEndTimeStr(DateUtils.parseDateToStr("yyyy-MM-dd HH:mm:ss", new Date(data.getCallEndTime())));
+            }
+            Long timeLen = data.getTimeLen()/1000;
+            vo.setTimeLenSec(timeLen/60 + "分" + timeLen%60 + "秒" );
+            dataList.add(vo);
+        }
+        ExcelUtil<CallPhoneExportVo> util = new ExcelUtil<>(CallPhoneExportVo.class);
+        return util.exportExcel(dataList, "外呼结果数据");
     }
 
     /**
