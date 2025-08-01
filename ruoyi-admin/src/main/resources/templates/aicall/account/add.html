@@ -56,7 +56,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xs-12" >
+        <div class="col-xs-12" id="intentionTipsContainer" >
             <div class="form-group">
                 <label class="col-sm-3 control-label is-required" th:text="#{llmAcount.form.intentionTips}"></label>
                 <div class="col-sm-8">
@@ -291,6 +291,12 @@
             var selectedTokenType = $("#tokenTypeSelect").val();
             updateTokenTypeSelect(selectedTokenType);
 
+        }
+
+        if (accountType == "llm") {
+            $("#intentionTipsContainer").show();
+        } else {
+            $("#intentionTipsContainer").hide();
         }
     }
 
