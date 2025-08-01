@@ -272,10 +272,12 @@
                 {
                     field: 'telephone',
                     title: i18n('callPhone.table.telephone'),
+                    width: 120
                 },
                 {
                     field: 'callstatus',
                     title: i18n('callPhone.table.callstatus'),
+                    width: 120,
                     formatter: function(value, row, index) {
                         if (value == 0) {
                             return i18n('callPhone.table.callstatus0');
@@ -321,7 +323,7 @@
                 {
                     field: 'intent',
                     title: i18n('callPhone.table.intent'),
-                    width: 120
+                    width: 60
                 },
                 {
                     field: 'calloutTime',
@@ -399,6 +401,11 @@
                             return `${seconds}秒`;
                         }
                     }
+                },
+                {
+                    field: 'hangupCause',
+                    title: i18n('callPhone.table.hangupCause'),
+                    width: 120
                 },
                 {
                     title: i18n('callPhone.table.opra'),
