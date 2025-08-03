@@ -538,46 +538,48 @@ function ccPhoneBarSocket() {
 	 * @type {{rest: number, calling: number, busy: number, free: number, justLogin: number, meeting: number, train: number}}
 	 */
 	ccPhoneBarSocket.agentStatusEnum = {
+
+		/**
+		 *  刚刚上线，尚未就绪中;
+		 */
+		"justLogin" : 1,
+
 		/**
 		 * 空闲
 		 */
-		"free"  :  1,
-		/**
-		 * 通话中;
-		 */
-		"calling"  :  2,
+		"free"  :  2,
+
 		/**
 		 * 事后处理中
 		 */
 		"busy"  :  3,
+
 		/**
-		 * 休息中
+		 * 通话中
 		 */
-		"rest"  :  4,
+		"incall" : 4,
+
 		/**
-		 * 培训中
+		 * 事后处理，填写表单中
 		 */
-		"train"  :  5,
+		"fill_form" : 5,
+
 		/**
 		 * 会议中
 		 */
-		"meeting"  :  6,
-		/**
-		 *  刚登录系统
-		 */
-		"justLogin"  :  7
+		"conference"  :  6
 	};
 
 	//定义视频level-id
 	ccPhoneBarSocket.videoLevels = {
-		"Smooth" :  { "levelId" : "42e00b",  "description" : i18n('phonebar.video.levels.smooth')  },
-		"Smooth2" :  { "levelId" : "42e00c",  "description" : i18n('phonebar.video.levels.smooth') + "+"  },
-		"Smooth3" :  { "levelId" : "42e00d",  "description" : i18n('phonebar.video.levels.smooth') + "++"  },
-		"Clear" : { "levelId" : "42e014",  "description" : i18n('phonebar.video.levels.clear')  },
-		"Clear2" :  { "levelId" : "42e015",  "description" : i18n('phonebar.video.levels.clear') + "+"  },
-		"Clear3" :  { "levelId" : "42e016",  "description" : i18n('phonebar.video.levels.clear') + "++"  },
-		"HD" :   { "levelId" : "42e01e",  "description" : i18n('phonebar.video.levels.hd')  },
-		"HD2" :  { "levelId" : "42e01f",  "description" : i18n('phonebar.video.levels.hd') + "+"  }
+		"Smooth" :  { "levelId" : "42e00b",  "description" : "流畅"  },
+		"Smooth2" :  { "levelId" : "42e00c",  "description" : "流畅+"  },
+		"Smooth3" :  { "levelId" : "42e00d",  "description" : "流畅++"  },
+		"Clear" : { "levelId" : "42e014",  "description" : "清晰"  },
+		"Clear2" :  { "levelId" : "42e015",  "description" : "清晰+"  },
+		"Clear3" :  { "levelId" : "42e016",  "description" : "清晰++"  },
+		"HD" :   { "levelId" : "42e01e",  "description" : "高清"  },
+		"HD2" :  { "levelId" : "42e01f",  "description" : "高清+"  }
 	};
 
 
@@ -625,7 +627,10 @@ function ccPhoneBarSocket() {
 		// 座席状态改变
 		"status_changed" : "608",
 		// 一个完整的外呼任务结束： [可能尝试了一个或多个网关]
-		"outbound_finished" : "611", 
+		"outbound_finished" : "611",
+
+		// 预测外呼，分配的来电;
+		"PREDICTIVE_CALL_INBOUND" : "612",
 
          // ACD队列分配的新来电
 		"new_inbound_call" : "613",
@@ -801,7 +806,12 @@ function ccPhoneBarSocket() {
 		/**
 		 * 成功把通话转接到多人视频会议
 		 */
-		"CONFERENCE_TRANSFER_SUCCESS_FROM_EXISTED_CALL"  :  "678"
+		"CONFERENCE_TRANSFER_SUCCESS_FROM_EXISTED_CALL"  :  "678",
+
+		/**
+		 *  outbound start event
+		 */
+		"OUTBOUND_START" : "679"
 	};
 
 	this.createIframe = function(src){
@@ -1030,16 +1040,17 @@ function ccPhoneBarSocket() {
 			console.log('请先上线.');
 			return;
 		}
+		let outboundInfo = {
+			"gatewayList": _cc.callConfig.gatewayList,
+			'destPhone': phoneNumber,
+			'gatewayEncrypted' : _cc.callConfig.gatewayEncrypted,
+			'useSameAudioCodeForOutbound' : _cc.callConfig.useSameAudioCodeForOutbound,
+			'callType' :  callType,
+			'videoLevel' : videoLevel
+		};
 		this.callControl(
 			"startSession",
-			{
-				"gatewayList": _cc.callConfig.gatewayList,
-				'destPhone': phoneNumber,
-				'gatewayEncrypted' : _cc.callConfig.gatewayEncrypted,
-				'useSameAudioCodeForOutbound' : _cc.callConfig.useSameAudioCodeForOutbound,
-				'callType' :  callType,
-				'videoLevel' : videoLevel
-			}
+			outboundInfo
 		);
 	};
 	
@@ -1080,15 +1091,15 @@ function ccPhoneBarSocket() {
 	 */
 	  ccPhoneBarSocket.eventListWithTextInfo = {
 		"ws_connected": { "code": 200,  msg:"已签入",
-			btn_text:[{id:"#onLineBtn",name:i18n('phonebar.btn.offLine')}],
+			btn_text:[{id:"#onLineBtn",name:"签出"}],
 			enabled_btn:['#setFree','#callBtn','#onLineBtn', '#consultationBtn']
 		},
-		"ws_disconnected": { "code" : 202, msg:i18n('phonebar.ws.state.disconnect'),
-			btn_text:[{id:"#onLineBtn",name:i18n('phonebar.btn.onLine')}],
+		"ws_disconnected": { "code" : 202, msg:"服务器连接断开",
+			btn_text:[{id:"#onLineBtn",name:"签入"}],
 			enabled_btn:['#onLineBtn']
 		},
 		"user_login_on_other_device": { "code" : 201, msg:"用户已在其他设备登录",
-			btn_text:[{id:"#onLineBtn",name:i18n('phonebar.btn.onLine')}],
+			btn_text:[{id:"#onLineBtn",name:"签入"}],
 			enabled_btn:['#onLineBtn']
 		},
 		"request_args_error":{ "code" : 400, msg:"客户端请求参数错误",

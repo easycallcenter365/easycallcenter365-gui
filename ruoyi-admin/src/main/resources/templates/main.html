@@ -199,8 +199,7 @@
                             <td valign="middle">
                                 <input type="button" name="doTransferBtn" id="doTransferBtn"
                                        onclick="_phoneBar.transferBtnClickUI('张三')"
-                                       style="width: 70px;" value="转接电话" />
-                            </td>
+                                       style="width: 70px;" value="转接电话" />                           
 
                             <input type="button" name="stopCallWait" id="stopCallWait"
                                    onclick="_phoneBar.stopCallWaitBtnClickUI()"
@@ -213,6 +212,7 @@
                             <input type="button" name="doConsultationBtn" id="doConsultationBtn"
                                    onclick="_phoneBar.consultationBtnClickUI()"
                                    style="width: 70px;" value="拨号咨询" title="" />
+							</td>	   
 
                         </tr>
                     </table>
@@ -294,7 +294,7 @@
                 console.log(msg, "呼入" );
                 _phoneBar.updatePhoneBar(msg, ccPhoneBarSocket.eventListWithTextInfo.caller_answered.code);
                 // 呼入弹屏
-                $("#ccphoneNumber").val('10000');
+                //$("#ccphoneNumber").val('10000');
                 addCallRecord(_phoneNum, _uuid, 1);
             });
 
@@ -303,12 +303,21 @@
                 console.log(msg, "主叫接通" );
                 _phoneBar.updatePhoneBar(msg, ccPhoneBarSocket.eventListWithTextInfo.caller_answered.code);
                 // 外呼弹屏
-                var _phoneNum = $("#ccphoneNumber").val();
-                var _uuid = msg.object.uuid;
-                addCallRecord(_phoneNum, _uuid, 2);
+               // var _phoneNum = $("#ccphoneNumber").val();
+               // var _uuid = msg.object.uuid;
+               // addCallRecord(_phoneNum, _uuid, 2);
 
             });
-
+			
+		 _phoneBar.on(ccPhoneBarSocket.eventList.OUTBOUND_START, function (msg) {
+                console.log('outbound_start',msg);
+			    // 外呼弹屏
+                var _phoneNum = msg.object.destPhone;
+                var _uuid = msg.object.uuid;
+                addCallRecord(_phoneNum, _uuid, 2);
+         });
+			 
+ 
             // 主叫挂断事件
             _phoneBar.on(ccPhoneBarSocket.eventListWithTextInfo.caller_hangup.code, function(msg){
                 console.log(msg, "主叫挂断");
@@ -635,7 +644,7 @@
                 .filter(member => member.groupId === selectedGroupId)
                 .forEach(member => {
                     const option = document.createElement("option");
-                    const statusMap = { 1: "空闲", 2: "通话中", 3: "忙碌" };
+                    const statusMap = { 1 : "刚签入", 2: "空闲", 3: "忙碌", 4: "通话中", 5: "事后处理" };
                     option.value = member.opnum;
                     option.textContent = `${member.opnum}(${statusMap[member.agentStatus] || ""})`;
                     transferToMember.appendChild(option);
