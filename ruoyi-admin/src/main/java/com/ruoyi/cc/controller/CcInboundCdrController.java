@@ -1,9 +1,12 @@
 package com.ruoyi.cc.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.ruoyi.cc.domain.CcBizGroup;
 import com.ruoyi.cc.domain.CcOutboundCdr;
+import com.ruoyi.cc.service.ICcBizGroupService;
 import com.ruoyi.cc.service.ICcParamsService;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
@@ -40,9 +43,10 @@ public class CcInboundCdrController extends BaseController
 
     @Autowired
     private ICcInboundCdrService ccInboundCdrService;
-
     @Autowired
     private ICcParamsService ccParamsService;
+    @Autowired
+    private ICcBizGroupService groupService;
 
 
     @RequiresPermissions("cc:inboundcdr:view")
@@ -95,9 +99,21 @@ public class CcInboundCdrController extends BaseController
             params.put("timeLenEnd", Double.valueOf((String)params.get("timeLenEnd")) * 60 * 1000L);
         }
         ccInboundCdr.setParams(params);
+        Map<String, String> groupNames = new HashMap<>();
         List<CcInboundCdr> list = ccInboundCdrService.selectCcInboundCdrList(ccInboundCdr);
         for (CcInboundCdr data: list) {
             data.setWavFileUrl("/recordings/files?filename=" + data.getWavFile());
+            String groupName = groupNames.getOrDefault(data.getGroupId(), "");
+            if (StringUtils.isBlank(groupName)) {
+                CcBizGroup ccBizGroup = groupService.selectCcBizGroupByGroupId(data.getGroupId());
+                if (null != ccBizGroup) {
+                    groupName = ccBizGroup.getBizGroupName();
+                } else {
+                    groupName = "-";
+                }
+                groupNames.put(data.getGroupId(), groupName);
+            }
+            data.setGroupName(groupName);
         }
         return getDataTable(list);
     }

@@ -71,4 +71,7 @@ public class CcInboundCdr implements Serializable {
     /** 请求参数 */
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private Map<String, Object> params;
+
+    /** Business Group Name */
+    private String groupName;
 }
