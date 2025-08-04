@@ -55,11 +55,11 @@
             <artifactId>ruoyi-framework</artifactId>
         </dependency>
 
-        <!-- 定时任务-->
-        <dependency>
-            <groupId>com.ruoyi</groupId>
-            <artifactId>ruoyi-quartz</artifactId>
-        </dependency>
+<!--        &lt;!&ndash; 定时任务&ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>com.ruoyi</groupId>-->
+<!--            <artifactId>ruoyi-quartz</artifactId>-->
+<!--        </dependency>-->
 
         <!-- 代码生成-->
         <dependency>

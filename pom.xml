@@ -7,9 +7,8 @@
     <artifactId>ruoyi</artifactId>
     <version>4.7.9</version>
 
-    <name>ruoyi</name>
-    <url>http://www.ruoyi.vip</url>
-    <description>若依管理系统</description>
+    <name>easycallcenter365-gui</name>
+    <description>easycallcenter365</description>
     
     <properties>
         <ruoyi.version>4.7.9</ruoyi.version>
@@ -194,12 +193,12 @@
                 <version>${fastjson.version}</version>
             </dependency>
 
-            <!-- 定时任务-->
-            <dependency>
-                <groupId>com.ruoyi</groupId>
-                <artifactId>ruoyi-quartz</artifactId>
-                <version>${ruoyi.version}</version>
-            </dependency>
+<!--            &lt;!&ndash; 定时任务&ndash;&gt;-->
+<!--            <dependency>-->
+<!--                <groupId>com.ruoyi</groupId>-->
+<!--                <artifactId>ruoyi-quartz</artifactId>-->
+<!--                <version>${ruoyi.version}</version>-->
+<!--            </dependency>-->
 
             <!-- 代码生成-->
             <dependency>
@@ -236,7 +235,7 @@
         <module>ruoyi-admin</module>
         <module>ruoyi-framework</module>
         <module>ruoyi-system</module>
-        <module>ruoyi-quartz</module>
+<!--        <module>ruoyi-quartz</module>-->
         <module>ruoyi-generator</module>
         <module>ruoyi-common</module>
     </modules>

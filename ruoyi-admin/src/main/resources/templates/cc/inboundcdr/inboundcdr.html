@@ -329,22 +329,26 @@
                     }
                 },
                 {
-                    field: 'answeredTimeLen',
-                    title: i18n('inboundcdr.table.answeredTimeLen'),
-                    formatter: function(value, row, index, field) {
-                        // 计算分钟数，向下取整
-                        var answeredTimeLen = Math.ceil(value / 1000);
-                        const minutes = Math.floor(answeredTimeLen / 60);
-                        // 计算剩余的秒数，取余数
-                        const seconds = answeredTimeLen % 60;
-                        // 返回格式化后的时间字符串
-                        if (minutes > 0) {
-                            return `${minutes}分${seconds}秒`;
-                        } else {
-                            return `${seconds}秒`;
-                        }
-                    }
+                    field: 'groupName',
+                    title: i18n('inboundcdr.table.groupName')
                 },
+                // {
+                //     field: 'answeredTimeLen',
+                //     title: i18n('inboundcdr.table.answeredTimeLen'),
+                //     formatter: function(value, row, index, field) {
+                //         // 计算分钟数，向下取整
+                //         var answeredTimeLen = Math.ceil(value / 1000);
+                //         const minutes = Math.floor(answeredTimeLen / 60);
+                //         // 计算剩余的秒数，取余数
+                //         const seconds = answeredTimeLen % 60;
+                //         // 返回格式化后的时间字符串
+                //         if (minutes > 0) {
+                //             return `${minutes}分${seconds}秒`;
+                //         } else {
+                //             return `${seconds}秒`;
+                //         }
+                //     }
+                // },
                 {
                     field: 'timeLen',
                     title: i18n('inboundcdr.table.timeLen'),

@@ -545,6 +545,7 @@ ALTER TABLE cc_llm_agent_account MODIFY COLUMN account_json MEDIUMTEXT COMMENT '
 INSERT INTO `sys_config` (`config_id`, `config_name`, `config_key`, `config_value`, `config_type`, `create_by`, `create_time`, `remark`)
 VALUES('12', '系统版本号', 'sys.version', 'v20250805', 'Y', 'admin', NOW(), '系统版本号（每次版本升级需要更新该值）') ;
 
+UPDATE sys_config SET config_value = 'v20250805' WHERE config_key = 'sys.version';
 
 
 
