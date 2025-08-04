@@ -10,7 +10,6 @@ spring:
         url: jdbc:mysql://127.0.0.1:3306/easycallcenter365?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
         username: root
         password: easycallcenter365
-#        password: tydic202x888
       slave:
         # 从数据源开关/默认关闭
         enabled: false
@@ -204,3 +203,5 @@ sysconfig:
   hidden-key-list: api/app/token/key/secret/access
   # 是否开启敏感参数隐藏功能
   hide-secret: true
+  # 系统版本号
+  sysVersion: v20250805

@@ -82,6 +82,7 @@ public class SysIndexController extends BaseController
         mmap.put("tagsView", tagsView);
         mmap.put("mainClass", contentMainClass(footer, tagsView));
         mmap.put("copyrightYear", RuoYiConfig.getCopyrightYear());
+        mmap.put("sysVersion", configService.selectConfigByKey("sys.version", "v20250805"));
         if (user.getLoginName().equals("admin")) {
             mmap.put("demoEnabled", RuoYiConfig.isDemoEnabled());
         } else {

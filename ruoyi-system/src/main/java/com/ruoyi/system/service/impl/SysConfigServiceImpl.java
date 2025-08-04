@@ -57,6 +57,12 @@ public class SysConfigServiceImpl implements ISysConfigService
     @Override
     public String selectConfigByKey(String configKey)
     {
+        return selectConfigByKey(configKey, StringUtils.EMPTY);
+    }
+
+    @Override
+    public String selectConfigByKey(String configKey, String defaultValue)
+    {
         String configValue = Convert.toStr(CacheUtils.get(getCacheName(), getCacheKey(configKey)));
         if (StringUtils.isNotEmpty(configValue))
         {
@@ -70,7 +76,7 @@ public class SysConfigServiceImpl implements ISysConfigService
             CacheUtils.put(getCacheName(), getCacheKey(configKey), retConfig.getConfigValue());
             return retConfig.getConfigValue();
         }
-        return StringUtils.EMPTY;
+        return defaultValue;
     }
 
     /**
