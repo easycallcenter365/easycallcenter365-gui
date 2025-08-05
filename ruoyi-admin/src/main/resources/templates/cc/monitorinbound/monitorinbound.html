@@ -24,7 +24,8 @@
 <script th:inline="javascript">
     console.log("================")
     var _phoneBar = new ccPhoneBarSocket();
-    var _scriptServer = [[${callConfig.scriptServer}]];
+    var _scriptServer = window.location.host.split(":")[0];
+    //var _scriptServer = [[${callConfig.scriptServer}]];
     var _scriptPort = [[${callConfig.scriptPort}]];
     var _loginToken = [[${callConfig.loginToken}]];
     var _callConfig = null;

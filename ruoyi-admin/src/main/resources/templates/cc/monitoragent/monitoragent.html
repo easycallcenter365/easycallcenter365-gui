@@ -28,7 +28,8 @@
     var listenFlag = [[${@permission.hasPermi('cc:monitor:agent:listen')}]];
     // var _listenExtnum = [];
     var _phoneBar = new ccPhoneBarSocket();
-    var _scriptServer = [[${callConfig.scriptServer}]];
+    var _scriptServer = window.location.host.split(":")[0];
+    // var _scriptServer =   [[${callConfig.scriptServer}]];
     var _scriptPort = [[${callConfig.scriptPort}]];
     var _loginToken = [[${callConfig.loginToken}]];
     var groupId = 0;  // 固定值
